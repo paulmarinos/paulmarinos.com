@@ -1,0 +1,27 @@
+---
+/**
+ * Footer override — carries the mobile rendering of the graph and backlinks.
+ *
+ * Starlight hides the right sidebar below 72rem, which took the graph with it.
+ * The footer renders inside the main column at every width, so the panels go
+ * here and CSS shows them only below that breakpoint (see custom.css). Above
+ * it, PageSidebar.astro is responsible and this block is hidden — so exactly
+ * one copy is ever visible.
+ */
+import Default from '@astrojs/starlight/components/Footer.astro';
+import { PageGraph, PageBacklinks } from 'starlight-site-graph/components';
+---
+
+<div class="slsg-mobile-panels not-content">
+	<PageGraph class="slsg-graph-panel">
+		<h2 slot="title">{Astro.locals.t('starlight-site-graph.graph')}</h2>
+	</PageGraph>
+
+	<PageBacklinks class="slsg-backlinks-panel">
+		<h2 slot="title">{Astro.locals.t('starlight-site-graph.backlinks')}</h2>
+	</PageBacklinks>
+</div>
+
+<Default>
+	<slot />
+</Default>

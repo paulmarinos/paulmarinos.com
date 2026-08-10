@@ -17,6 +17,7 @@ hero:
 ---
 
 import { CardGrid, LinkCard } from '@astrojs/starlight/components';
+import { PageGraph } from 'starlight-site-graph/components';
 
 ## The thesis
 
@@ -71,6 +72,14 @@ compose.
 		description="Turning knowledge of attacks into durable, tested detections — detection as code, pipelines, quality testing, hunting, and IR."
 	/>
 </CardGrid>
+
+## The map
+
+Every article links to at least one article in a different pillar — that rule is enforced
+at build time, so this graph can't quietly drift out of date. Drag it around; click through
+to any node.
+
+<PageGraph class="slsg-landing-graph not-content" />
 
 ## Cross-cutting threads
 

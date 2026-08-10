@@ -30,11 +30,19 @@ Personal site for paulmarinos.com — Astro + Starlight, deployed to GitHub Page
   fails validation under Astro 7 / zod v4 — the plugin does not build at all without this,
   even with empty config. Applied via `patch-package` on `postinstall`; do not remove it
   without checking whether upstream (last published Aug 2025, targeting Astro 5) has fixed it.
-- **Known caveat — base paths containing a dot.** The plugin slugifies the base path when
-  building node keys (`/paulmarinos.com` → `paulmarinoscom`) but not when resolving links,
-  which splits the graph into two disconnected halves. This only affects the temporary
-  github.io preview build; at `base: '/'` (the custom domain, and `npm run dev`) the graph is
-  correct. Do not patch around it — it disappears with the custom domain.
+  The same patch also fixes base-path slugification: the plugin slugified the base when
+  building node keys (`/paulmarinos.com` → `paulmarinoscom`) but not when resolving link
+  targets, so under the dotted preview base the graph split into two disconnected halves and
+  rendered empty. Node keys and link targets now both keep the base verbatim, matching
+  Astro's `BASE_URL`. Both hunks are in `sitemap/build.ts`.
+- **Panel placement is ours, not the plugin's.** `overridePageSidebar: false` disables the
+  plugin's own right-sidebar override. `src/components/PageSidebar.astro` renders the table
+  of contents first, then graph, then backlinks. `src/components/Footer.astro` renders a
+  second copy that CSS shows only below 72rem (Starlight's right-sidebar breakpoint), since
+  the sidebar is hidden on mobile. The splash landing page has no sidebar at any width, so it
+  renders its own `<PageGraph>` inline in `index.mdx` and suppresses the footer copy via
+  `:root[data-has-hero]`. Exactly one copy is visible at any width — check that invariant if
+  you touch any of the three.
 
 ## Development
 

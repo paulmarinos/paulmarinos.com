@@ -11,3 +11,39 @@ index 8a38bbf..5c59fc0 100644
  }
  
  /**
+diff --git a/node_modules/starlight-site-graph/sitemap/build.ts b/node_modules/starlight-site-graph/sitemap/build.ts
+index 2957000..7689a63 100644
+--- a/node_modules/starlight-site-graph/sitemap/build.ts
++++ b/node_modules/starlight-site-graph/sitemap/build.ts
+@@ -348,7 +348,13 @@ export class SiteMapBuilder {
+ 			} else if (this.basePath !== '' && !trimSlashes(link).startsWith(this.basePath)) {
+ 				link = path.join(this.basePath, link);
+ 			}
+-			link = slugifyPath(onlyTrailingSlash(link.split('#')[0]!, this.addTrailingSlash).replace(/\\/g, '/'));
++			link = onlyTrailingSlash(link.split('#')[0]!, this.addTrailingSlash).replace(/\\/g, '/');
++			// Keep the base path verbatim here too — see `getLinkPath` above.
++			if (this.basePath !== '' && (link === this.basePath || link.startsWith(this.basePath + '/'))) {
++				link = this.basePath + slugifyPath(link.slice(this.basePath.length));
++			} else {
++				link = slugifyPath(link);
++			}
+ 			if (link !== current) {
+ 				links.add(link);
+ 				return link;
+@@ -377,10 +383,12 @@ export class SiteMapBuilder {
+ 			.slice(0, -path.extname(filePath).length || undefined);
+ 
+ 		// Ensure that the slashes are correct and honor the base option
+-		relative_path = basePath === '' ? stripLeadingSlash(relative_path) : path.join(basePath, relative_path).replace(/\\/g, '/');
+-
+-		// Slugify the path, keeping slashes
+-		relative_path = slugifyPath(relative_path);
++		// Slugify only the content-relative portion, then prepend the base path
++		// verbatim. Slugifying the base as well mangles any base containing a
++		// dot ("/paulmarinos.com" -> "paulmarinoscom"), which then never matches
++		// Astro's BASE_URL or the link targets resolved in `resolveLink`.
++		relative_path = slugifyPath(stripLeadingSlash(relative_path));
++		if (basePath !== '') relative_path = path.join(basePath, relative_path).replace(/\\/g, '/');
+ 
+ 		// Remove index from the end of the path
+ 		return ensureTrailingSlash(resolveIndex(relative_path), this.addTrailingSlash) || '/';

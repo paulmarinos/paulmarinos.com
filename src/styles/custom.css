@@ -21,3 +21,45 @@
 .sl-markdown-content :is(h2, h3):not(:where(.not-content *)) {
 	margin-top: 2em;
 }
+
+/*
+ * Graph + backlinks placement.
+ *
+ * 72rem is Starlight's own breakpoint for the right sidebar (see
+ * TwoColumnContent.astro). Above it the panels live in the sidebar; below it
+ * the sidebar is gone, so the copies rendered in Footer.astro take over.
+ * Exactly one copy is visible at any width.
+ */
+.slsg-mobile-panels {
+	display: grid;
+	gap: 1.5rem;
+	margin-block: 2.5rem 1rem;
+	padding-top: 2rem;
+	border-top: 1px solid var(--sl-color-hairline, var(--border));
+}
+
+@media (min-width: 72rem) {
+	.slsg-mobile-panels {
+		display: none;
+	}
+}
+
+/* The splash landing page renders its own graph inline (see index.mdx), and it
+   has no right sidebar at any width — so the footer copy would be a duplicate
+   on narrow screens. `data-has-hero` is Starlight's marker for splash pages. */
+:root[data-has-hero] .slsg-mobile-panels {
+	display: none;
+}
+
+/* Give the graph a usable height on narrow screens — the sidebar sizing is
+   tuned for a narrow column and reads as a sliver at full width. */
+.slsg-mobile-panels .slsg-graph-panel .graph-component {
+	height: 20rem;
+}
+
+/* The landing page is splash-templated: no sidebar, no footer panels. Its
+   graph is placed inline in index.mdx and gets more room than the sidebar one. */
+.slsg-landing-graph .graph-component {
+	height: 26rem;
+	margin-top: 1rem;
+}

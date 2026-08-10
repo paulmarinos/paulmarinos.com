@@ -36,6 +36,10 @@ export default defineConfig({
 				{ icon: 'github', label: 'GitHub', href: 'https://github.com/paulmarinos' },
 			],
 			customCss: ['./src/styles/custom.css'],
+			components: {
+				PageSidebar: './src/components/PageSidebar.astro',
+				Footer: './src/components/Footer.astro',
+			},
 			plugins: [
 				starlightThemeBlack({
 					docs: {
@@ -49,6 +53,11 @@ export default defineConfig({
 					// connects" sections are already the cross-pillar edge list.
 					// Nav, header, footer and the right sidebar are excluded by
 					// default, so only editorial links become edges.
+					//
+					// We render the panels ourselves (src/components/PageSidebar.astro
+					// and Footer.astro) so the graph sits *below* the table of contents
+					// and still appears on mobile, where the right sidebar is hidden.
+					overridePageSidebar: false,
 					graphConfig: {
 						// Depth 1 shows only direct neighbours; 2 makes the
 						// cross-pillar structure legible, which is the point.

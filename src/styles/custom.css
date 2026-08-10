@@ -63,3 +63,55 @@
 	height: 26rem;
 	margin-top: 1rem;
 }
+
+/*
+ * Collapsible mobile menu sections, to match the desktop sidebar.
+ *
+ * The disclosure buttons are built by src/components/Banner.astro. These rules
+ * are unlayered, so they outrank the theme's scoped styles in `@layer black`.
+ * Sections are only ever collapsed once the script has marked them
+ * `data-collapsible` — without JS the menu stays fully expanded and usable.
+ */
+.mobile-nav-section[data-collapsible] {
+	gap: 0;
+}
+
+/* The theme sets `display: flex` on every section, which outranks the UA
+   stylesheet's `[hidden] { display: none }` — so hiding the empty navbar-links
+   section needs an explicit rule. */
+.mobile-nav-section[hidden] {
+	display: none;
+}
+
+.mobile-nav-section[data-collapsible] .mobile-nav-toggle {
+	all: unset;
+	box-sizing: border-box;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.5rem;
+	width: 100%;
+	padding-block: 0.75rem;
+	cursor: pointer;
+	font-size: 0.875rem;
+	font-weight: 500;
+	color: var(--muted-foreground);
+	-webkit-tap-highlight-color: transparent;
+}
+
+.mobile-nav-section[data-collapsible] .mobile-nav-caret {
+	flex-shrink: 0;
+	transition: transform 0.2s ease-in-out;
+}
+
+.mobile-nav-section[data-collapsible][data-open='true'] .mobile-nav-caret {
+	transform: rotate(90deg);
+}
+
+.mobile-nav-section[data-collapsible][data-open='false'] .mobile-nav-links {
+	display: none;
+}
+
+.mobile-nav-section[data-collapsible][data-open='true'] .mobile-nav-links {
+	padding-bottom: 1rem;
+}

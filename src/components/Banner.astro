@@ -1,0 +1,71 @@
+---
+/**
+ * Banner override — used as a global hook for the mobile-nav enhancement.
+ *
+ * The theme renders the mobile menu as flat sections (label + links) with no
+ * disclosure behaviour, so it does not match the collapsible desktop sidebar.
+ * Its component chain is SiteTitle -> MobileNavTrigger -> MobileNav, and the
+ * theme only exports `./overrides/*` — `NavBar`, `MobileNav` and the navbar
+ * link helpers are not importable. Replacing MobileNav would therefore mean
+ * vendoring the whole chain, including reimplementing NavBar.
+ *
+ * So the markup is upgraded in place instead: cheaper, and it keeps receiving
+ * the theme's own styling and future fixes. Banner renders on every page
+ * (including the splash landing page) and is claimed by neither plugin, which
+ * makes it the one dependable place to hang this.
+ */
+import Default from '@astrojs/starlight/components/Banner.astro';
+---
+
+<Default />
+
+<script>
+	function enhanceMobileNav() {
+		const nav = document.querySelector('.mobile-nav');
+		if (!nav || nav.hasAttribute('data-collapsible-ready')) return;
+		nav.setAttribute('data-collapsible-ready', '');
+
+		nav.querySelectorAll('.mobile-nav-section').forEach((section, index) => {
+			const label = section.querySelector('.mobile-nav-label');
+			const links = section.querySelector('.mobile-nav-links');
+			if (!(label instanceof HTMLElement) || !(links instanceof HTMLElement)) return;
+
+			// The navbar-links section is empty unless `navLinks` is configured.
+			// Leave it out rather than render an empty disclosure.
+			if (links.querySelectorAll('a').length === 0) {
+				section.setAttribute('hidden', '');
+				return;
+			}
+
+			const id = `mobile-nav-links-${index}`;
+			links.id = id;
+
+			// Mirror the desktop sidebar: the group holding the current page
+			// starts open, everything else starts closed.
+			const isCurrent = links.querySelector('a[data-active="true"]') !== null;
+
+			const button = document.createElement('button');
+			button.type = 'button';
+			button.className = label.className;
+			button.classList.add('mobile-nav-toggle');
+			button.setAttribute('aria-controls', id);
+			button.setAttribute('aria-expanded', String(isCurrent));
+			button.innerHTML = `<span>${label.innerHTML}</span><svg class="mobile-nav-caret" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m14.83 11.29-4.24-4.24a1 1 0 1 0-1.42 1.41L12.71 12l-3.54 3.54a1 1 0 0 0 0 1.41 1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29l4.24-4.24a1.002 1.002 0 0 0 0-1.42Z"/></svg>`;
+
+			button.addEventListener('click', () => {
+				const open = button.getAttribute('aria-expanded') === 'true';
+				button.setAttribute('aria-expanded', String(!open));
+				section.setAttribute('data-open', String(!open));
+			});
+
+			section.setAttribute('data-collapsible', '');
+			section.setAttribute('data-open', String(isCurrent));
+			label.replaceWith(button);
+		});
+	}
+
+	enhanceMobileNav();
+	// Astro's prefetch/back-forward cache can restore a page without re-running
+	// module scripts; re-run on restore so the menu is never left un-upgraded.
+	window.addEventListener('pageshow', enhanceMobileNav);
+</script>

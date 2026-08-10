@@ -26,6 +26,14 @@ Personal site for paulmarinos.com — Astro + Starlight, deployed to GitHub Page
   children permanently expanded, and Starlight's own `collapsed: true` is silently ignored.
   With it, groups honour `collapsed` and auto-expand the one containing the current page.
   Nested subdirectories under a pillar become nested disclosures automatically.
+- **The mobile menu is a separate component and does not share that behaviour.** The theme
+  renders it flat via SiteTitle -> MobileNavTrigger -> MobileNav, none of which are
+  importable (only `./overrides/*` is exported), so it is upgraded in place by a script in
+  `src/components/Banner.astro` — Banner is claimed by neither plugin and renders on every
+  page. Without JS the menu stays fully expanded and usable.
+  Known limitation: the theme's MobileNav renders only `type === 'link'` children, so a
+  *nested* sub-group under a pillar will not appear in the mobile menu at all. Nothing is
+  nested yet; revisit when the first sub-group lands.
 - **`starlight-site-graph`** supplies the graph view and backlinks, and overrides only
   `PageSidebar`, so it composes with the theme. Graph edges are parsed from real links in
   page content, so the "How this connects" prose links *are* the edge list. Node colour and

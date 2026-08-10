@@ -39,6 +39,8 @@ export default defineConfig({
 			components: {
 				PageSidebar: './src/components/PageSidebar.astro',
 				Footer: './src/components/Footer.astro',
+				// Not a banner — a global hook for the mobile-nav enhancement.
+				Banner: './src/components/Banner.astro',
 			},
 			plugins: [
 				starlightThemeBlack({

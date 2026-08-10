@@ -26,6 +26,12 @@ jobs:
         uses: withastro/action@v3
         with:
           node-version: 22
+        # TEMPORARY: serve from the github.io project URL until the custom
+        # domain (www.paulmarinos.com) is verified and DNS points at GitHub.
+        # Delete this env block once the custom domain is live.
+        env:
+          SITE_URL: https://paulmarinos.github.io
+          BASE_PATH: /paulmarinos.com
 
   deploy:
     needs: build

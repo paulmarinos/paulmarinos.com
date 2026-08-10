@@ -21,6 +21,11 @@ Personal site for paulmarinos.com — Astro + Starlight, deployed to GitHub Page
   accent). It overrides `Head`, `Hero`, `MobileMenuToggle`, `PageTitle`, `Pagination`,
   `Sidebar`, `SiteTitle`, `ThemeSelect`. Do not override those in `astro.config.mjs` — the
   theme skips its own override and warns if you do.
+- **Sidebar groups are collapsible only because of `sidebar.useDropdowns: true`** in the
+  theme's options. Without it the theme renders each group as a static label with its
+  children permanently expanded, and Starlight's own `collapsed: true` is silently ignored.
+  With it, groups honour `collapsed` and auto-expand the one containing the current page.
+  Nested subdirectories under a pillar become nested disclosures automatically.
 - **`starlight-site-graph`** supplies the graph view and backlinks, and overrides only
   `PageSidebar`, so it composes with the theme. Graph edges are parsed from real links in
   page content, so the "How this connects" prose links *are* the edge list. Node colour and

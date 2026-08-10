@@ -42,6 +42,14 @@ export default defineConfig({
 			},
 			plugins: [
 				starlightThemeBlack({
+					sidebar: {
+						// Without this the theme renders each pillar as a static label
+						// with its children always expanded — `collapsed: true` below
+						// has no effect. With it, each pillar becomes a <details>
+						// disclosure that honours `collapsed` and auto-opens the group
+						// containing the current page.
+						useDropdowns: true,
+					},
 					docs: {
 						// Off by default here: the stock behaviour puts
 						// "Open in ChatGPT / Claude / v0 / Scira" buttons on every page.

@@ -1,38 +1,23 @@
 /*
- * Design token overrides.
+ * Site-specific style on top of `starlight-theme-black`.
  *
- * Scope for now: get off the stock Starlight blue/purple and widen the measure
- * so the site doesn't read as "default docs theme". Dark mode is the primary
- * design target; light mode is derived from it.
+ * IMPORTANT — cascade note: the theme ships its styles inside `@layer black`
+ * (it declares `@layer starlight, black`). This file is *unlayered*, and
+ * unlayered CSS beats layered CSS regardless of source order. So anything
+ * declared here silently wins over the theme. Keep it small and deliberate.
  *
- * The full design pass (display typeface, custom landing page, section layouts)
- * is step 5 in the build order — this file is deliberately minimal until then.
+ * The theme owns the design system: Geist Sans/Mono, the neutral scale, and a
+ * deliberately monochrome accent (`--sl-color-accent*` are mapped to grays).
+ * The earlier teal accent was removed rather than left to half-apply — the
+ * theme's own components reference `--foreground`/`--border` directly, so an
+ * accent hue set only on the Starlight variables lands inconsistently.
+ *
+ * Reintroducing an accent is a design-pass decision (build order step 5), and
+ * it should be done against the theme's variables (`--accent`, `--gray-*`),
+ * not Starlight's.
  */
 
-:root {
-	/* Accent — a desaturated teal, not the Starlight default. */
-	--sl-hue-accent: 185;
-	--sl-color-accent-low: hsl(var(--sl-hue-accent), 45%, 18%);
-	--sl-color-accent: hsl(var(--sl-hue-accent), 50%, 40%);
-	--sl-color-accent-high: hsl(var(--sl-hue-accent), 60%, 78%);
-
-	/* Neutrals with a slight cool cast. */
-	--sl-hue-gray: 215;
-
-	/* Wider content measure than the default 45rem. */
-	--sl-content-width: 50rem;
-
-	/* Slightly looser vertical rhythm. */
-	--sl-line-height: 1.75;
-}
-
-:root[data-theme='light'] {
-	--sl-color-accent-low: hsl(var(--sl-hue-accent), 55%, 86%);
-	--sl-color-accent: hsl(var(--sl-hue-accent), 55%, 32%);
-	--sl-color-accent-high: hsl(var(--sl-hue-accent), 50%, 18%);
-}
-
-/* Give headings a bit more air above than the default. */
+/* Slightly more air above section headings than the theme's default. */
 .sl-markdown-content :is(h2, h3):not(:where(.not-content *)) {
-	margin-top: 2.25em;
+	margin-top: 2em;
 }

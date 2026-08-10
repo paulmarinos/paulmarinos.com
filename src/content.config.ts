@@ -1,6 +1,7 @@
 import { defineCollection, z } from 'astro:content';
 import { docsLoader } from '@astrojs/starlight/loaders';
 import { docsSchema } from '@astrojs/starlight/schema';
+import { ExtendDocsSchema } from 'starlight-theme-black/schema';
 
 export const PILLARS = [
 	'threat-intel',
@@ -47,8 +48,11 @@ export const collections = {
 	docs: defineCollection({
 		loader: docsLoader(),
 		schema: docsSchema({
+			// `extend` is a single hook, so the theme's frontmatter fields
+			// (hero.layout, hero.announcement, showMarkdownActions) have to be
+			// merged in here explicitly — installing the plugin does not add them.
 			extend: (context) =>
-				taxonomy.superRefine((value, ctx) => {
+				taxonomy.merge(ExtendDocsSchema).superRefine((value, ctx) => {
 					if (value.contentType === 'landing') return;
 
 					if (!value.pillar) {

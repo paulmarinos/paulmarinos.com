@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
+import starlightThemeBlack from 'starlight-theme-black';
 
 // The seven pillars. Order here is the order in the sidebar.
 const pillars = [
@@ -33,6 +34,15 @@ export default defineConfig({
 				{ icon: 'github', label: 'GitHub', href: 'https://github.com/paulmarinos' },
 			],
 			customCss: ['./src/styles/custom.css'],
+			plugins: [
+				starlightThemeBlack({
+					docs: {
+						// Off by default here: the stock behaviour puts
+						// "Open in ChatGPT / Claude / v0 / Scira" buttons on every page.
+						showMarkdownActions: false,
+					},
+				}),
+			],
 			editLink: {
 				baseUrl: 'https://github.com/paulmarinos/paulmarinos.com/edit/main/',
 			},

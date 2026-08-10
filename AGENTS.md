@@ -15,6 +15,27 @@ Personal site for paulmarinos.com — Astro + Starlight, deployed to GitHub Page
   cross-link discipline. Pillar overview pages use `contentType: landing` and are exempt.
 - **Node 22** (see `.nvmrc`). Astro 7 will not run on the system Node 18.
 
+### Theme and graph plugins
+
+- **`starlight-theme-black`** owns the design system (Geist, neutral scale, monochrome
+  accent). It overrides `Head`, `Hero`, `MobileMenuToggle`, `PageTitle`, `Pagination`,
+  `Sidebar`, `SiteTitle`, `ThemeSelect`. Do not override those in `astro.config.mjs` — the
+  theme skips its own override and warns if you do.
+- **`starlight-site-graph`** supplies the graph view and backlinks, and overrides only
+  `PageSidebar`, so it composes with the theme. Graph edges are parsed from real links in
+  page content, so the "How this connects" prose links *are* the edge list. Node colour and
+  tags are driven per pillar from the `pillars` table in `astro.config.mjs`.
+- **`patches/starlight-site-graph+0.5.0.patch`** is load-bearing. The plugin's `deepMerge`
+  treats a `Map` as a plain object and flattens it to `{}`, so its own `styleRules` default
+  fails validation under Astro 7 / zod v4 — the plugin does not build at all without this,
+  even with empty config. Applied via `patch-package` on `postinstall`; do not remove it
+  without checking whether upstream (last published Aug 2025, targeting Astro 5) has fixed it.
+- **Known caveat — base paths containing a dot.** The plugin slugifies the base path when
+  building node keys (`/paulmarinos.com` → `paulmarinoscom`) but not when resolving links,
+  which splits the graph into two disconnected halves. This only affects the temporary
+  github.io preview build; at `base: '/'` (the custom domain, and `npm run dev`) the graph is
+  correct. Do not patch around it — it disappears with the custom domain.
+
 ## Development
 
 When starting the dev server, use background mode:

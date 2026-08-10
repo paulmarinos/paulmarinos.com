@@ -7,16 +7,21 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@astrojs/starlight": "^0.41.7",
     "astro": "^7.1.6",
     "sharp": "^0.35.3",
+    "starlight-site-graph": "^0.5.0",
     "starlight-theme-black": "^0.7.1"
   },
   "private": true,
   "engines": {
     "node": ">=22"
+  },
+  "devDependencies": {
+    "patch-package": "^8.0.1"
   }
 }

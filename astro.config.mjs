@@ -2,16 +2,18 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import starlightThemeBlack from 'starlight-theme-black';
+import starlightSiteGraph from 'starlight-site-graph';
 
-// The seven pillars. Order here is the order in the sidebar.
+// The seven pillars. Order here is the order in the sidebar; `color` is the
+// graph node colour, so each pillar is visually distinct in the graph view.
 const pillars = [
-	{ label: 'Threat Intelligence', dir: 'threat-intel' },
-	{ label: 'Identity & Access Management', dir: 'iam' },
-	{ label: 'Application Security', dir: 'appsec' },
-	{ label: 'Governance, Risk & Compliance', dir: 'grc' },
-	{ label: 'Pentesting', dir: 'pentest' },
-	{ label: 'AI & Automation Engineering', dir: 'ai-automation' },
-	{ label: 'Detection Engineering & SecOps', dir: 'detection-eng' },
+	{ label: 'Threat Intelligence', dir: 'threat-intel', color: 'nodeColor1' },
+	{ label: 'Identity & Access Management', dir: 'iam', color: 'nodeColor2' },
+	{ label: 'Application Security', dir: 'appsec', color: 'nodeColor3' },
+	{ label: 'Governance, Risk & Compliance', dir: 'grc', color: 'nodeColor4' },
+	{ label: 'Pentesting', dir: 'pentest', color: 'nodeColor5' },
+	{ label: 'AI & Automation Engineering', dir: 'ai-automation', color: 'nodeColor6' },
+	{ label: 'Detection Engineering & SecOps', dir: 'detection-eng', color: 'nodeColor7' },
 ];
 
 // Deploy target. Defaults to the custom domain, which serves at the root path.
@@ -40,6 +42,33 @@ export default defineConfig({
 						// Off by default here: the stock behaviour puts
 						// "Open in ChatGPT / Claude / v0 / Scira" buttons on every page.
 						showMarkdownActions: false,
+					},
+				}),
+				starlightSiteGraph({
+					// Edges come from real links in page content — the "How this
+					// connects" sections are already the cross-pillar edge list.
+					// Nav, header, footer and the right sidebar are excluded by
+					// default, so only editorial links become edges.
+					graphConfig: {
+						// Depth 1 shows only direct neighbours; 2 makes the
+						// cross-pillar structure legible, which is the point.
+						depth: 2,
+						renderArrows: true,
+					},
+					sitemapConfig: {
+						// One colour per pillar, driven by the table above.
+						// Globs are written both bare and `**/`-prefixed so they match
+						// whether or not a base path is prepended to the node key.
+						styleRules: new Map(
+							pillars.map(({ dir, color }) => [
+								[`${dir}/**`, `**/${dir}/**`],
+								{ shapeColor: color },
+							]),
+						),
+						// Tag each page with its pillar so the graph can be filtered.
+						tagRules: Object.fromEntries(
+							pillars.map(({ dir }) => [dir, [`${dir}/**`, `**/${dir}/**`]]),
+						),
 					},
 				}),
 			],

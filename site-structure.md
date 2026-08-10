@@ -10,7 +10,7 @@
 | 2 | Identity & Access Management | `/iam` | Who/what gets access, proven and enforced |
 | 3 | Application Security | `/appsec` | Building it right before it ships |
 | 4 | Governance, Risk & Compliance | `/grc` | Obligations mapped to controls, controls mapped to evidence |
-| 5 | Pentesting | `/pentest` | Adversarial validation of everything above |
+| 5 | Penetration Testing | `/pentest` | Adversarial validation of everything above |
 | 6 | AI & Automation Engineering | `/ai-automation` | The tooling layer that scales the rest |
 | 7 | Detection Engineering & SecOps | `/detection-eng` | Turning knowledge of attacks into durable, tested detections |
 
@@ -204,7 +204,7 @@
 
 ---
 
-## 5. Pentesting
+## 5. Penetration Testing
 `/pentest`
 
 ### 5.1 Web Application Pentesting

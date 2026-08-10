@@ -1,0 +1,48 @@
+---
+title: Application Security
+description: Building it right before it ships.
+pillar: appsec
+contentType: landing
+sidebar:
+  label: Overview
+  order: 0
+---
+
+Application security is the only pillar with a real chance of removing a vulnerability
+class permanently rather than detecting instances of it forever. That's the whole argument
+for investing here: a parameterized query API kills SQL injection in a codebase; a
+detection rule for SQL injection does not.
+
+The material spans secure coding, the pitfalls that keep recurring, the SDLC practices
+that catch them, and the scanning and pipeline tooling that enforces the whole thing.
+
+## Why it matters
+
+Most AppSec programs fail the same way: they generate findings faster than engineering can
+absorb them, so engineering routes around the program. Getting this right is less about
+finding more and more about **finding what matters, at a moment when fixing it is cheap,
+in a form the developer can act on.**
+
+## How this connects
+
+- **→ [Pentesting](/pentest/):** the same flaws from the attacker's side. A pentest finding is an AppSec control that didn't exist or didn't fire.
+- **→ [IAM](/iam/):** authorization flaws (IDOR, broken object-level auth) are identity problems inside the application. CI/CD OIDC to cloud is an IAM design decision.
+- **→ [GRC](/grc/):** secure SDLC is a control requirement in SOC 2, ISO 27001, and FedRAMP. Scanning output is audit evidence — if it's collected deliberately.
+- **→ [Threat Intel](/threat-intel/):** exploit-in-the-wild signal and EPSS are what should order the remediation backlog, not raw CVSS.
+- **→ [AI & Automation](/ai-automation/):** code review and triage augmentation is the highest-yield security use of LLMs — and the easiest place to ship confident nonsense.
+- **→ [Detection Engineering](/detection-eng/):** application logs are the least-instrumented detection tier, and the one AppSec is best positioned to fix.
+
+## What's here
+
+| Subsection | Focus |
+|---|---|
+| **Secure Coding Practices & Paradigms** | Validation and encoding, memory safety as a control, secure defaults and fail-closed design, crypto hygiene, language-specific guidance |
+| **Common Insecure Coding Pitfalls** | OWASP Top 10 in real code, injection families, deserialization, SSRF and cloud metadata, IDOR/BOLA, TOCTOU, secrets in source, dependency confusion |
+| **SDLC Best Practices** | Threat modeling (STRIDE, PASTA, attack trees) and when it pays, abuse cases, design review gates, secure code review methodology |
+| **CI/CD & Platform Security** | GitHub Actions and OIDC, GitLab pipeline security, poisoned pipeline execution, Sigstore/SLSA/SBOMs |
+| **Code Scanning** | SAST taint analysis and tuning, DAST auth and API scanning, SCA reachability, IAST/RASP, building a program people don't route around |
+| **API & Cloud-Native AppSec** | OWASP API Top 10, container and image security, IaC scanning |
+
+:::note[Status]
+This pillar is being written out. Subsections appear in the sidebar as articles land.
+:::

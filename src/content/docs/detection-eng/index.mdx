@@ -1,0 +1,52 @@
+---
+title: Detection Engineering & SecOps
+description: Turning knowledge of attacks into durable, tested detections.
+pillar: detection-eng
+contentType: landing
+sidebar:
+  label: Overview
+  order: 0
+---
+
+Detection engineering is what happens when you stop treating detection content as
+configuration and start treating it as software: versioned, peer-reviewed, tested against
+known inputs, monitored in production, and deprecated when it stops earning its keep.
+
+Where [Threat Intelligence](/threat-intel/) is the analysis and communication of adversary
+knowledge, this pillar is the **operationalization** of it — plus the SOC functions that
+consume the output: hunting, incident response, and response automation.
+
+## Why it matters
+
+Two failure modes dominate. First, rules that were never tested and silently stopped
+firing when a log source changed — the detection exists on paper and nowhere else. Second,
+alert volume treated as a success metric, which guarantees the base rates make the queue
+useless. Both are engineering problems with engineering fixes.
+
+## How this connects
+
+- **→ [Threat Intel](/threat-intel/):** intel feeds the detection backlog; detection output feeds intel. The base-rate math (§1.2) is what makes alert-fatigue arguments quantitative rather than anecdotal.
+- **→ [Pentesting](/pentest/):** the purple team loop. Emulate a technique, verify the detection fires, fix whichever end was wrong. ATT&CK is the shared vocabulary.
+- **→ [IAM](/iam/):** identity telemetry is the richest detection surface, and identity-centric containment is the fastest lever in cloud IR.
+- **→ [GRC](/grc/):** continuous control monitoring is this pipeline with an auditor as the consumer. Log coverage analysis is shared evidence.
+- **→ [AI & Automation](/ai-automation/):** agent-assisted triage and SOAR enrichment, with human approval gates on destructive actions.
+- **→ [AppSec](/appsec/):** application logs are the least-instrumented tier and the one AppSec can actually fix.
+
+## What's here
+
+| Subsection | Focus |
+|---|---|
+| **Detection as Code** | Versioned reviewed tested rules, repo structure and peer review, CI/CD for detection content, Sigma and backend conversion, KQL/SPL/EQL, metadata standards |
+| **Detection Lifecycle** | Idea intake from intel/pentest/incidents/hunts, hypothesis → data check → rule → tune → deploy → monitor → retire, backlog prioritization, rule health, deprecation discipline |
+| **Data Pipeline & Log Engineering** | Log tiers, cloud telemetry, normalization (OCSF, ECS, ASIM), enrichment joins, Cribl/Vector/Fluent Bit and cost control, coverage gap analysis |
+| **Detection Quality & Testing** | Precision and recall, unit testing against synthetic and replayed events, Atomic Red Team validation, ATT&CK Navigator coverage, tuning without gutting, the alert fatigue math |
+| **Threat Hunting** | Hypothesis-driven vs. baseline-driven, structured methodology and documentation, converting hunts to detections, cloud and identity hunting, measuring value |
+| **Incident Response Operations** | NIST SP 800-61 lifecycle and playbooks, triage and severity declaration, cloud IR specifics, identity-centric containment, evidence handling, blameless postmortems |
+| **SOAR & Automation** | Automation candidates, playbook guardrails, agent-assisted triage, human approval gates |
+| **Program Metrics** | MTTD/MTTR and their limits, coverage vs. capability reporting, team models |
+
+:::tip[The thread worth following]
+**The purple team loop.** [Pentest](/pentest/) emulation → detection validation → backlog →
+[prioritization](/threat-intel/). That full circuit, from adversary technique to tested
+detection, is the clearest demonstration of why these pillars belong on one site.
+:::

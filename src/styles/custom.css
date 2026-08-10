@@ -1,0 +1,38 @@
+/*
+ * Design token overrides.
+ *
+ * Scope for now: get off the stock Starlight blue/purple and widen the measure
+ * so the site doesn't read as "default docs theme". Dark mode is the primary
+ * design target; light mode is derived from it.
+ *
+ * The full design pass (display typeface, custom landing page, section layouts)
+ * is step 5 in the build order — this file is deliberately minimal until then.
+ */
+
+:root {
+	/* Accent — a desaturated teal, not the Starlight default. */
+	--sl-hue-accent: 185;
+	--sl-color-accent-low: hsl(var(--sl-hue-accent), 45%, 18%);
+	--sl-color-accent: hsl(var(--sl-hue-accent), 50%, 40%);
+	--sl-color-accent-high: hsl(var(--sl-hue-accent), 60%, 78%);
+
+	/* Neutrals with a slight cool cast. */
+	--sl-hue-gray: 215;
+
+	/* Wider content measure than the default 45rem. */
+	--sl-content-width: 50rem;
+
+	/* Slightly looser vertical rhythm. */
+	--sl-line-height: 1.75;
+}
+
+:root[data-theme='light'] {
+	--sl-color-accent-low: hsl(var(--sl-hue-accent), 55%, 86%);
+	--sl-color-accent: hsl(var(--sl-hue-accent), 55%, 32%);
+	--sl-color-accent-high: hsl(var(--sl-hue-accent), 50%, 18%);
+}
+
+/* Give headings a bit more air above than the default. */
+.sl-markdown-content :is(h2, h3):not(:where(.not-content *)) {
+	margin-top: 2.25em;
+}

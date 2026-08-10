@@ -1,0 +1,50 @@
+---
+title: Threat Intelligence
+description: Turning raw signal into decisions people act on.
+pillar: threat-intel
+contentType: landing
+sidebar:
+  label: Overview
+  order: 0
+---
+
+Most threat intelligence fails at the last mile. The collection is fine, the analysis is
+defensible, and then it lands in a PDF that nobody reads and nothing changes. This pillar
+is about the last mile: making a finding legible, quantifying how sure you are, and
+handing it to someone in a form they can act on.
+
+The working definition here is narrow on purpose. **Threat intelligence is the analysis
+and communication of adversary knowledge.** Operationalizing that knowledge into running
+detections is a different discipline — that lives in
+[Detection Engineering & SecOps](/detection-eng/).
+
+## Why it matters
+
+An organization's defensive capacity is bounded by what it decides to do, not by what it
+knows. The bottleneck is almost never the feed. It's that the analysis arrived without a
+confidence statement, without a base rate, or without a "so what" — so the reader
+substituted their own priors and moved on.
+
+## How this connects
+
+- **→ [Pentesting](/pentest/):** adversary emulation validates the techniques intel says matter. Pentest findings become intel inputs.
+- **→ [Detection Engineering](/detection-eng/):** intel supplies the detection backlog; detection supplies the telemetry that becomes intel.
+- **→ [GRC](/grc/):** risk prioritization (§1.4) is the same math a risk register needs, done honestly.
+- **→ [AppSec](/appsec/):** exploit-in-the-wild signal is what should be driving the vulnerability queue, not CVSS alone.
+- **→ [AI & Automation](/ai-automation/):** summarization and enrichment pipelines are where this pillar scales — and where hallucinated intel does real damage.
+- **→ [IAM](/iam/):** identity is the most common initial-access path in the reporting, which makes it the most common thing intel should be arguing about.
+
+## What's here
+
+| Subsection | Focus |
+|---|---|
+| **Report Writing** | Tactical/operational/strategic formats, BLUF, ICD 203 confidence language, Admiralty source grading, templates |
+| **Statistics & Data Analytics** | Base rates, time-series for detection trends, cohort and survival analysis for remediation, sampling bias |
+| **Data Visualization** | Chart selection by question type, visualizing uncertainty, SOC vs. executive dashboards, anti-patterns |
+| **Risk Prioritization** | CVSS vs. EPSS vs. SSVC, KEV, asset criticality weighting, FAIR and loss exceedance |
+| **Effective Communication** | Writing for engineer/director/board, translating findings to business impact, briefing formats |
+| **Collection & Sourcing** | OSINT tradecraft, feed evaluation, internal telemetry as a source, STIX/TAXII and MISP |
+
+:::note[Status]
+This pillar is being written out. Subsections appear in the sidebar as articles land.
+:::

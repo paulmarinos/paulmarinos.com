@@ -1,0 +1,90 @@
+---
+title: Paul Marinos
+description: Threat intelligence, identity, application security, GRC, pentesting, AI engineering, and detection engineering — and the connective tissue between them.
+contentType: landing
+template: splash
+hero:
+  tagline: Seven pillars of security work, and the connective tissue between them.
+  actions:
+    - text: Start with the thesis
+      link: '#the-thesis'
+      icon: right-arrow
+      variant: primary
+    - text: Browse the pillars
+      link: '#the-pillars'
+      icon: document
+      variant: minimal
+---
+
+import { CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+## The thesis
+
+Security is usually written about one discipline at a time. That's how it's staffed, how
+it's tooled, and how it's sold — and it's also why the same root cause gets rediscovered
+independently by five teams who never compare notes.
+
+The interesting material lives at the seams. An overpermissioned role is a *pentest
+finding*, an *IAM design failure*, a *control gap* an auditor will flag, a *detection
+opportunity* nobody built, and a *risk* somebody has to prioritize against forty others.
+Same fact, five vocabularies, five audiences.
+
+This site covers seven pillars in depth, but the argument it's making is about how they
+compose.
+
+## The pillars
+
+<CardGrid>
+	<LinkCard
+		title="Threat Intelligence"
+		href="/threat-intel/"
+		description="Turning raw signal into decisions people act on — report writing, statistics, visualization, risk prioritization, and communication."
+	/>
+	<LinkCard
+		title="Identity & Access Management"
+		href="/iam/"
+		description="Who and what gets access, proven and enforced — AWS and Azure identity, federation, Zero Trust, and identity for autonomous agents."
+	/>
+	<LinkCard
+		title="Application Security"
+		href="/appsec/"
+		description="Building it right before it ships — secure coding, recurring pitfalls, SDLC practice, CI/CD security, and scanning programs."
+	/>
+	<LinkCard
+		title="Governance, Risk & Compliance"
+		href="/grc/"
+		description="Obligations mapped to controls, controls mapped to evidence — frameworks, regulations, data handling, crosswalks, and GRC as code."
+	/>
+	<LinkCard
+		title="Pentesting"
+		href="/pentest/"
+		description="Adversarial validation of everything above — web and cloud methodology, tooling, ATT&CK mapping, and reports people actually fix."
+	/>
+	<LinkCard
+		title="AI & Automation Engineering"
+		href="/ai-automation/"
+		description="The tooling layer that scales the rest — RAG, embeddings, evaluation, agent orchestration, and securing AI systems."
+	/>
+	<LinkCard
+		title="Detection Engineering & SecOps"
+		href="/detection-eng/"
+		description="Turning knowledge of attacks into durable, tested detections — detection as code, pipelines, quality testing, hunting, and IR."
+	/>
+</CardGrid>
+
+## Cross-cutting threads
+
+The pieces that only make sense because all seven pillars are here:
+
+- **One finding, five lenses.** A single IAM misconfiguration traced through pentest, AppSec, GRC, detection, and intel — and reported five different ways.
+- **The purple team loop.** Adversary emulation → detection validation → backlog → prioritization. The full circuit from technique to tested detection.
+- **Agentic AI identity.** Zero Knowledge Trust, agent orchestration, and tool-use authorization are one problem: scoped, revocable, auditable authority for a non-human actor.
+- **Risk prioritization as the universal problem.** The same methods applied to AppSec backlogs, GRC findings, and pentest reports.
+- **The telemetry gap.** Log coverage analysis as the shared prerequisite for detection, IR, hunting, and audit evidence.
+- **Communication as a technical skill.** The same discipline behind a good intel product, a good pentest report, and a good audit narrative.
+
+:::note[Early days]
+The site is being built out pillar by pillar. Structure and framing are in place; articles
+are landing. See [the content architecture](https://github.com/paulmarinos/paulmarinos.com/blob/main/site-structure.md)
+for what's planned.
+:::

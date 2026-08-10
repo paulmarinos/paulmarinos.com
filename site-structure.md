@@ -10,7 +10,7 @@
 | 2 | Identity & Access Management | `/iam` | Who/what gets access, proven and enforced |
 | 3 | Application Security | `/appsec` | Building it right before it ships |
 | 4 | Governance, Risk & Compliance | `/grc` | Obligations mapped to controls, controls mapped to evidence |
-| 5 | Penetration Testing | `/pentest` | Adversarial validation of everything above |
+| 5 | Penetration Testing & Red Teaming | `/pentest` | Adversarial validation of everything above |
 | 6 | AI & Automation Engineering | `/ai-automation` | The tooling layer that scales the rest |
 | 7 | Detection Engineering & SecOps | `/detection-eng` | Turning knowledge of attacks into durable, tested detections |
 
@@ -204,7 +204,7 @@
 
 ---
 
-## 5. Penetration Testing
+## 5. Penetration Testing & Red Teaming
 `/pentest`
 
 ### 5.1 Web Application Pentesting
@@ -238,7 +238,16 @@
 - Mapping findings to ATT&CK for defensive handoff
 - D3FEND and mitigation mapping
 
-### 5.5 Report Writeups
+### 5.5 Red Team Operations
+- Pentest vs. red team: breadth-first scope coverage vs. objective-based, stealth-constrained engagements
+- Engagement design: objectives, rules of engagement, deconfliction, white cell
+- Threat-informed adversary emulation — selecting an actor and emulating its TTPs
+- C2 infrastructure and tradecraft (Sliver, Havoc, Mythic); redirectors and infrastructure OPSEC
+- Detection evasion as a *measurement tool* — what got caught, what didn't, and why
+- Blue team handoff: turning the engagement timeline into detection gaps (ties to §7.4)
+- Measuring an engagement by defender response, not just objectives achieved
+
+### 5.6 Report Writeups
 - Report anatomy: exec summary, scope, methodology, findings, appendices
 - Finding structure: description, impact, evidence, reproduction, remediation
 - Severity ratings and justifying them
@@ -246,10 +255,9 @@
 - Retest and closure reporting
 - Writing for the developer who has to fix it
 
-### 5.6 Specialized Testing *(placeholder — to expand)*
+### 5.7 Specialized Testing *(placeholder — to expand)*
 - API and GraphQL
 - Mobile
-- Red team ops and detection evasion
 - AI/LLM application testing
 
 ---
@@ -377,8 +385,8 @@ The site's differentiator is the connective tissue. Candidate cross-section piec
 - **Agentic AI identity.** §2.4 (Zero Knowledge Trust) × §6.4 (orchestration) × §6.6 (securing AI).
 - **Risk prioritization as the universal problem.** §1.4 methods applied to AppSec backlogs, GRC findings, and pentest reports.
 - **Automation of the compliance-to-evidence pipeline.** §4.6 × §6.5.
-- **Communication as a technical skill.** §1.5 applied to §5.5 pentest reports and §4.x audit narratives.
-- **Purple team loop.** §5.4 emulation → §7.4 detection validation → §7.2 backlog → §1.4 prioritization. The full circuit from adversary technique to tested detection.
+- **Communication as a technical skill.** §1.5 applied to §5.6 pentest and red team reports and §4.x audit narratives.
+- **Purple team loop.** §5.4/§5.5 emulation → §7.4 detection validation → §7.2 backlog → §1.4 prioritization. The full circuit from adversary technique to tested detection.
 - **The telemetry gap.** §7.3 log coverage analysis as the shared prerequisite for detection, IR, threat hunting, and §4.x audit evidence.
 
 ---

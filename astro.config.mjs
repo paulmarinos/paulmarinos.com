@@ -11,7 +11,7 @@ const pillars = [
 	{ label: 'Identity & Access Management', dir: 'iam', color: 'nodeColor2' },
 	{ label: 'Application Security', dir: 'appsec', color: 'nodeColor3' },
 	{ label: 'Governance, Risk & Compliance', dir: 'grc', color: 'nodeColor4' },
-	{ label: 'Penetration Testing', dir: 'pentest', color: 'nodeColor5' },
+	{ label: 'Penetration Testing & Red Teaming', dir: 'pentest', color: 'nodeColor5' },
 	{ label: 'AI & Automation Engineering', dir: 'ai-automation', color: 'nodeColor6' },
 	{ label: 'Detection Engineering & SecOps', dir: 'detection-eng', color: 'nodeColor7' },
 ];

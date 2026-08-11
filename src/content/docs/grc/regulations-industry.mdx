@@ -1,0 +1,122 @@
+---
+title: Regulations by Industry
+description: How sectoral regulation actually works — healthcare, financial, critical infrastructure, defense, and consumer — and the structural patterns that repeat across all of them.
+pillar: grc
+contentType: deep-dive
+maturity: foundational
+frameworks: [HIPAA, SOX, DORA, NERC CIP, FISMA]
+relatedTo:
+  - grc/regulations-region
+  - grc/risk-management
+  - dfir/evidence-legal
+updated: 2026-08-11
+sidebar:
+  order: 2
+---
+
+Sectoral regulation is where compliance stops being a framework you chose and becomes a law you
+must obey. The obligations attach to the *industry* you operate in, they carry real enforcement,
+and they layer on top of everything else. The trap is trying to memorize the statutes; the
+durable skill is recognizing the *patterns*, because the same handful recur across every sector
+under different names.
+
+:::caution[Not legal advice, and a moving target]
+This describes the shape of sectoral regulation to orient an engineer, not to advise on
+compliance. Specific obligations, thresholds, and penalties change and vary by jurisdiction —
+counsel owns the determinations. Verify anything specific before relying on it.
+:::
+
+## The patterns that repeat
+
+Before the sectors, the structure they share. Almost every industry regime combines some of:
+
+- **A security-controls mandate** — implement reasonable/specified safeguards for sensitive
+  data.
+- **A breach-notification clock** — tell regulators and affected parties within a defined window
+  when something goes wrong.
+- **An audit or attestation requirement** — prove compliance periodically to someone.
+- **Individual accountability** — named executives on the hook, sometimes personally.
+- **Third-party/supply-chain reach** — your vendors must comply too, and you're responsible for
+  ensuring it.
+
+Learn to decompose any new regulation into these components and it stops being alien. The rest of
+this page is those patterns wearing sector-specific names.
+
+## Healthcare
+
+**HIPAA** (with **HITECH** extending it) governs protected health information in the US. The
+Security Rule mandates safeguards; the Breach Notification Rule sets the clock; the Privacy Rule
+governs use and disclosure. Its defining features for an engineer: the **Business Associate**
+structure pushes obligations down the vendor chain contractually (your cloud provider signs a
+BAA), and the penalties scale with negligence. Health data also carries an unusually long
+[confidentiality lifetime](../../cloud-infra/cryptography-key-management/) — it doesn't stop being
+sensitive.
+
+## Financial
+
+The most heavily regulated sector, with overlapping regimes:
+
+- **GLBA** — safeguarding customer financial information.
+- **SOX** — financial-reporting integrity, which reaches IT through the controls over systems
+  that produce financial statements (change management, access control, audit trails). SOX is
+  why financial-systems access reviews are non-negotiable.
+- **DORA** (EU) — operational resilience for financial entities, including ICT risk and
+  third-party oversight. Appears here and in [regulations by region](../regulations-region/)
+  because it's both.
+- **NYDFS 500** — New York's prescriptive cybersecurity regulation for financial services, notable
+  for requiring named accountability (a CISO function) and specific controls.
+
+The through-line: financial regulation cares intensely about **integrity and accountability**,
+not just confidentiality — who did what, to which system, provably.
+
+## Critical infrastructure
+
+- **NERC CIP** — mandatory, enforced cybersecurity standards for the North American bulk electric
+  system, with real financial penalties. Prescriptive and audited.
+- **TSA directives** — post-2021 security requirements for pipelines and transport, notable for
+  how *fast* they were issued, which is the pattern for critical-infrastructure regulation:
+  reactive, and it accelerates after incidents.
+
+Critical-infrastructure regimes increasingly mandate incident *reporting* to government, which
+makes [incident response](../../dfir/incident-response/) and its notification path a regulatory
+function, not just an operational one.
+
+## Federal and defense
+
+- **FISMA** — security requirements for US federal information systems, implemented largely
+  through [NIST 800-53](../common-frameworks/) baselines. FedRAMP is the cloud path into it.
+- **ITAR / EAR** — export controls on defense and dual-use technology. These are unusual: they
+  restrict *who can access* technical data by nationality and location, which turns access
+  control into an export-compliance function. An [IAM](../../iam/) misconfiguration exposing
+  controlled technical data to a foreign national can be an export violation, not just a security
+  finding — a genuinely different failure mode.
+
+## Consumer and retail
+
+- **FTC Act Section 5** — the FTC's authority over "unfair or deceptive" practices has become a
+  de facto US federal security regulator, through enforcement actions against companies with poor
+  security or misleading privacy claims. There's no prescriptive checklist, which is precisely the
+  point: "reasonable" security is judged after the fact.
+- **State breach-notification laws** — every US state has one, with differing definitions and
+  clocks, which is why a breach affecting a national customer base triggers a
+  [patchwork of obligations](../regulations-region/) at once.
+
+## What this means for an engineer
+
+The practical consequences that actually reach the technical work:
+
+- **Regulation drives which controls are non-negotiable.** SOX makes financial-system access
+  reviews mandatory; PCI makes segmentation mandatory; the sector decides the floor.
+- **Breach-notification clocks are engineering requirements.** They mean [classification](../../data-privacy/)
+  (what was accessed) and [forensics](../../dfir/investigation-method/) (what happened) have a
+  deadline, and the deadline started before you finished investigating.
+- **Vendor obligations flow through contracts**, which makes [third-party risk](../risk-management/)
+  a compliance function, not just a security one.
+
+## Where this connects
+
+Industry regulation overlaps regional regulation — [DORA and the EU regimes](../regulations-region/)
+are both — and both feed [risk management](../risk-management/) and
+[compliance mapping](../compliance-mapping/). Notification clocks land on
+[incident response](../../dfir/incident-response/) and [evidence handling](../../dfir/evidence-legal/),
+and the data-access obligations rest on [classification](../../data-privacy/).

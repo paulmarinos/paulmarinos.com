@@ -1,0 +1,123 @@
+---
+title: Risk Management
+description: The risk register done honestly, when quantitative beats qualitative, third-party risk as the hardest problem, and exception workflows as the place risk decisions actually happen.
+pillar: grc
+contentType: deep-dive
+maturity: practitioner
+frameworks: [FAIR]
+relatedTo:
+  - threat-intel/risk-prioritization
+  - grc/regulations-industry
+  - dfir/incident-response
+updated: 2026-08-11
+sidebar:
+  order: 6
+---
+
+Risk management is the discipline that decides where finite security effort goes, and it's the
+one most often reduced to a ritual — a color-coded spreadsheet updated quarterly that changes no
+decision. Done honestly it's the opposite: the mechanism that connects "we have limited resources"
+to "here is what we're doing about the things most likely to hurt us." The difference is whether
+the register drives decisions or merely records them.
+
+## The risk register, done honestly
+
+A risk register is the inventory of identified risks with their assessment and treatment. It
+becomes theater when it's maintained for the auditor rather than the business — every risk rated
+"medium," nothing ever closed, no decision traceable to it.
+
+A register earns its place when it's an actual decision tool:
+
+- **Risks are specific and testable**, not "cyber attack" but "credential theft leading to
+  customer-data access via the payment service." Vague risks produce vague treatment.
+- **Assessment drives a decision** — treat (add a control), transfer (insure), accept (document
+  and move on), or avoid (stop doing the risky thing). Every risk resolves to one of these, or
+  it's just a worry that got written down.
+- **It connects to reality.** The register's top risks should match where incidents actually
+  happen and where [detection](../../detection-eng/) and [pentest](../../pentest/) findings
+  cluster. A register that disagrees with the evidence is measuring anxiety, not risk.
+
+The register is a means to prioritized action, and a register that produces no decisions has
+failed regardless of how complete it looks.
+
+## Qualitative vs. quantitative
+
+Two schools, and the honest answer is that each fits a different question.
+
+**Qualitative** — high/medium/low, likelihood × impact heat maps. Fast, accessible, and the
+default. Its weakness is false precision: "high × medium = medium" reads as arithmetic but is
+consensus dressed as calculation, and the [risk-quadrant anti-pattern](../../threat-intel/data-visualization/)
+lives here — unlabeled axes, dots placed by feel.
+
+**Quantitative** — express risk in money and probability. **FAIR** (Factor Analysis of Information
+Risk) is the established model: decompose risk into loss frequency and magnitude, estimate each as
+a *range* with a confidence, and compute a loss distribution — a loss exceedance curve — rather
+than a point.
+
+When each wins:
+
+- **Quantitative** for portfolio decisions — should we fund the IAM program or the AppSec program,
+  is this control worth its cost. Money is the common unit that makes unlike risks comparable, and
+  that comparison is exactly what budget arguments need.
+- **Qualitative** for triage and communication where quantitative rigor would cost more than it
+  returns.
+
+The [risk-prioritization](../../threat-intel/risk-prioritization/) analysis applies directly:
+quantification earns its cost at the portfolio level and usually doesn't for ranking individual
+findings, where the input uncertainty swamps the difference between finding #300 and #700. Use the
+FAIR-style curve for the funding decision; use ordinal methods for the queue.
+
+## Third-party and vendor risk
+
+The hardest risk problem, because it's risk you're accountable for and don't control. Your data in
+a vendor's systems, your uptime dependent on their reliability, your compliance
+[contingent on theirs](../regulations-industry/) — and your visibility into their actual security
+usually limited to a questionnaire.
+
+The honest assessment of the standard tools:
+
+- **Security questionnaires** are self-reported and mostly measure the vendor's willingness to fill
+  them out. Necessary, weak evidence.
+- **Certifications** (a vendor's [SOC 2 or ISO](../common-frameworks/)) are stronger because a third
+  party assessed them — which is one of certification's real purposes: to be *shown* to customers,
+  turning your vendor-risk problem into a question about their auditor.
+- **Continuous monitoring** services rate vendors from the outside; a useful signal, an incomplete
+  picture.
+- **Contractual controls** — breach notification, audit rights, security requirements — are how
+  obligations [flow down the chain](../regulations-industry/), and they're only as good as your
+  ability to enforce them.
+
+The structural reality: you're accepting the vendor's risk as your own, and the concentration
+problem is underappreciated — when everyone depends on the same few cloud and SaaS providers, a
+single vendor's failure is a correlated, systemic event, not an isolated one.
+
+## Exception and acceptance workflows
+
+Where risk management actually happens day to day, and the most neglected part. Reality generates
+constant exceptions — a system that can't meet a control, a deadline that forces a temporary gap, a
+legacy dependency. How you handle them *is* your risk management, far more than the register.
+
+A sound exception workflow:
+
+- **Documents** the exception, its risk, and its justification.
+- **Assigns an owner** — someone accountable, not "the team."
+- **Sets an expiry.** The critical discipline. An exception without an expiry is a permanent
+  security hole with a paper trail, and permanent "temporary" exceptions are how environments
+  decay. This is the [same failure as un-expiring allowlists](../../detection-eng/detection-quality/)
+  and [un-expiring suppressions](../../cloud-infra/posture-iac/) — the pattern recurs everywhere,
+  and the fix is always an owner and a date.
+- **Requires appropriate approval**, scaled to the risk, so accepting a big risk needs the
+  authority to own its consequences.
+
+Accepting risk is legitimate — not every risk can or should be fixed. Accepting it *without
+documentation, ownership, and expiry* is how organizations end up carrying risks nobody remembers
+agreeing to, which is precisely what surfaces, expensively, [during an incident](../../dfir/incident-response/).
+
+## Where this connects
+
+Risk management is [risk prioritization](../../threat-intel/risk-prioritization/) at the program
+level — the same math, applied to the portfolio rather than the finding queue. It's driven by
+[regulatory obligation](../regulations-industry/), informed by [incident](../../dfir/) and
+[detection](../../detection-eng/) reality, and its exception discipline is the same
+owner-and-expiry pattern that keeps [allowlists](../../detection-eng/detection-quality/) and
+[posture suppressions](../../cloud-infra/posture-iac/) from rotting.

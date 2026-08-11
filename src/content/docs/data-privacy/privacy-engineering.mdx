@@ -1,0 +1,101 @@
+---
+title: Privacy Engineering
+description: Minimization and purpose limitation as design constraints, threat modeling for privacy with LINDDUN, consent as system state, and privacy impact assessments that change designs.
+pillar: data-privacy
+contentType: deep-dive
+maturity: practitioner
+frameworks: [GDPR, LINDDUN]
+relatedTo:
+  - data-privacy/classification-discovery
+  - appsec/sdlc
+  - grc/regulations-region
+updated: 2026-08-11
+sidebar:
+  order: 4
+---
+
+Privacy engineering is the practice of building privacy into systems by design rather than bolting
+it on after, and it's distinct from the [protection techniques](../protection-transformation/) in
+the same way [secure SDLC](../../appsec/sdlc/) is distinct from a firewall — it's about the
+decisions made while building, not the controls added around the result. The premise is that the
+cheapest and most effective privacy control is *not collecting the data in the first place*, and
+almost everything follows from taking that seriously.
+
+## Minimization and purpose limitation as design constraints
+
+Two principles from [GDPR](../../grc/regulations-region/) that are also simply good engineering,
+and they're design *constraints*, not policies you write down and ignore:
+
+- **Data minimization** — collect only what you need for the stated purpose. Every field you don't
+  collect is one you don't have to protect, retain, delete, or lose in a breach. The most reliable
+  way to not leak data is to not hold it, which makes minimization the highest-leverage privacy
+  decision and one available only at design time.
+- **Purpose limitation** — use data only for the purpose it was collected for. Data gathered to
+  ship an order shouldn't silently feed ad targeting, and "we might want it later" is the exact
+  anti-pattern the principle exists to stop.
+
+The engineering tension is real and worth naming: more data is generally useful — for analytics,
+[for ML](../data-governance-ai/), for features not yet imagined — so minimization fights the
+default incentive to hoard. Purpose limitation fights the temptation to reuse what you already
+have. Both are constraints applied *at design time*, because retrofitting them means unwinding
+systems built to collect and reuse freely, which rarely happens. The discipline is asking, before
+building, "do we actually need this field, for this purpose" — and it's cultural as much as
+technical.
+
+## Privacy by design, and privacy threat modeling
+
+Privacy by design means privacy is a first-class requirement from the start, alongside security and
+functionality — the same argument [shift-left](../../appsec/sdlc/) makes for security, applied to
+privacy, and for the same reason: the flaw is cheapest to fix before it's built.
+
+**LINDDUN** is the privacy counterpart to security [threat modeling](../../appsec/sdlc/) —
+STRIDE for privacy. It structures the analysis around privacy threat categories (Linking,
+Identifying, Non-repudiation, Detecting, Data disclosure, Unawareness, Non-compliance) so you
+systematically ask, per data flow, how privacy could be violated — not just how the data could be
+*breached*, but how the system's normal operation could harm privacy. It surfaces the category
+you'd otherwise miss: linkability across datasets, identifiability from quasi-identifiers,
+[detectability](../protection-transformation/) of someone's presence. Worth the effort where
+personal data flows are significant, on the same [when-it's-worth-it](../../appsec/sdlc/) logic as
+security threat modeling — not on every story, but on the designs that handle real personal data.
+
+## Consent and preference management as system state
+
+Privacy regulation frequently requires consent for processing, and where it does, consent becomes
+*system state* the architecture has to model and honor — not a checkbox at signup and forgotten:
+
+- **Consent must be recorded** — what someone agreed to, when, and the version of terms they saw.
+- **It must be honored across systems.** Withdrawing consent for marketing has to actually stop the
+  marketing, everywhere it's decided, which means consent state has to propagate to every system
+  that acts on it — the same [distribution problem as deletion](../lifecycle-retention/).
+- **It must be revocable**, as easily as it was granted, and the revocation must take effect.
+- **Preferences are ongoing state**, not a one-time capture — a live input to processing decisions
+  that systems check, not a row nobody reads.
+
+The engineering consequence: consent is a cross-cutting concern that touches every system acting on
+personal data, and "we stored the consent flag" is not the same as "every system checks it before
+acting." The gap between those two is where consent violations live.
+
+## Privacy impact assessments that inform design
+
+A Privacy Impact Assessment (or DPIA under [GDPR](../../grc/regulations-region/), required for
+high-risk processing) evaluates the privacy implications of a system or change. Like every
+[assessment gate](../../appsec/sdlc/), it's valuable or theater depending entirely on timing and
+use:
+
+- **Valuable** when done *during* design, so findings change the design — dropping a field, adding
+  minimization, reconsidering a flow while it's still cheap to change.
+- **Theater** when done *after* the system is built, to document a decision already made and produce
+  a compliance artifact that changed nothing.
+
+The difference is whether the PIA is a design input or a paperwork output — the same distinction as
+[threat modeling and design review](../../appsec/sdlc/), and it fails the same way, for the same
+reason: a gate that only documents is a gate everyone learns to satisfy without engaging.
+
+## Where this connects
+
+Privacy engineering is [secure SDLC](../../appsec/sdlc/) pointed at privacy — minimization is
+[design-time risk reduction](../../appsec/sdlc/), LINDDUN is [STRIDE's](../../appsec/sdlc/) privacy
+sibling, and DPIAs are [design review gates](../../appsec/sdlc/). It implements the
+[regulatory principles](../../grc/regulations-region/) as engineering constraints, reduces what
+[classification and deletion](../classification-discovery/) later have to manage, and its
+consent-as-state problem is the same [propagation challenge as erasure](../lifecycle-retention/).

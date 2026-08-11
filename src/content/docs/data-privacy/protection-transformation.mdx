@@ -1,0 +1,112 @@
+---
+title: Protection & Transformation
+description: Tokenization and masking, why pseudonymization and anonymization differ legally as well as technically, re-identification risk, and where differential privacy genuinely applies.
+pillar: data-privacy
+contentType: deep-dive
+maturity: advanced
+frameworks: [GDPR]
+relatedTo:
+  - data-privacy/classification-discovery
+  - cloud-infra/cryptography-key-management
+  - ai-automation/vector-databases
+updated: 2026-08-11
+sidebar:
+  order: 2
+---
+
+Once you know [what data you have](../classification-discovery/), the question is how to protect it
+while still using it — because data locked away perfectly is data that delivers no value. The
+techniques here transform data so it's safer to hold and process, and the sharpest distinction in
+the whole pillar lives here: **pseudonymization and anonymization are not the same thing, and the
+difference is legal as well as technical.** Getting it wrong is how organizations believe they've
+anonymized data that a regulator considers personal.
+
+## Tokenization, masking, and format-preserving encryption
+
+Three ways to substitute sensitive values with safer ones, for different purposes:
+
+- **Tokenization** replaces a sensitive value with a token, with the mapping held in a separate,
+  guarded vault. The classic use is payment cards: systems handle tokens, the real number lives in
+  one small heavily-controlled place, and [PCI scope](../../grc/common-frameworks/) shrinks to that
+  vault. The security rests entirely on the vault and its access control being genuinely separate.
+- **Masking** obscures part or all of a value — showing `****1234`, or replacing names with
+  realistic fakes in non-production. Its highest-value use is killing the
+  [shadow-data problem](../classification-discovery/) of real data in test environments: mask on
+  the way to non-production and the copies stop being sensitive.
+- **Format-preserving encryption** encrypts while keeping the shape, so a 16-digit card stays 16
+  digits and doesn't break systems that validate format. Convenient, with weaker security
+  properties than standard encryption — a deliberate trade worth making consciously.
+
+The choice depends on whether you need to recover the original (tokenization, reversible with vault
+access), never need it (masking), or need it to fit existing formats (FPE).
+
+## Pseudonymization vs. anonymization — the distinction that matters
+
+This is the one to get right, because the legal consequences diverge completely.
+
+- **Pseudonymization** replaces identifiers with pseudonyms, keeping a separate mapping that can
+  re-link. Under [GDPR](../../grc/regulations-region/) it's a valuable security measure — and the
+  data is **still personal data**, because it *can* be re-identified. You keep the full obligations.
+- **Anonymization** irreversibly removes the ability to identify individuals. Genuinely anonymized
+  data falls **outside** privacy regulation, because there's no data subject left to protect.
+
+The gap between them is enormous in practice, and the trap is the middle: organizations routinely
+believe they've anonymized data that's merely pseudonymized, treat it as exempt, and are wrong. The
+legal test isn't "did we remove the obvious identifiers" but "can anyone re-identify individuals by
+any reasonable means" — and that bar is far higher than it looks, because of the re-identification
+problem below.
+
+## Re-identification risk and k-anonymity
+
+True anonymization is hard because data that seems anonymous frequently isn't. The classic results
+are sobering: a large fraction of a population is uniquely identifiable from just ZIP code, birth
+date, and sex — none of which is an "identifier" in the naive sense. Strip the name and the record
+can still point to one person through the combination of quasi-identifiers.
+
+**k-anonymity** is the foundational formalization: ensure each record is indistinguishable from at
+least *k−1* others on the quasi-identifiers, so no combination singles out fewer than *k* people.
+It's a real improvement and has known limits — attribute disclosure (if all *k* share a sensitive
+value you learn it anyway) and vulnerability to linkage with outside data — that spawned refinements
+(l-diversity, t-closeness). The durable lesson for an engineer: **removing names is not
+anonymization**, and claiming anonymization is a technical assertion a regulator can test, not a
+label you get to apply.
+
+## Differential privacy — where it genuinely applies
+
+Differential privacy is the strongest formal privacy guarantee: add calibrated noise so that
+whether any single individual is in the dataset can't be determined from the output, with a
+mathematical bound (epsilon) on the privacy loss. It's powerful and genuinely deployed at scale for
+*aggregate statistics and analytics*.
+
+The honest scope, because it gets over-invoked as a privacy cure-all:
+
+- **It fits aggregate queries** — statistics, counts, ML training over a population — where
+  per-individual accuracy doesn't matter and population-level accuracy does.
+- **It does not fit** cases needing accurate individual records, and the privacy/utility trade is
+  real: more privacy (less epsilon) means more noise means less useful output.
+- **It's not a wrapper** you drop over any system. It's a design commitment that changes what the
+  system can answer, and applying it well takes genuine expertise.
+
+Where it fits it's excellent; invoked as a synonym for "we added privacy," it's misapplied.
+
+## Encryption in use — confidential computing
+
+The remaining gap in [the encryption story](../../cloud-infra/cryptography-key-management/): data
+is protected at rest and in transit, but must be *decrypted to be processed* — plaintext in memory,
+exposed to anything that compromises the running system. Confidential computing (hardware enclaves,
+trusted execution environments) processes data while it stays encrypted in memory, closing that gap.
+
+The honest limits: performance overhead, a real and evolving hardware-based trust model (you're
+trusting the enclave vendor and its attestation), and a maturing rather than turnkey ecosystem. It
+genuinely closes the encryption-in-use gap for specific high-value cases; it isn't yet a default,
+and pairs with [key management](../../cloud-infra/cryptography-key-management/) as the runtime
+complement to at-rest and in-transit.
+
+## Where this connects
+
+Protection needs [classification](../classification-discovery/) to know what to transform, and it's
+the runtime partner to [key management](../../cloud-infra/cryptography-key-management/) — §8.4 owns
+the keys, §10 owns what's done to the data. The pseudonymization/anonymization line is a
+[GDPR](../../grc/regulations-region/) determination, and the re-identification and DP material is
+what governs [PII in embeddings and ML](../data-governance-ai/), where "we anonymized the training
+data" is the exact claim that needs testing.

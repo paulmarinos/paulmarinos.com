@@ -1,0 +1,114 @@
+---
+title: Data Governance for AI
+description: Training-data provenance and consent, PII in prompts and embeddings, model memorization and extraction, and the genuinely unsolved problem of deleting data baked into weights.
+pillar: data-privacy
+contentType: deep-dive
+maturity: advanced
+frameworks: [GDPR, EU AI Act]
+relatedTo:
+  - ai-automation/vector-databases
+  - ai-automation/securing-ai
+  - data-privacy/lifecycle-retention
+updated: 2026-08-11
+sidebar:
+  order: 6
+---
+
+AI systems are voracious consumers of data, and they break the assumptions every prior data
+control was built on. The [lifecycle model](../lifecycle-retention/) assumes data sits in
+identifiable stores you can point at, protect, and delete. Machine learning takes data and
+dissolves it into model weights — where it still exerts influence, can still leak, and can no
+longer be located or removed by any method that resembles deleting a row. This is the newest and
+least-solved corner of data governance, and it's where this pillar meets
+[AI engineering](../../ai-automation/) from the data side.
+
+## Training-data provenance, licensing, and consent
+
+Before a model trains, the data feeding it carries obligations that don't disappear because it's
+"training data" — a reframing that has caused real legal exposure:
+
+- **Provenance** — where did the training data come from, and do you have the right to use it *for
+  this purpose*? Data collected for one purpose and repurposed for model training is exactly the
+  [purpose-limitation violation](../privacy-engineering/) privacy law targets, and "we already had
+  it" is not consent to train on it.
+- **Licensing** — scraped and third-party data carries license terms, and "publicly available" is
+  not the same as "licensed for training," a distinction now central to active litigation.
+- **Consent** — [GDPR-style regimes](../../grc/regulations-region/) require a lawful basis for
+  processing, and training a model *is* processing. Consent obtained for a service rarely extends
+  to training a model on that data.
+- **Special categories** — health, biometric, and similar data carry heightened obligations that
+  survive into any model trained on them.
+
+The durable point: **training data is data, with all its obligations intact.** The [EU AI
+Act](../../grc/regulations-region/) makes training-data governance an explicit regulatory
+requirement, but the underlying principle predates it — the obligations attach to the data, and
+feeding it to a model doesn't launder them.
+
+## PII in prompts, embeddings, and vector stores
+
+Inference-time data creates fresh exposure the training discussion misses entirely:
+
+- **Prompts** — users and systems put sensitive data into prompts constantly, and those prompts may
+  be logged, retained, used for improvement, or sent to a third-party API. A prompt is a data flow
+  with a destination, and it's the [same egress path](../dlp-egress/) as any other — often
+  uncontrolled.
+- **Embeddings** — an embedding of sensitive text is [derived data](../classification-discovery/)
+  that carries the sensitivity forward. A [vector database](../../ai-automation/vector-databases/)
+  built from personal data is a personal-data store, subject to every obligation the source was,
+  and it is precisely the [shadow data](../classification-discovery/) nobody classified because it
+  "isn't the real data."
+- **Cross-tenant leakage** — a [vector store's access controls](../../ai-automation/vector-databases/)
+  are the boundary, and a retrieval crossing a tenant line is a data breach exactly as a database
+  query returning another tenant's rows would be.
+
+The reframing that ties it together: **embeddings and prompt logs are data stores, and they inherit
+the obligations of what they were built from.** Treating them as "just vectors" or "just logs" is
+how sensitive data ends up in systems no one classified, retained, or access-controlled — the
+oldest failure in this pillar, in the newest clothing.
+
+## Model memorization and extraction
+
+Models can memorize training data and reproduce it, which turns training data into a leak channel:
+
+- **Memorization** — models, especially large ones, can recall specific training examples verbatim,
+  so a model trained on personal data can emit it, sometimes to an ordinary user and sometimes only
+  to a crafted prompt.
+- **Extraction attacks** — the [offensive counterpart](../../ai-automation/securing-ai/) —
+  deliberately coax memorized data out. Membership-inference (was this record in the training set?)
+  and reconstruction attacks are active research with working demonstrations.
+- **The consequence** — a model is potentially a *disclosure surface* for its training data, which
+  means training on sensitive data creates a leak path that persists for the life of the model and
+  can't be inspected away.
+
+## Deletion in the weights — the unsolved problem
+
+The hardest problem in this pillar, and genuinely unsolved. When [right-to-erasure](../lifecycle-retention/)
+or a retention limit requires deleting someone's data, and that data was baked into a model's
+weights, what does deletion even mean? The data isn't in a row to drop — it's diffused across
+billions of parameters, influencing behavior without existing anywhere you can point to.
+
+The current options are all unsatisfying, and honesty about that is the right posture:
+
+- **Retrain without the data** — clean, and often prohibitively expensive for a large model, so it
+  doesn't happen on a per-request basis.
+- **Machine unlearning** — techniques to remove specific data's influence without full retraining.
+  An active research area, not yet a reliable production answer, and hard to *prove* to a regulator.
+- **Don't train on data you'll need to delete** — the [minimization](../privacy-engineering/)
+  answer, and the only truly reliable one: keep personal data out of training sets where erasure
+  obligations apply, and the problem never arises.
+
+There's no clean solution today, which makes it a genuine open problem — and, like
+[agentic identity](../../iam/frameworks/), one worth understanding precisely because the tooling
+doesn't exist yet. The organizations training on personal data are mostly hoping the erasure
+request doesn't come, which is not a strategy.
+
+## Where this connects
+
+This is the data-governance counterpart to [securing AI systems](../../ai-automation/securing-ai/)
+— that page covers extraction from the [attacker's side](../../ai-automation/securing-ai/), this one
+from the data-obligation side, meeting at the model as a disclosure surface. Embeddings and vector
+stores are [classification and shadow-data](../classification-discovery/) problems in
+[new form](../../ai-automation/vector-databases/), deletion-in-the-weights is
+[erasure](../lifecycle-retention/) at its hardest, and the whole area is where the
+[EU AI Act](../../grc/regulations-region/) makes governance law. It closes the loop the site keeps
+returning to: AI and data protection are the same problem, seen from two sides.

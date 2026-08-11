@@ -1,0 +1,109 @@
+---
+title: Regulations by Region
+description: The EU's regulatory leadership, the US state patchwork, and cross-border transfer — how geography multiplies obligations and why the strictest regime usually sets your floor.
+pillar: grc
+contentType: deep-dive
+maturity: foundational
+frameworks: [GDPR, NIS2, EU AI Act, CCPA]
+relatedTo:
+  - grc/regulations-industry
+  - data-privacy
+  - data-privacy/lifecycle-retention
+updated: 2026-08-11
+sidebar:
+  order: 3
+---
+
+Regional regulation attaches to *where your data subjects are*, not where your company is — which
+is the fact that makes it inescapable. Serve users in the EU and you're subject to EU law
+regardless of where you're headquartered. The result is that most organizations of any scale
+face several overlapping regional regimes at once, and the practical strategy is almost always to
+**build to the strictest and inherit the rest.**
+
+:::caution[Not legal advice, and fast-moving]
+Privacy and cyber regulation is among the fastest-changing areas of law. This is orientation to
+the landscape's shape, not compliance guidance — specifics, thresholds, and new regimes change
+constantly. Counsel owns the determinations; verify anything specific.
+:::
+
+## The EU sets the pace
+
+The EU has been the world's most influential regulator of data and cyber, and its regimes tend to
+become de facto global baselines because complying separately per region is more expensive than
+building to the strictest:
+
+- **GDPR** — the reference point for modern privacy law. Its durable contributions are principles,
+  not clauses: lawful basis for processing, data-subject rights (access, erasure, portability),
+  privacy by design, breach notification, and extraterritorial reach with penalties large enough
+  to matter. Most later privacy laws are variations on GDPR's structure, so understanding it is
+  understanding the template.
+- **NIS2** — cybersecurity obligations across a broad set of "essential and important" sectors:
+  risk management, incident reporting, and — notably — management accountability. It widened both
+  the sectors covered and the personal responsibility of leadership.
+- **DORA** — operational resilience for financial entities (also [sectoral](../regulations-industry/)).
+- **Cyber Resilience Act** — security requirements for products with digital elements, pushing
+  obligations onto *manufacturers* across the product lifecycle. Notable for regulating the
+  [software supply chain and secure development](../../appsec/cicd-security/) as a product-safety
+  matter.
+- **EU AI Act** — risk-tiered regulation of AI systems, from prohibited uses through high-risk
+  obligations to transparency requirements. It makes [AI systems themselves](../../ai-automation/securing-ai/)
+  a compliance surface, and [training-data governance](../../data-privacy/) a regulatory
+  requirement rather than a best practice.
+
+The pattern across all five: the EU regulates broadly, extraterritorially, and with real
+penalties, so its regimes set the floor for anyone operating globally.
+
+## The US patchwork
+
+The US has no comprehensive federal privacy law, which produces a genuine patchwork:
+
+- **State privacy laws** — California's **CCPA/CPRA** led, and many states followed (VCDPA and
+  others), each similar in spirit and different in detail. The practical result is a moving target
+  of overlapping state obligations with no single standard.
+- **Sectoral overlay** — the [industry regimes](../regulations-industry/) (HIPAA, GLBA) sit on top
+  of state law, so a healthcare company in California faces both.
+- **State breach-notification laws** — fifty-plus regimes with differing clocks and definitions,
+  which is why a single breach of a national user base triggers many notification obligations
+  simultaneously, on different timelines.
+
+The engineering consequence: US compliance means handling *many* similar-but-not-identical regimes
+at once, which strongly favors building to the strictest applicable standard (usually California,
+often GDPR) and applying it uniformly rather than trying to vary behavior by user location.
+
+## UK and APAC
+
+- **UK** — post-Brexit, **UK GDPR** and the **DPA 2018** track EU GDPR closely, with divergence
+  that must be watched rather than assumed.
+- **APAC** — a varied landscape: China's **PIPL** (strict, with significant data-localization and
+  cross-border requirements), Japan's **APPI**, and **PDPA** variants across Singapore and others.
+  The variation is real, and PIPL in particular imposes localization obligations that shape
+  [architecture](../../cloud-infra/architecture-landing-zones/), not just policy.
+
+## Cross-border transfer — where geography becomes architecture
+
+The most technically consequential piece. Several regimes restrict moving personal data across
+borders, and satisfying them is an *engineering* problem as much as a legal one:
+
+- **Transfer mechanisms** — standard contractual clauses, adequacy decisions, and binding
+  corporate rules are the legal instruments that permit transfers, and they shift as adequacy
+  decisions are challenged and replaced.
+- **Data localization** — some regimes (PIPL notably) require certain data to *stay in country*,
+  which is a [data-residency architecture](../../data-privacy/lifecycle-retention/) requirement:
+  regional storage, regional processing, and controls that keep data from flowing where it
+  mustn't.
+- **The reach into design** — residency requirements mean the [landing zone](../../cloud-infra/architecture-landing-zones/),
+  the [database region](../../data-privacy/lifecycle-retention/), and the backup and failover
+  topology all become compliance-relevant. A [multi-region failover](../../cloud-infra/resilience-recovery/)
+  that replicates EU data to a US region can be a transfer violation.
+
+This is where regional regulation stops being paperwork and becomes something engineers build:
+where data lives, where it's processed, and where it's allowed to move are architecture decisions
+with legal force.
+
+## Where this connects
+
+Regional and [industry](../regulations-industry/) regulation overlap and compound, feeding
+[risk management](../risk-management/) and [mapping](../compliance-mapping/). The data obligations
+are implemented as [privacy engineering, retention, and residency](../../data-privacy/), the AI
+Act lands on [securing AI](../../ai-automation/securing-ai/), and localization shapes
+[cloud architecture](../../cloud-infra/architecture-landing-zones/).

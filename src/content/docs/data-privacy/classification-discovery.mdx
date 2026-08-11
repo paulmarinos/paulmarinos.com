@@ -1,0 +1,107 @@
+---
+title: Classification & Discovery
+description: Classification schemes that survive contact with users, finding the data you forgot you had, and why data mapping and shadow data are the prerequisites for every other control.
+pillar: data-privacy
+contentType: deep-dive
+maturity: practitioner
+relatedTo:
+  - data-privacy/protection-transformation
+  - grc
+  - detection-eng/data-pipeline
+updated: 2026-08-11
+sidebar:
+  order: 1
+---
+
+Every data control depends on a prior question that's harder than it sounds: what data do you
+have, and where is it. You cannot protect, retain, delete, or report on data you don't know
+exists — and most organizations don't know, because data spreads faster than anyone tracks it.
+Classification and discovery are the unglamorous foundation the rest of this pillar stands on, and
+the reason data programs fail is almost always that the foundation was skipped.
+
+## Classification schemes that survive users
+
+A classification scheme sorts data by sensitivity so controls can attach to the label. The
+recurring failure is schemes designed for elegance rather than use: seven tiers with subtle
+distinctions nobody can apply, so everything gets labeled "internal" and the scheme is decorative.
+
+What makes a scheme survive contact with actual users:
+
+- **Few tiers.** Three or four, with obvious boundaries. Public, internal, confidential,
+  restricted — a scheme people can apply without a decision tree beats a precise one they ignore.
+- **Clear examples per tier**, in the language of the business — "customer payment data," "employee
+  records" — not abstract definitions.
+- **Consequences that follow the label.** If confidential and internal get treated identically, the
+  distinction is theater and people stop maintaining it.
+- **A sensible default.** Most data isn't manually classified, so the automatic default has to be
+  safe without being so restrictive people route around it.
+
+The honest reality: manual classification doesn't scale, and a scheme relying on every user
+correctly labeling every document has already failed. The scheme has to be paired with automation,
+below, or it describes an aspiration rather than the environment.
+
+## Automated discovery and labeling
+
+Because manual classification doesn't scale, discovery tools scan data stores and identify
+sensitive data by pattern, context, and content — credit card numbers, national IDs, health
+terms, credentials. This is what makes classification real rather than aspirational, and it does
+two jobs: labeling data at rest so controls attach, and *finding* data nobody knew was there.
+
+The [precision problem](../../detection-eng/detection-quality/) applies exactly as it does to
+detection. A discovery tool flagging every nine-digit number as a national ID drowns the real
+findings in false positives, and gets tuned out. Context matters — a number in a field named
+`ssn` is different from one in `order_id` — and tuning discovery for precision is the same
+discipline as tuning a detection rule, for the same reason.
+
+## Data mapping and lineage
+
+Knowing where data *sits* is necessary and insufficient. You also need to know where it *flows* —
+lineage — because data moves, copies, and transforms, and each destination inherits the
+obligations of the source.
+
+Data mapping traces the paths: this customer data enters here, flows to the warehouse, gets
+exported to that SaaS tool, is backed up there, and feeds this analytics pipeline. The map is what
+makes every downstream obligation tractable:
+
+- **[Right-to-erasure](../lifecycle-retention/)** — you can't delete what you can't locate, and
+  a deletion that misses the warehouse copy isn't a deletion.
+- **[Breach scoping](../../dfir/investigation-method/)** — "what was accessed" requires knowing
+  what was *where*, on a [regulatory clock](../../grc/).
+- **[Cross-border transfer](../../grc/regulations-region/)** — you can't control flows you haven't
+  mapped, and residency violations happen in the flows nobody drew.
+
+Lineage is hard because data flows are built incrementally by different teams, and no one holds the
+whole picture — which is exactly why it has to be discovered and maintained deliberately rather
+than assumed.
+
+## Shadow data — the copies you forgot
+
+The hardest part, and where most sensitive data actually lives at risk. **Shadow data** is the
+copies outside the systems you manage: exports to spreadsheets, data in a test database, a forgotten
+S3 bucket, log files that captured payloads, backups, and — increasingly — analytics stores and
+[vector databases](../../ai-automation/vector-databases/) built from production data.
+
+Every copy inherits the original's sensitivity and obligations while escaping its controls. The
+production database is encrypted, access-controlled, and audited; the CSV a well-meaning analyst
+exported to their laptop is none of those, and it's the same customer records.
+
+Discovery has to reach the shadows, not just the systems of record, because that's where the
+uncontrolled sensitive data is — and where breaches originate:
+
+- **Non-production environments** with real data — test and staging with production copies is
+  endemic and rarely as controlled as production.
+- **[Backups](../../cloud-infra/resilience-recovery/)** — sensitive data, long retention, often
+  weaker access controls.
+- **Logs and caches** that captured sensitive payloads incidentally — the SSRF avatar-fetcher that
+  logged the request, the debug dump that caught a token.
+- **Derived data** — analytics, embeddings, ML training sets built from sensitive originals, which
+  carry the sensitivity forward in a form nobody classified.
+
+## Where this connects
+
+Classification is the prerequisite for everything downstream: [protection](../protection-transformation/)
+needs to know what to protect, [retention and deletion](../lifecycle-retention/) needs to know what
+to delete and where, and [breach notification](../../grc/) needs to know what was accessed.
+Discovery is [detection's precision problem](../../detection-eng/detection-quality/) applied to data
+at rest, and shadow data in [ML pipelines](../data-governance-ai/) is the fastest-growing corner of
+the problem.

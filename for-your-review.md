@@ -91,6 +91,15 @@ the only reasonable view. Since this is your portfolio, the opinions should be *
 - [ ] **`cloud-infra/resilience-recovery` (§8.6)** — frames backup as a security control, not an
   ops concern, and asserts immutability is "the single most important ransomware-recovery
   control." Defensible; confirm the emphasis.
+- [ ] **`data-privacy/dlp-egress` (§10.5)** — "most DLP is theatre." A pointed, defensible
+  position stated bluntly; confirm you want it that direct. Also takes an explicit stance on the
+  insider-monitoring/surveillance tradeoff (proportionate over maximal) that reads as an ethical
+  position, not just a technical one.
+- [ ] **`data-privacy/protection-transformation` (§10.2)** — draws a hard line that
+  pseudonymized data is "still personal data" and that "removing names is not anonymization." A
+  correct-but-strong legal-technical claim worth confirming you'd state that firmly.
+- [ ] **`grc/grc-engineering` (§4.5)** — "treat the auditor as a downstream consumer of an API"
+  as the organizing frame for the whole discipline. A distinctive reframing; confirm it's yours.
 
 ## 3. Sensitive / dual-use framing — confirm the guardrails read right
 
@@ -112,13 +121,29 @@ authorization/caution notes, but this is the category where framing matters most
 - [ ] **`threat-intel/collection-sourcing` (§1.6)** — OSINT OPSEC section (interacting with
   adversary infrastructure can notify the operator). Defensive framing; confirm.
 
-## 4. Legal content — the one place I'm explicitly out of my lane
+## 4. Legal / regulatory content — verify against current law, not just current tools
+
+This is the largest review category now that GRC (§4) is written. All regulatory content is
+framed structurally (the *shape* of a regime, not its current clauses) and carries "not legal
+advice / verify current" notes, but regulation moves fast and the specifics date.
 
 - [ ] **`dfir/evidence-legal` (§9.5)** — chain of custody, legal hold, privilege, breach
-  notification clocks. Opens with an explicit "not legal advice" note and stays structural
-  rather than prescriptive (it describes how technical responders work *alongside* legal, not
-  what the law requires). This is the article most worth a careful read, and the one where
-  jurisdiction-specific detail is most likely to mislead if taken as guidance.
+  notification clocks. Explicit "not legal advice" note; structural, not prescriptive. The
+  article where jurisdiction-specific detail is most likely to mislead if taken as guidance.
+- [ ] **`grc/common-frameworks` (§4.1)** — framework versions and certification specifics
+  (NIST CSF 2.0, ISO 27001, SOC 2 Type I/II, FedRAMP baselines, PCI DSS v4.x, CIS, HITRUST,
+  CMMC). Written about each framework's durable *role*, but versions and scheme details change —
+  confirm before citing in a real assessment.
+- [ ] **`grc/regulations-industry` (§4.2)** — HIPAA/HITECH, GLBA/SOX/DORA/NYDFS 500, NERC CIP/TSA,
+  FISMA/ITAR-EAR, FTC Act, state breach laws. "Not legal advice" note. Confirm the sectoral
+  characterizations still hold.
+- [ ] **`grc/regulations-region` (§4.3)** — GDPR, NIS2, DORA, Cyber Resilience Act, EU AI Act,
+  the US state patchwork, UK GDPR, APAC (PIPL/APPI/PDPA), cross-border transfer mechanisms. The
+  fastest-moving legal content on the site; transfer mechanisms and adequacy in particular
+  change. "Not legal advice / fast-moving" note in-page.
+- [ ] **`data-privacy/*` regulatory ties** — the §10 articles reference GDPR erasure, the EU AI
+  Act, and residency/transfer throughout. Framed as engineering-under-obligation rather than
+  legal guidance, but the obligations cited should be confirmed current.
 
 ## 5. Illustrative code — confirm the fixes match your house style
 
@@ -148,7 +173,9 @@ runnable exploit material. Worth confirming the *fixes* are how you'd actually w
 
 ## Status
 
-Pillars complete: **Threat Intelligence (§1), Identity & Access Management (§2), Application
-Security (§3), Penetration Testing & Red Teaming (§5), AI & Automation Engineering (§6),
-Detection Engineering & SecOps (§7), Cloud & Infrastructure Security (§8), Incident Response &
-Digital Forensics (§9).** Remaining: GRC (§4), Data Security & Privacy Engineering (§10).
+**All ten pillars complete** — every subsection across §1–§10 is written (60 articles, plus
+10 pillar overviews and the landing page). The site's content architecture is fully built out
+at subsection level; individual subsections can deepen into multiple articles over time.
+
+The placeholder subsections from the plan (§1.6, §2.5, §3.6, §4.6, §5.7, §6.6, §7.7, §8.6,
+§9.5, §10.6) are all written as full articles rather than left as stubs.

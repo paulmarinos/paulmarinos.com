@@ -1,0 +1,107 @@
+---
+title: Data Loss Prevention & Egress
+description: Why most DLP is theatre, the egress paths that actually matter including AI tooling, and the surveillance-versus-detection tradeoff that insider risk forces.
+pillar: data-privacy
+contentType: deep-dive
+maturity: practitioner
+relatedTo:
+  - cloud-infra/network-segmentation
+  - detection-eng/threat-hunting
+  - data-privacy/data-governance-ai
+updated: 2026-08-11
+sidebar:
+  order: 5
+---
+
+Data Loss Prevention is the control class with the widest gap between its promise and its delivery.
+The promise — stop sensitive data from leaving — is exactly what everyone wants. The delivery is
+frequently theatre: a tool generating alerts nobody actions, blocking legitimate work while missing
+real exfiltration, and providing the *appearance* of control that's arguably worse than none,
+because it substitutes for the harder work that would actually help.
+
+## Why most DLP is theatre
+
+The honest assessment, because pretending otherwise wastes real money:
+
+- **Detection is genuinely hard.** Distinguishing sensitive-data exfiltration from legitimate use
+  requires understanding content *and* context, and DLP tools are noisy — a false-positive rate
+  that gets them tuned toward permissiveness until they catch little.
+- **Trivially evadable by a determined insider.** Encrypt before sending, use a channel the DLP
+  doesn't watch, photograph the screen. DLP that a motivated person walks around is providing
+  assurance it can't back up.
+- **It blocks legitimate work**, generating friction that builds pressure to weaken it, until it's
+  configured so permissively it catches nothing.
+- **It substitutes for architecture.** Effort goes into watching data leave instead of
+  [not exposing it](../privacy-engineering/) or [minimizing what exists](../privacy-engineering/) to
+  leak — treating the symptom while the disease compounds.
+
+This doesn't make DLP worthless. It makes it a control with real limits that's routinely oversold,
+and the [precision reality of detection](../../detection-eng/detection-quality/) applies in full —
+a DLP tuned to catch everything catches nothing usable.
+
+## Where DLP genuinely helps
+
+Used with realistic expectations, DLP has real value:
+
+- **Catching accidents.** Its best case, and a common real loss: the employee who emails the wrong
+  spreadsheet, uploads to a personal account by mistake, misconfigures a share. Most data loss is
+  error, not malice, and DLP catches errors well.
+- **Enforcing clear policy** on well-defined data — blocking credit card numbers to personal email
+  is tractable precisely because the data type is unambiguous.
+- **Visibility** into where data flows, which feeds [classification and lineage](../classification-discovery/)
+  even when enforcement is limited.
+- **A deterrent and a compliance requirement** — sometimes the point is the documented control, and
+  that's a legitimate if modest goal.
+
+The reframing: **DLP is good at accidents and policy enforcement on clear-cut data, and poor at
+determined adversaries.** Deploy it for the former, don't rely on it for the latter, and don't let
+it substitute for [minimizing](../privacy-engineering/) what can leak in the first place.
+
+## Egress paths that matter
+
+DLP is one control on the broader [egress problem](../../cloud-infra/network-segmentation/) — the
+same outbound-is-what-matters point from the network side, here for data:
+
+- **Endpoint** — USB, personal cloud sync, screenshots, print. The device is where data meets the
+  physical world and the hardest surface to control.
+- **SaaS** — the sanctioned app with an unsanctioned export, or the shadow SaaS nobody approved.
+- **[Cloud storage](../../cloud-infra/network-segmentation/)** — the public bucket, the
+  over-shared link, the cross-account copy.
+- **AI tooling** — the fast-growing and least-controlled path. Employees paste sensitive data into
+  external LLM tools, and it leaves the moment they hit enter — a genuinely new egress channel most
+  DLP wasn't built for, and [governing it](../data-governance-ai/) is an unsolved corner.
+
+The unifying principle is the network one: [egress control is the direction that catches
+exfiltration](../../cloud-infra/network-segmentation/), and it needs default-deny thinking rather
+than default-allow-and-watch. Watching every exit is harder than closing the ones you don't need.
+
+## Insider risk and the surveillance tradeoff
+
+Insider risk is where data protection meets a genuine ethical and practical tension, and it's worth
+being honest about rather than waving through. Detecting insider data theft requires *monitoring
+insiders* — watching what employees do with data — and that monitoring is itself a
+[privacy](../privacy-engineering/) and trust problem:
+
+- **More monitoring catches more**, and erodes trust and privacy — of your own employees, who have
+  their own rights and their own [regulatory protections](../../grc/regulations-region/).
+- **Surveillance has real costs** — culture, morale, legal exposure in jurisdictions that restrict
+  employee monitoring, and the corrosive effect of a workplace that treats staff as suspects.
+- **The tradeoff has to be made deliberately**, with proportionality, transparency where required,
+  and genuine limits — not maximized by default because the tooling permits it.
+
+This is the same [detection-versus-cost](../../detection-eng/threat-hunting/) balance as everywhere
+in security, with the sharpest ethical edge, because the subject is your own people. The mature
+position is proportionate monitoring focused on genuinely sensitive data and high-risk actions,
+with transparency and limits — not a surveillance apparatus justified by a threat that's real but
+rarer than the monitoring it's used to license. Identity-centric signals — a
+[dormant account waking](../../iam/governance/), access wildly outside a role — are higher-signal
+and less invasive than watching everyone equally.
+
+## Where this connects
+
+DLP and egress are the data-side of the [network egress problem](../../cloud-infra/network-segmentation/),
+bounded by the same [precision limits as detection](../../detection-eng/detection-quality/). The
+AI-tooling path ties to [data governance for AI](../data-governance-ai/), and insider monitoring is
+[threat hunting](../../detection-eng/threat-hunting/) with the surveillance tradeoff made explicit —
+best served by the [identity signals](../../iam/governance/) that catch misuse without watching
+everyone.

@@ -45,6 +45,11 @@ ones where being wrong is most visible to a knowledgeable reader.
   `agent-orchestration`. Note: this pillar deliberately names no LLM provider or model — it's
   written about the engineering patterns, not a specific vendor's API.
 
+- [ ] **`cloud-infra/cryptography-key-management` (§8.4)** — NIST PQC standards and
+  post-quantum recommendations. The article deliberately avoids naming specific finalized
+  algorithms and says "verify current standards," but confirm the harvest-now-decrypt-later
+  framing and the crypto-agility emphasis still match current guidance.
+
 ## 2. Opinionated stances — confirm you'd defend these
 
 Places where I took a clear position rather than staying neutral. All defensible; none are
@@ -79,6 +84,13 @@ the only reasonable view. Since this is your portfolio, the opinions should be *
   may not be fully solvable," and that the real control is authorization/blast-radius, not
   prompt hardening. Defensible and important, but a strong claim worth confirming you'd stand
   behind — it's the load-bearing argument of the pillar and the hinge to IAM §2.4.
+- [ ] **`cloud-infra/cryptography-key-management` (§8.4)** — "'encrypted at rest' is often an
+  audit answer that defends against a threat you don't face, while the threat you do face —
+  application compromise reading through valid access — is untouched." A pointed reframing of a
+  control everyone claims. Correct and worth confirming you want it stated that bluntly.
+- [ ] **`cloud-infra/resilience-recovery` (§8.6)** — frames backup as a security control, not an
+  ops concern, and asserts immutability is "the single most important ransomware-recovery
+  control." Defensible; confirm the emphasis.
 
 ## 3. Sensitive / dual-use framing — confirm the guardrails read right
 
@@ -137,6 +149,6 @@ runnable exploit material. Worth confirming the *fixes* are how you'd actually w
 ## Status
 
 Pillars complete: **Threat Intelligence (§1), Identity & Access Management (§2), Application
-Security (§3), AI & Automation Engineering (§6), Penetration Testing & Red Teaming (§5),
-Detection Engineering & SecOps (§7), Incident Response & Digital Forensics (§9).** Remaining:
-GRC (§4), Cloud & Infrastructure Security (§8), Data Security & Privacy Engineering (§10).
+Security (§3), Penetration Testing & Red Teaming (§5), AI & Automation Engineering (§6),
+Detection Engineering & SecOps (§7), Cloud & Infrastructure Security (§8), Incident Response &
+Digital Forensics (§9).** Remaining: GRC (§4), Data Security & Privacy Engineering (§10).

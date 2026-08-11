@@ -1,0 +1,109 @@
+---
+title: Cloud Architecture & Landing Zones
+description: Account structure as blast-radius design, org-level guardrails as architecture rather than identity, and why the landing zone is the security decision you can't retrofit.
+pillar: cloud-infra
+contentType: deep-dive
+maturity: practitioner
+cloud: [aws, azure, gcp, multi]
+relatedTo:
+  - iam/aws-identity
+  - cloud-infra/posture-iac
+  - pentest/cloud-pentesting
+updated: 2026-08-11
+sidebar:
+  order: 1
+---
+
+The most expensive cloud security decisions are made before any workload ships, in how the
+environment is structured. A flat single account where everything can reach everything isn't a
+misconfiguration you patch — it's an architecture you migrate away from over months. The
+landing zone is where blast radius is decided, and blast radius is the property that determines
+what a compromise costs.
+
+## Account structure is blast-radius design
+
+The single most important architectural decision is how you carve the environment into
+accounts (AWS), subscriptions (Azure), or projects (GCP). Each boundary is a containment
+boundary: a compromise, a runaway cost, a misconfiguration is bounded by the account it happens
+in — *if* the accounts are drawn along the right lines.
+
+The lines that matter:
+
+- **Environment separation.** Production, staging, and development in separate accounts, so a
+  dev mistake can't reach production data. The most basic and most frequently violated.
+- **Blast-radius isolation.** The high-value workload — the one holding customer data — in its
+  own account with its own controls, so compromising something adjacent doesn't reach it.
+- **Blast-radius for identity.** This is where account structure and [IAM](../../iam/aws-identity/)
+  meet: a smaller account is a smaller set of things a compromised role can touch. Structure
+  shrinks what an identity mistake can reach.
+
+A single shared account optimizes for convenience and pays for it in an incident, when the
+scoping question — what could the intruder reach — has the answer "everything." The
+[investigation](../../dfir/investigation-method/) is bounded by the architecture, and a flat
+account makes the boundary the whole estate.
+
+## The org hierarchy
+
+Every major cloud gives you a tree above the account:
+
+- **AWS** — Organizations, with Organizational Units (OUs), and Control Tower to set it up with
+  guardrails.
+- **Azure** — Management Groups above subscriptions.
+- **GCP** — the resource hierarchy of folders above projects.
+
+The hierarchy exists so policy can be applied at the right altitude — to all of production, to
+the whole organization — rather than account by account, where it drifts. Structure the tree to
+match how you want to apply guardrails, because the tree *is* the unit of policy.
+
+## Org-level guardrails — architecture, not identity
+
+This is the boundary with [IAM](../../iam/aws-identity/) worth being precise about, because both
+pillars touch policy. **Identity policy** (§2) decides what a principal can do. **Org-level
+guardrails** (here) set outer bounds no principal in that account can exceed, regardless of what
+their identity policy grants.
+
+- **AWS SCPs** — deny whole regions, deny disabling CloudTrail, deny root actions, deny
+  weakening specific controls. An SCP is not "who can do this" — it's "this cannot be done here,
+  by anyone."
+- **Azure Policy** — enforce and audit resource configuration: require encryption, deny public
+  IPs, enforce tagging and allowed regions.
+- **GCP Org Policy** — organization-wide constraints like disabling service-account key
+  creation or restricting external sharing.
+
+The distinction is real and load-bearing: guardrails are **blast-radius design**, the outer
+wall that holds when an account-level mistake grants too much. An SCP denying CloudTrail
+tampering means a compromised admin *still* can't blind the [detection pipeline](../../detection-eng/data-pipeline/),
+because the guardrail sits above their identity. This is [fail-closed](../../appsec/secure-coding/)
+at organizational scale, and it's the layer that survives the mistakes the other layers make.
+
+## Landing zones as code
+
+A landing zone is the pre-configured, secure-by-default foundation new accounts are created
+into — identity baseline, logging, network scaffolding, and guardrails already in place. The
+principle that makes it work: **an account should be secure the moment it exists, not secured
+afterward by someone remembering to.**
+
+Defining it as code (Terraform, Control Tower customizations, Azure Landing Zone templates)
+is what makes it consistent and reviewable — every account gets the same baseline, and the
+baseline is a diff, not tribal knowledge. This is the substrate side of the
+[IaC discipline](../../appsec/api-cloud-native/): the account foundation is infrastructure
+code, subject to the same review and scanning as any other.
+
+## Drift and re-baselining
+
+A landing zone is a starting state, and cloud environments drift from any starting state —
+someone changes a setting by hand, an exception becomes permanent, a new service arrives
+outside the template. Drift detection ([posture management](../posture-iac/)) is how you
+notice, and re-baselining — periodically bringing accounts back to the intended foundation — is
+how you stop the slow decay from secure-by-default to whatever-accumulated. Without it, the
+landing zone describes how the environment looked on day one and nothing since.
+
+## Where this connects
+
+Account structure bounds what [IAM](../../iam/aws-identity/) mistakes can reach and what
+[cloud pentesting](../../pentest/cloud-pentesting/) can pivot through. Guardrails protect the
+[detection pipeline](../../detection-eng/data-pipeline/) from being disabled. Landing zones are
+[IaC](../posture-iac/), and drift from them is a [posture](../posture-iac/) problem. It's the
+foundation the rest of this pillar builds on — [network](../network-segmentation/),
+[workload](../workload-container/), and [crypto](../cryptography-key-management/) all assume a
+sane structure underneath.

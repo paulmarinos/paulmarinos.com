@@ -1,0 +1,123 @@
+---
+title: Cryptography & Key Management
+description: What encryption actually defends against and what it doesn't, key hierarchies and envelope encryption, and why post-quantum is a today problem through harvest-now-decrypt-later.
+pillar: cloud-infra
+contentType: deep-dive
+maturity: advanced
+cloud: [aws, azure, gcp, multi]
+frameworks: [NIST PQC]
+relatedTo:
+  - iam/multi-cloud-federation
+  - data-privacy
+  - grc
+updated: 2026-08-11
+sidebar:
+  order: 4
+---
+
+Encryption is the control most often claimed and least often understood. "Data is encrypted at
+rest" appears in every [audit response](../../grc/), and it's frequently true and nearly
+meaningless — because the security of encryption lives entirely in key management, and that's
+the part the claim skips. This page is about what encryption actually buys, which is a question
+about keys.
+
+## What encryption defends against — and what it doesn't
+
+Being precise here dissolves most of the confusion:
+
+- **Encryption at rest** defends against **physical media compromise** — a stolen disk, a
+  decommissioned drive, a raw storage layer accessed directly. It does **not** defend against an
+  attacker who compromises the application, because the application reads decrypted data through
+  legitimate access. Against most cloud intrusions, encryption at rest is irrelevant, because
+  the intruder is using the app's own read path.
+- **Encryption in transit** defends against **network interception** — someone on the wire. It
+  does **not** protect data at the endpoints, where it's plaintext.
+
+The uncomfortable implication: **"encrypted at rest" is often an audit answer that defends
+against a threat the organization doesn't face, while the threat it does face — application
+compromise reading data through valid access — is untouched.** The control is real; the question
+is whether it addresses your actual risk, and the honest version names what it does and doesn't
+cover rather than asserting encryption as a blanket good.
+
+The one case where at-rest encryption genuinely earns its keep in cloud is **key-scoped access
+control**: if different data is encrypted with different keys and access to those keys is
+governed by [IAM](../../iam/aws-identity/), then reaching the data requires reaching the key,
+and the key is a separately-controllable boundary. Encryption becomes an access control, not
+just a checkbox — but only if the keys are actually scoped, which is where most implementations
+fall down.
+
+## Key management is the whole game
+
+Encryption is arithmetic; key management is security. The failure modes cluster:
+
+- **The key any compute role can use.** A single account-wide key that every workload can
+  decrypt with means the encryption adds nothing against a compromised workload — it just
+  decrypts, like everything else. This is the most common key-management finding, and it's why
+  "everything is encrypted" can be true and worthless simultaneously.
+- **KMS and HSM.** Cloud KMS manages keys and gates their use behind IAM. HSMs (or HSM-backed
+  KMS tiers) protect the key material itself in hardware for high-assurance needs. The security
+  moves from "protect the ciphertext" to "control who can invoke the key," which is an
+  [identity](../../iam/aws-identity/) problem — and the right place for it to live.
+
+## Key hierarchies and envelope encryption
+
+The pattern that makes key management scale: **envelope encryption**. A data key encrypts the
+data; a key-encryption key (KEK) in KMS encrypts the data key; the encrypted data key is stored
+alongside the ciphertext. To read, you call KMS to decrypt the data key, then decrypt locally.
+
+Why this is the standard rather than encrypting everything directly with a KMS key:
+
+- **KMS never sees your data**, only the small data key — so you're not streaming bulk data
+  through KMS.
+- **Rotating the KEK** doesn't require re-encrypting all the data, only the data keys.
+- **Access control concentrates on the KEK**, one auditable [IAM-governed](../../iam/aws-identity/)
+  chokepoint — every decrypt is a KMS call, which is a [detection signal](../../detection-eng/data-pipeline/).
+
+The hierarchy — data keys under KEKs under a root — is what lets you reason about, rotate, and
+revoke access at the right level without moving the data.
+
+## Secrets architecture vs. secrets tooling
+
+Worth separating from the [tooling discussion in IAM](../../iam/multi-cloud-federation/). A
+secrets *manager* is where secrets live; secrets *architecture* is the design that minimizes how
+many long-lived secrets exist at all. The best-managed secret is the one that doesn't exist —
+which is why [federation and workload identity](../../iam/multi-cloud-federation/) beat any vault:
+a short-lived, identity-issued credential has no standing secret to manage, rotate, or leak. Reach
+for a vault for the secrets you genuinely can't eliminate, and treat every long-lived secret as a
+design smell worth engineering away.
+
+## PKI
+
+Certificate management is where cryptographic good intentions go to die operationally. Internal
+CAs, certificate lifecycle, and — the perennial failure — **rotation and revocation**. The
+expired certificate that takes down production, and the compromised certificate that can't be
+revoked cleanly because nothing tracks what trusts it, are both key-management failures wearing a
+certificate. [Service mesh](../network-segmentation/) exists in large part to automate this, because
+manual certificate lifecycle does not survive scale.
+
+## Post-quantum — a today problem
+
+Post-quantum cryptography sounds like a future concern and isn't, because of one specific threat:
+**harvest now, decrypt later.** An adversary can capture encrypted traffic *today* and decrypt it
+once quantum computers mature. So any data with a **long confidentiality lifetime** — records that
+must stay secret for years or decades — is at risk *now*, even though the decryption capability
+doesn't exist yet. The data captured today is already exposed on that timeline.
+
+The practical posture:
+
+- **NIST has standardized PQC algorithms** — verify the current standards and recommendations
+  rather than trusting a fixed list, as this is moving.
+- **Crypto agility is the real design goal.** The durable answer isn't picking the winning
+  algorithm; it's building systems where the algorithm can be *swapped* without re-architecting.
+  Most systems hardcode crypto assumptions and can't migrate cleanly, and that inflexibility is
+  the actual vulnerability — the specific algorithm matters less than whether you can change it.
+- **Inventory long-lived secrets and long-confidentiality data first** — that's where
+  harvest-now-decrypt-later bites, and where migration effort should go first.
+
+## Where this connects
+
+Key access control is an [IAM](../../iam/aws-identity/) problem, and secrets architecture is
+[federation](../../iam/multi-cloud-federation/) done right. What encryption does and doesn't
+defend is the honest version of the [GRC](../../grc/) "encrypted at rest" audit answer, and it
+governs [data-privacy](../../data-privacy/) — where §10 owns the data and §8.4 owns the keys.
+Every KMS call is a [detection signal](../../detection-eng/data-pipeline/).

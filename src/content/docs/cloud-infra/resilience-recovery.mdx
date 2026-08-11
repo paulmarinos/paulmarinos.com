@@ -1,0 +1,107 @@
+---
+title: Resilience & Recovery
+description: Backup as a security control rather than an ops concern, why immutable and air-gapped copies are the ransomware answer, and restore testing as the only evidence that counts.
+pillar: cloud-infra
+contentType: deep-dive
+maturity: practitioner
+cloud: [aws, azure, gcp, multi]
+relatedTo:
+  - dfir/incident-response
+  - grc
+  - detection-eng
+updated: 2026-08-11
+sidebar:
+  order: 6
+---
+
+Backup and recovery get filed under operations, and that filing is a security mistake. The
+moment ransomware exists, backup is a *security control* — often the deciding one between "we
+restored and moved on" and "we paid, or we didn't recover." This page treats resilience as
+security, which is the framing the placeholder in the site structure marks for expansion.
+
+## Backup is a security control
+
+The reframing is the whole point. Backup was designed for the accidental-deletion and
+hardware-failure threat model, and it still serves those. But the modern threat is an adversary
+who **targets the backups first**, because they know recovery is what defeats their leverage.
+Ransomware operators encrypt or delete backups before triggering the main event, precisely so
+paying becomes the only path.
+
+Which means backup has to be designed against an *adversary*, not just against accident — and
+that changes the requirements entirely.
+
+## Immutable and air-gapped backups
+
+The two properties that make backup survive a competent attacker:
+
+- **Immutable.** Write-once, delete-proof for a defined retention period, so a compromised
+  credential — even an administrative one — cannot alter or delete the backup. Object-lock and
+  equivalent features enforce it at the storage layer, below the identity that an intruder would
+  compromise. This is the single most important ransomware-recovery control, because it removes
+  the attacker's ability to destroy your recovery path even with full access.
+- **Air-gapped (or logically isolated).** Separated from the production environment so a
+  compromise of production doesn't reach the backups. In cloud this is logical rather than
+  physical — a separate [account](../architecture-landing-zones/) with separate credentials and
+  a one-way path — but the principle holds: the backup an intruder can reach from a compromised
+  environment is a backup they can destroy.
+
+The design test: **assume the production environment is fully compromised, including admin
+credentials. Can the attacker reach the backups?** If yes, the backups are part of the blast
+radius and won't be there when you need them. Immutability and isolation are what take them out
+of that radius.
+
+## Restore testing is the only real evidence
+
+The failure mode that recurs across every organization: **backups that exist and don't restore.**
+A backup is a hypothesis that you can recover; a *tested restore* is the only evidence, and it's
+the step almost universally skipped because it's tedious and nothing appears to be broken until
+the day it matters.
+
+- **Test restores on a schedule**, not after an incident. The incident is the worst possible
+  time to discover the backup was incomplete, the retention was too short, or the restore
+  procedure has an undocumented dependency.
+- **Test the whole path**, not just the copy — permissions, dependencies, order of operations.
+  A database restore that needs a key from a system that's also down is not a working recovery.
+- **Measure recovery time and recovery point** against what the business actually requires. An
+  eight-hour restore against a one-hour tolerance is a finding, discovered in the test rather
+  than the crisis.
+
+This ties directly to [incident response](../../dfir/incident-response/): recovery is the last
+phase of an incident, and its speed and completeness were decided long before, by whether anyone
+tested the restore. Untested backups are the [preparation shortcut](../../dfir/incident-response/)
+that becomes expensive at exactly the wrong moment.
+
+## DDoS and edge protection
+
+Availability is a security property — the A in the classic triad — and denial-of-service is a
+security event. Cloud providers offer DDoS protection (often free at the network layer, paid for
+advanced application-layer defense), and edge/CDN services absorb volumetric attacks by
+distributing and caching. The design points: know what protection is automatic versus what you
+must enable, and understand that application-layer DDoS — expensive requests rather than raw
+volume — needs different defenses than network floods, and is the harder problem.
+
+## Multi-region failover and its security implications
+
+Failover is usually framed as an availability decision, and it carries security implications
+that are easy to miss:
+
+- **A failover region is a full second copy of your attack surface** — same data, same
+  identities, same misconfigurations if the [landing zone](../architecture-landing-zones/)
+  templated them consistently. It doubles what has to be secured, not just what has to be run.
+- **Failover paths are trust relationships**, and the replication mechanism connecting regions
+  is itself a target — a path between environments that an intruder can potentially ride.
+- **Consistency of controls.** The security value of failover depends on the standby region
+  being held to the same standard as production. A weaker DR region is a softer way in to the
+  same data, and "it's just DR" is how it drifts below production's controls.
+
+The principle: **design resilience against the adversary as well as the outage.** A recovery
+capability that assumes a benign failure — hardware, region outage — and ignores a malicious one
+solves the easy half of the problem and leaves the expensive half open.
+
+## Where this connects
+
+Recovery is the final phase of [incident response](../../dfir/incident-response/), and its
+success was decided by preparation here. Backup integrity, retention, and availability are
+[GRC](../../grc/) control requirements, and backup-targeting is a
+[detection](../../detection-eng/) opportunity — an attacker enumerating or deleting backups is a
+high-signal event, if anyone is watching the backup plane.

@@ -1,0 +1,113 @@
+---
+title: Network Security & Segmentation
+description: Segmentation as blast-radius control, egress and DNS as the exfiltration path nobody instruments, and where zero-trust network access actually beats a VPN.
+pillar: cloud-infra
+contentType: deep-dive
+maturity: practitioner
+cloud: [aws, azure, gcp, multi]
+relatedTo:
+  - cloud-infra/architecture-landing-zones
+  - iam/frameworks
+  - detection-eng/data-pipeline
+updated: 2026-08-11
+sidebar:
+  order: 2
+---
+
+Network security changed shape in the cloud but didn't disappear. The perimeter that used to
+be a firewall at the edge is gone; what remains is segmentation — controlling what can reach
+what — and it's still one of the strongest levers for limiting how far a compromise travels.
+The catch is that the most important direction of network control, *outbound*, is the one
+almost nobody instruments.
+
+## Segmentation is blast-radius control
+
+Where [account structure](../architecture-landing-zones/) contains blast radius at the
+organizational layer, network segmentation contains it at the traffic layer. The design
+questions:
+
+- **VPC/VNet design and subnet tiering.** Public subnets for what must face the internet,
+  private subnets for everything else, and database tiers reachable only from the application
+  tier. The tiering *is* the control — a database in a private subnet with no route to the
+  internet cannot be reached directly no matter what its credentials are.
+- **Private and service endpoints.** Reach a managed service (storage, database) over the
+  provider's private network instead of the public internet. Removes an entire class of
+  exposure — the storage account that's "private" but still has a public endpoint is a
+  recurring finding.
+- **Not flat.** A flat network where every workload can reach every other is the network
+  equivalent of a [single shared account](../architecture-landing-zones/): convenient, and it
+  makes lateral movement free once an intruder is inside.
+
+## East-west and microsegmentation
+
+The traditional model hardened north-south (in and out) and left east-west (workload to
+workload, inside the perimeter) wide open. That's exactly the freedom a
+[pentester or red team](../../pentest/cloud-pentesting/) exploits after initial access — get one
+foothold, move sideways unimpeded.
+
+**Microsegmentation** closes it: each workload reaches only what it legitimately needs, so a
+compromise is contained to what that specific workload could talk to rather than the whole
+segment. It's the network expression of least privilege, and it's what turns "attacker has a
+foothold" into "attacker has a foothold and nowhere to go."
+
+## Egress control — the path nobody instruments
+
+Here's the point most network security misses. Organizations pour effort into *inbound*
+filtering — what can reach us — and leave *outbound* wide open. But exfiltration, command-and-
+control, and data theft are all **outbound**, which means egress control is the direction that
+actually catches an active intrusion.
+
+- **Default-deny egress.** Workloads reach only the specific destinations they need. This
+  breaks [C2 and exfiltration](../../pentest/red-team-operations/) directly — the implant can't
+  call home if home isn't on the allowlist. It's the most under-deployed high-value network
+  control in the cloud.
+- **DNS security.** DNS is an exfiltration channel and a C2 channel — data tunneled through
+  queries, domain-generation algorithms for resilient C2. Monitoring and controlling DNS closes
+  a path that bypasses most other egress controls, because DNS is so often allowed to flow
+  freely.
+
+The reframing worth carrying: **egress control is a detection and containment capability, not a
+firewall chore.** Whether east-west and outbound traffic is even *visible* is a network design
+decision that sits [upstream of the detection pipeline](../../detection-eng/data-pipeline/) — you
+cannot detect on traffic the architecture never lets you see, which is why §8.2 is a
+prerequisite for §7.3's coverage rather than a peer of it.
+
+## TLS, mTLS, and service mesh
+
+Encryption in transit is table stakes; the interesting decisions are about *identity* in
+transit:
+
+- **TLS termination.** Where TLS ends determines where traffic is plaintext and who can read
+  it. Terminating at the edge means internal traffic is unencrypted unless you re-encrypt.
+- **mTLS** — mutual authentication, so both sides prove identity. The certificate *is* the
+  [workload identity](../../iam/multi-cloud-federation/), and it's how service-to-service auth
+  stops relying on a shared secret.
+- **Service mesh** (Istio, Linkerd) — pushes mTLS, and the certificate lifecycle it requires,
+  into infrastructure so it doesn't become an operational burden on every service. The main
+  reason mTLS is practical at scale.
+
+## ZTNA vs. VPN — where each helps
+
+Both provide remote access; the models differ, and the difference is the
+[Zero Trust](../../iam/frameworks/) one:
+
+- **VPN** puts you *on the network* — authenticate once, and you have network-level access to a
+  segment. The failure mode is exactly that: a compromised VPN credential grants broad network
+  access, and the [flat internal network](#east-west-and-microsegmentation) does the rest.
+- **ZTNA** grants access *per application*, continuously verified against identity and device
+  posture, with no network-level access at all. You reach the specific app you're authorized
+  for, and nothing else is even visible.
+
+ZTNA is the better model for most remote-access needs because it doesn't grant the network foot
+in the door, and it's [Zero Trust](../../iam/frameworks/) applied to connectivity — identity as
+the perimeter, enforced per request. VPN still fits site-to-site connectivity and legacy
+systems that can't sit behind a ZTNA proxy. The common mistake is treating them as
+interchangeable; they grant fundamentally different things.
+
+## Where this connects
+
+Segmentation extends the blast-radius design of [account structure](../architecture-landing-zones/),
+and its egress dimension is what makes [detection](../../detection-eng/data-pipeline/) possible —
+you can't see what the network never routes to a sensor. It's what
+[cloud pentesting](../../pentest/cloud-pentesting/) navigates after a foothold, and ZTNA is
+[Zero Trust](../../iam/frameworks/) at the connectivity layer.

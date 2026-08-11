@@ -74,6 +74,9 @@ export default defineConfig({
 						// cross-pillar structure legible, which is the point.
 						depth: 2,
 						renderArrows: true,
+						// The plugin defaults `linkDistance` to 0, so layout is driven
+						// only by repulsion and nodes clump with overlapping labels.
+						linkDistance: 150,
 					},
 					sitemapConfig: {
 						// One colour per pillar, driven by the table above.

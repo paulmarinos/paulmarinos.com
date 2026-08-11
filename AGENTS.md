@@ -59,6 +59,14 @@ Personal site for paulmarinos.com — Astro + Starlight, deployed to GitHub Page
   megapixels and silently fails to draw on software renderers and low-end GPUs — which is
   what made every attempt to widen the graph produce a blank canvas. At 2 it is still beyond
   retina density for this content.
+- **Graph layout knobs.** `linkDistance` is set to 150 in `astro.config.mjs`; the plugin
+  defaults it to 0, which leaves layout to repulsion alone and clumps nodes with
+  overlapping labels. There is no fit-to-bounds — zoom is pinned at `scale` and centred on
+  the current node — so nodes can fall outside the box as content grows. Measured with
+  synthetic sitemaps: at 40 nodes, `linkDistance` 0 vs 150 keeps 75% vs 73% of nodes in
+  view, and at 88 nodes 68% vs 59%. `depth` dominates: at the same 40 nodes, depth 1 keeps
+  94-100% in view against depth 2's ~74%. So the lever when content grows is `depth`
+  (currently 2, and exposed to readers as a graph control), not `linkDistance`.
 - **Graph placement.** The graph renders at the bottom of the content column at every width
   (`src/components/Footer.astro`), spanning the full content measure via
   `--slsg-graph-width: 100%`. It is deliberately not in the right sidebar — at ~250px the

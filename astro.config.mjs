@@ -76,9 +76,13 @@ export default defineConfig({
 					// and still appears on mobile, where the right sidebar is hidden.
 					overridePageSidebar: false,
 					graphConfig: {
-						// Depth 1 shows only direct neighbours; 2 makes the
-						// cross-pillar structure legible, which is the point.
-						depth: 2,
+						// Depth 1 already shows the whole graph today: the pillars form
+						// a complete mesh, so every pillar is a direct neighbour of every
+						// other. Measured identical to depth 2 at the current 11 nodes.
+						// It stops being identical once articles land — at 4 articles per
+						// pillar, depth 1 shows 18 nodes (94% on screen) against depth 2's
+						// 50 (74%). Readers can still raise it with the graph's depth control.
+						depth: 1,
 						renderArrows: true,
 						// The plugin defaults `linkDistance` to 0, so layout is driven
 						// only by repulsion and nodes clump with overlapping labels.

@@ -72,9 +72,16 @@ Personal site for paulmarinos.com — Astro + Starlight, deployed to GitHub Page
   overlapping labels. There is no fit-to-bounds — zoom is pinned at `scale` and centred on
   the current node — so nodes can fall outside the box as content grows. Measured with
   synthetic sitemaps: at 40 nodes, `linkDistance` 0 vs 150 keeps 75% vs 73% of nodes in
-  view, and at 88 nodes 68% vs 59%. `depth` dominates: at the same 40 nodes, depth 1 keeps
-  94-100% in view against depth 2's ~74%. So the lever when content grows is `depth`
-  (currently 2, and exposed to readers as a graph control), not `linkDistance`.
+  view, and at 88 nodes 68% vs 59%. `depth` dominates, so that is the lever as content grows,
+  not `linkDistance`.
+- **`depth` is 1.** Set while the pillars still form a complete mesh, where depth 1 and 2 are
+  measurably identical (11 of 11 nodes either way) — so it was a no-op at the time and cannot
+  have regressed anything. It starts mattering the moment articles land: at 4 articles per
+  pillar, depth 1 shows 18 nodes with 94% on screen against depth 2's 50 with 74%. Readers can
+  still raise it with the graph's depth control.
+  Not measured: the view from an *article* page, because `currentPage` is read once in the
+  component constructor and cannot be repointed at runtime. Depth 1 from an article may be
+  sparse (its pillar plus its `relatedTo` targets). Check that when the first article lands.
 - **Graph placement.** The graph renders at the bottom of the content column at every width
   (`src/components/Footer.astro`), spanning the full content measure via
   `--slsg-graph-width: 100%`. It is deliberately not in the right sidebar — at ~250px the

@@ -1,0 +1,114 @@
+---
+title: CI/CD & Platform Security
+description: The pipeline is a production system with credentials to everything — OIDC over long-lived keys, poisoned pipeline execution, and provenance from Sigstore to SLSA.
+pillar: appsec
+contentType: deep-dive
+maturity: practitioner
+frameworks: [SLSA, Sigstore, SBOM]
+cloud: [aws, azure, multi]
+relatedTo:
+  - appsec/insecure-coding
+  - iam
+  - cloud-infra
+  - detection-eng
+updated: 2026-08-11
+sidebar:
+  order: 4
+---
+
+The build pipeline is the most over-privileged and under-secured system most organizations
+run. It has credentials to the cloud, write access to production, the signing keys, and it
+executes code from every contributor and every dependency. Compromising it is compromising
+everything it can deploy to — which is usually everything.
+
+The mental model that fixes most of this: **treat the pipeline as production infrastructure**,
+not as a developer convenience. It has the blast radius of production, so it needs the
+controls of production.
+
+## OIDC instead of long-lived credentials
+
+The highest-value change available. Storing a long-lived cloud key as a CI secret means a
+credential that never rotates, is readable by every job, and leaks through logs, compromised
+actions, or fork pull requests.
+
+**OIDC federation** replaces it: the pipeline presents a short-lived signed token proving its
+identity, and the cloud exchanges it for temporary credentials scoped to that specific
+workflow.
+
+```yaml
+# GitHub Actions -> AWS, no stored key
+permissions:
+  id-token: write          # request the OIDC token
+  contents: read
+# the workflow assumes a role via the token; nothing long-lived is stored
+```
+
+This is an [IAM design decision](../../iam/) made in the build system, and the trust policy
+is where the security lives: scope it to the specific repository, and to a branch or
+environment, so a token from a fork or a feature branch can't assume the production role.
+An unscoped trust policy hands the role to anyone who can trigger a workflow.
+
+## The pipeline attack surface
+
+**Poisoned Pipeline Execution** — the pipeline runs attacker-influenced code with the
+pipeline's privileges. The classic vector is a pull request from a fork that modifies the
+build itself (or a script it runs) and executes on a runner holding real credentials.
+
+The controls:
+
+- **Don't run privileged workflows on untrusted PRs.** GitHub's `pull_request_target` runs
+  with secrets *and* the fork's code — a combination that is a foot-gun by design. Understand
+  which triggers expose secrets to fork code.
+- **Require approval** for workflows from first-time or external contributors.
+- **Pin actions to a commit SHA, not a tag.** A tag is mutable; `@v3` can be repointed at
+  malicious code after you've reviewed it. A SHA can't.
+- **Minimize and scope the token.** Default-read `GITHUB_TOKEN`, elevated only where needed.
+
+**Dependency tampering** and **artifact integrity** are the other half — covered by the
+[dependency and supply-chain pitfalls](../insecure-coding/) and by provenance below.
+
+## Platform controls
+
+The features exist; the failure is leaving them off.
+
+**GitHub:**
+- **Branch protection** — required reviews, required checks, no force-push to protected
+  branches. This is where "reviewed before merge" stops being a convention.
+- **CODEOWNERS** — the right reviewers auto-required for sensitive paths.
+- **Secret scanning with push protection** — blocks the [committed secret](../insecure-coding/)
+  at push, not after.
+- **Dependabot** — dependency updates and alerts.
+
+**GitLab** has equivalents — protected branches and variables, and the critical one is
+**runner isolation**: a shared runner executing untrusted code is a cross-tenant compromise
+waiting to happen, so untrusted builds need isolated, ephemeral runners.
+
+The common thread: protected variables and secrets must not be reachable from pipelines that
+run untrusted code. Most CI compromises are that sentence violated.
+
+## Signing and provenance
+
+The questions provenance answers: was this artifact built from the source it claims, by the
+pipeline it claims, without tampering in between.
+
+- **Sigstore** — signing artifacts with short-lived certificates tied to an OIDC identity,
+  keyless. Removes the "where do we store the signing key" problem that kills most signing
+  efforts, because there's no long-lived key to store.
+- **SLSA** — a graded framework (levels) for build integrity. Higher levels require a hardened
+  build process and verifiable provenance. Useful as a roadmap: it names the next increment
+  rather than demanding everything at once.
+- **SBOM** — a manifest of what's in a build. Necessary for answering "are we affected by the
+  new CVE in library X" in minutes instead of days, which is a
+  [detection and response](../../detection-eng/) capability as much as a compliance artifact.
+
+Provenance is only as good as its verification: signing artifacts and never checking the
+signatures at deploy is ceremony. The value is in the gate that refuses an unsigned or
+unverifiable artifact.
+
+## Where this connects
+
+OIDC is [IAM](../../iam/) in the build system, and its trust policy is a
+[cloud-architecture](../../cloud-infra/) decision. The pipeline is where
+[dependency risk](../insecure-coding/) is contained or realized. And SBOMs plus build logs are
+[detection](../../detection-eng/) inputs — the pipeline is a monitored production system, or
+it's an unmonitored one with production access.

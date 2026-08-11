@@ -1,0 +1,116 @@
+---
+title: SDLC Best Practices
+description: Threat modeling that's worth the hour, abuse cases, design review gates, and an honest account of shift-left versus shift-everywhere.
+pillar: appsec
+contentType: deep-dive
+maturity: practitioner
+frameworks: [STRIDE, PASTA]
+relatedTo:
+  - appsec/secure-coding
+  - grc
+  - threat-intel/risk-prioritization
+updated: 2026-08-11
+sidebar:
+  order: 3
+---
+
+The cost of fixing a security flaw rises sharply with how late it's found — a design flaw
+caught in a whiteboard session is a conversation; the same flaw caught in production is an
+incident. Secure SDLC is the practice of moving that discovery earlier. The trap is treating
+it as a set of gates to pass rather than a set of decisions to make, at which point it
+becomes theatre engineering learns to route around.
+
+## Threat modeling, and when it's actually worth it
+
+Threat modeling asks four questions about a design: what are we building, what can go wrong,
+what are we doing about it, and did we do a good job. The methodologies — STRIDE, PASTA,
+attack trees — are structured ways to answer the second.
+
+**STRIDE** is the most practical default: walk the design and ask, per component, about
+Spoofing, Tampering, Repudiation, Information disclosure, Denial of service, and Elevation of
+privilege. It's a checklist against a data-flow diagram, and its value is coverage — it
+surfaces the category you'd have skipped.
+
+The honest part is **when it's worth it**, because threat modeling every user story is how the
+practice dies:
+
+- **Worth it:** new trust boundaries, authentication and authorization changes, anything
+  handling money or sensitive data, new external interfaces, cryptographic decisions.
+- **Not worth it:** internal refactors with no boundary change, UI-only work, low-risk CRUD
+  behind existing controls.
+
+The [prioritization instinct](../../threat-intel/risk-prioritization/) applies — spend the
+modeling effort where the blast radius is largest, and let the rest go. A lightweight,
+frequent practice on the things that matter beats a heavyweight one that happens twice a year
+because it's too expensive to do more often.
+
+## Security requirements and abuse cases
+
+Most requirements describe what the system should do for a cooperative user. **Abuse cases**
+describe what it must *not* do for a hostile one, and writing them is where a lot of design-
+stage security lives.
+
+> **User story:** A user can reset their password via an emailed link.
+>
+> **Abuse cases:** An attacker cannot trigger resets for other users' accounts; cannot reuse
+> a consumed link; cannot use an expired one; cannot enumerate valid emails through response
+> differences; cannot race two links.
+
+The abuse cases become the security acceptance criteria — testable, and specific enough that
+"done" means something. This is the same discipline as
+[abuse cases in red-team objectives](../../pentest/red-team-operations/), applied at design
+time instead of against production.
+
+## Design review gates
+
+A design review gate is a checkpoint where a design is examined for security before it's
+built. It works only if two things are true: it's **lightweight enough that people bring
+designs voluntarily**, and it **adds value rather than just friction**. A gate that reliably
+finds nothing gets optimized away, correctly.
+
+Make it collaborative rather than adversarial — a review that helps engineers ship safely
+gets used; one that blocks them gets circumvented, and circumvented security is worse than
+absent security because it looks present. The output is decisions and follow-ups, not a
+sign-off.
+
+## Secure code review
+
+Distinct from [automated scanning](../code-scanning/): a human reading code for the flaws
+tools miss — [authorization gaps](../insecure-coding/), business-logic errors, misuse of
+crypto, the fail-open path. Where to concentrate finite attention:
+
+- **Trust boundaries** — where untrusted data enters, where privilege changes.
+- **Authentication and authorization** — the highest-value and least automatable.
+- **Anything handling secrets, money, or personal data.**
+- **The security-relevant diff**, not the whole codebase — review changes, at the boundary.
+
+The reviewer's advantage over a scanner is understanding *intent*. A tool sees code; a
+reviewer sees what the code is trying to do and where that intent has a hole.
+
+## Shift-left versus shift-everywhere — honestly
+
+"Shift left" — move security earlier — is directionally right and frequently overstated into
+a myth: that finding everything early removes the need for later controls. It doesn't, and
+believing it creates blind spots.
+
+The honest version is **shift everywhere**. Different flaws are catchable at different stages,
+and no single stage catches all:
+
+- **Design** catches architectural flaws — threat modeling. Nothing downstream catches a
+  fundamentally broken trust model cheaply.
+- **Code** catches implementation flaws — review and [SAST](../code-scanning/).
+- **Build** catches dependency and pipeline risk — [SCA and CI security](../cicd-security/).
+- **Runtime** catches what everything before it missed — [DAST](../code-scanning/),
+  [detection](../../detection-eng/), and the [pentest](../../pentest/).
+
+Shifting left is about adding early stages, not deleting late ones. A design flaw is cheapest
+at design and a configuration flaw may only be visible at runtime — you need coverage across
+the lifecycle, and the real skill is matching the check to the stage where it's cheapest and
+most reliable.
+
+## Where this connects
+
+The requirements this produces are [secure-coding](../secure-coding/) practices made explicit,
+and its abuse cases are [pentest scope](../../pentest/) written early. Secure SDLC is also a
+control requirement in [GRC](../../grc/) frameworks — where the risk is that it becomes a
+documented process that satisfies an auditor and changes no code.

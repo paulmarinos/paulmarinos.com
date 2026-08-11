@@ -1,0 +1,118 @@
+---
+title: Code Scanning
+description: How SAST, DAST and SCA actually work and what each structurally cannot find, why reachability changes everything for dependency risk, and building a program people don't route around.
+pillar: appsec
+contentType: deep-dive
+maturity: practitioner
+relatedTo:
+  - appsec/insecure-coding
+  - detection-eng/detection-quality
+  - threat-intel/risk-prioritization
+updated: 2026-08-11
+sidebar:
+  order: 5
+---
+
+Scanning tools are bought far more often than they're made useful. The pattern is familiar:
+a tool is procured, switched on, produces thousands of findings, and engineering learns to
+close the tab. The tool works exactly as designed; the *program* around it was never built.
+
+Understanding what each class of tool can and cannot find — structurally, not incidentally —
+is what separates a scanning program from a scanning purchase.
+
+## SAST — reading the code
+
+Static analysis examines source without running it. The good tools work by **taint analysis**:
+tracking data from a *source* (user input) to a *sink* (a dangerous operation), flagging paths
+where tainted data reaches a sink without passing through a sanitizer.
+
+That mechanism defines the strengths and the hard limits:
+
+- **Finds** injection, [the SSRF/metadata pattern](../insecure-coding/), hardcoded secrets,
+  unsafe API use — anything expressible as a dangerous data flow.
+- **Cannot find** authorization flaws, because "should this user access this object" is
+  business logic, not a data flow. [Broken object-level authorization](../insecure-coding/) —
+  the most common serious web bug — is invisible to SAST, which is exactly why manual review
+  and [pentesting](../../pentest/web-app-pentesting/) remain necessary.
+- **False positives** come from paths that look reachable but aren't, or sanitizers the tool
+  doesn't recognize.
+
+Semgrep (fast, readable rules), CodeQL (deep, query-based) and SonarQube (quality plus
+security) occupy different points on the speed-versus-depth trade. The rule tuning matters
+more than the tool choice — an untuned scanner is a false-positive generator regardless of
+brand.
+
+## DAST — testing the running app
+
+Dynamic analysis tests the deployed application from the outside, sending requests and
+observing responses. It's the inverse of SAST: it finds runtime and configuration issues SAST
+can't see, and misses code-level issues on paths it never exercises.
+
+- **Finds** configuration errors, missing headers, some injection, auth issues that only
+  manifest at runtime.
+- **Struggles with** coverage (it only tests what it can reach — authenticated, stateful, and
+  multi-step flows are hard), and with modern SPAs and APIs that don't crawl like classic
+  server-rendered sites.
+- **Needs auth handling** to test anything behind login, which is the fiddly part that decides
+  whether it covers the interesting surface or just the marketing pages.
+
+ZAP and Burp are the workhorses; Nuclei covers known-issue templates. DAST is closest to what
+a [pentester](../../pentest/) does, which is also its ceiling — it automates the mechanical
+part and not the judgment.
+
+## SCA — the dependencies
+
+Software Composition Analysis inventories dependencies and flags known-vulnerable versions.
+Since [your code is a minority of what ships](../insecure-coding/), this is often the
+highest-return scanning you do — and the noisiest, for one reason.
+
+**Reachability is everything.** A vulnerable function in a dependency you never call is not
+exploitable, and most SCA tools flag by *version*, not by *use* — so they report the CVE
+whether or not your code reaches the vulnerable path. That's the source of most SCA noise and
+most wasted remediation. Reachability analysis — does your code actually call the vulnerable
+function — is what turns an unworkable list into a real one, and it's the feature worth paying
+for.
+
+Transitive dependencies are where the risk hides: the library you chose pulled in thirty you
+didn't, and the vulnerable one is usually several levels deep and invisible without a
+[dependency graph](../cicd-security/).
+
+## IAST and RASP, briefly
+
+**IAST** instruments the running application to observe data flows during testing — a SAST/DAST
+hybrid with better accuracy on covered paths, at the cost of instrumentation and requiring
+exercised code. **RASP** instruments the app in production to block attacks at runtime — a
+mitigation, not a finder, and it overlaps with [runtime detection](../../detection-eng/). Both
+fit specific situations; neither is a starting point.
+
+## The real problem: a program people don't route around
+
+Any of these tools produces findings. The hard part is a program engineering doesn't
+circumvent, and that is a [precision problem](../../detection-eng/detection-quality/) identical
+to the one in detection engineering:
+
+- **A tool with 90% false positives will be ignored**, and the 10% that were real are ignored
+  with them. Tune aggressively for precision before expanding coverage — the same lesson as
+  [alert tuning](../../detection-eng/detection-quality/).
+- **Break the build only on high-confidence, high-severity findings.** A pipeline that fails
+  on style-level issues teaches everyone to bypass the gate, which loses the critical
+  findings too.
+- **Meet developers where they work** — in the IDE and the pull request, not a separate
+  dashboard nobody opens.
+- **[Prioritize](../../threat-intel/risk-prioritization/), don't enumerate.** Reachable,
+  exploitable, and on an exposed path beats a raw severity sort — the same model as
+  vulnerability triage.
+- **Own the false-positive burden centrally.** If every developer must independently judge each
+  finding, they'll judge them all as noise. A security team that triages first earns the
+  program credibility.
+
+The measure of a scanning program is not findings produced; it's findings *fixed*, divided by
+developer time spent. A program optimizing the numerator alone destroys the denominator and
+then gets switched off.
+
+## Where this connects
+
+Scanning finds the [coded pitfalls](../insecure-coding/) at scale, with the structural blind
+spot — authorization and logic — that keeps [pentesting](../../pentest/web-app-pentesting/)
+necessary. The program discipline is [detection quality](../../detection-eng/detection-quality/)
+by another name, and the triage is [risk prioritization](../../threat-intel/risk-prioritization/).

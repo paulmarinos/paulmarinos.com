@@ -1,0 +1,135 @@
+---
+title: Secure Coding Practices & Paradigms
+description: The handful of paradigms that remove vulnerability classes rather than instances — parameterization, output encoding, fail-closed defaults, and language choice as a control.
+pillar: appsec
+contentType: deep-dive
+maturity: foundational
+relatedTo:
+  - appsec/insecure-coding
+  - pentest/web-app-pentesting
+  - iam
+updated: 2026-08-11
+sidebar:
+  order: 1
+---
+
+Secure coding is the only place in security that can remove a vulnerability *class* rather
+than detecting its instances forever. A parameterized query API kills SQL injection in a
+codebase; a detection rule for SQL injection catches instances until the end of time. That
+asymmetry is the entire argument for investing here, and it's why the paradigms matter more
+than any checklist of specific bugs.
+
+## Parameterization beats validation
+
+The instinct on untrusted input is to validate it — reject the bad characters. This is
+weaker than it looks, because "bad" is context-dependent and the blocklist is never
+complete. The durable fix is **structural separation of code from data**, so input can never
+be interpreted as instructions regardless of its content.
+
+```python
+# Fragile: the blocklist is a guess about every dangerous input
+query = "SELECT * FROM users WHERE email = '" + email + "'"
+
+# Robust: email is data, and the driver guarantees it stays data
+cur.execute("SELECT * FROM users WHERE email = %s", (email,))
+```
+
+The parameterized version is not "better-validated" — it removes the possibility. The same
+principle recurs everywhere untrusted data meets an interpreter: prepared statements for SQL,
+argument arrays instead of shell strings for commands, safe builders instead of string
+concatenation for LDAP and XML. **When you find yourself validating to prevent injection,
+the real fix is usually to stop concatenating.**
+
+## Output encoding is contextual
+
+The mirror image of injection is output: data that was safe to store becomes dangerous when
+rendered. The critical point is that encoding is **specific to the destination context** —
+the same string needs different treatment in HTML body, an HTML attribute, JavaScript, a
+URL, or CSS.
+
+This is why "sanitize on input" is the wrong model. You don't know at input time where the
+data will be rendered, and a value cleaned for HTML is still dangerous in a JavaScript
+context. Encode at output, for the context you're writing into, and prefer frameworks that
+do it automatically — React and modern templating engines contextually escape by default,
+which is a language-level control rather than a discipline you have to sustain.
+
+## Secure defaults and fail-closed
+
+The behaviour when nobody made a decision should be the safe behaviour, because most code
+paths are the ones nobody thought about.
+
+- **Deny by default.** An [authorization](../../iam/) check that grants access unless a rule
+  denies it fails open — a missing rule becomes access. Reverse it: deny unless a rule
+  grants.
+- **Fail closed.** When a security check errors, the safe result is denial. A `try/except`
+  around an auth check that proceeds on exception is a bypass with a stack trace.
+
+```python
+# Fails OPEN: an exception in the check grants access
+try:
+    if not user.is_authorized(resource):
+        raise Forbidden()
+except AuthServiceError:
+    pass  # auth service down -> request proceeds
+
+# Fails CLOSED: any failure denies
+if not user.is_authorized(resource):   # raises on error, denies on false
+    raise Forbidden()
+```
+
+Fail-open bugs are especially dangerous because everything works in testing — the failure
+only appears under the conditions that also matter most.
+
+## Memory safety and language choice as a control
+
+Whole vulnerability classes — buffer overflows, use-after-free, most of the historically
+catastrophic CVEs — are properties of the *language*, not the programmer. Choosing a
+memory-safe language (Rust, Go, and the managed languages) eliminates them by construction
+rather than by care.
+
+This is the highest-leverage secure-coding decision available, and it's an architecture
+choice, not a coding one. For new systems handling untrusted input at a trust boundary,
+memory safety should be a default requirement — the reasoning is the same as
+[parameterization](#parameterization-beats-validation), applied to memory instead of queries:
+remove the class, don't police the instances.
+
+## Cryptographic hygiene: what never to hand-roll
+
+The one-line rule: **use a vetted library's high-level interface, and never invent the
+construction yourself.** Almost every hand-rolled cryptographic failure is a composition
+error — right primitives, wrong assembly.
+
+- **Never design your own scheme or mode.** Use libsodium, or your platform's audited
+  equivalent, at the highest level it offers.
+- **Password storage is not encryption.** Use a memory-hard hash (argon2, scrypt, bcrypt),
+  never a general-purpose hash, and never reversible encryption.
+- **Randomness for security must be cryptographic.** `secrets`, not `random`; `crypto`, not
+  `Math.random`. The general-purpose RNG is predictable, and predictable tokens are
+  guessable.
+- **Don't compare secrets with `==`.** Timing leaks. Use constant-time comparison.
+
+The meta-principle: cryptography fails silently. Wrong code produces output that looks
+correct and is broken, so "it works" is no evidence at all. This is where "don't be clever"
+is a security control.
+
+## Language-specific notes
+
+The paradigms are universal; the footguns are local.
+
+- **Python** — `subprocess` with `shell=True`, `pickle` on untrusted data, `yaml.load`
+  without `SafeLoader`.
+- **JS/TS** — prototype pollution, `eval` and its relatives, trusting client-side validation
+  the server must re-check.
+- **Go** — memory-safe but not injection-safe; `text/template` doesn't escape like
+  `html/template`, and errors ignored become fail-open paths.
+- **Java** — deserialization is the historic wound; `Runtime.exec` parsing, XXE in default
+  XML parsers.
+- **Rust** — memory-safe by default, but `unsafe` blocks reintroduce the risks and are where
+  review should concentrate.
+
+## Where this connects
+
+These paradigms are the controls whose absence [pentesters exploit](../../pentest/web-app-pentesting/)
+— every finding there is one of these missing. The specific bugs that result are cataloged in
+[common pitfalls](../insecure-coding/), and deny-by-default is where AppSec and
+[IAM](../../iam/) meet inside the application.

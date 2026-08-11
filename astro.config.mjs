@@ -14,6 +14,7 @@ const pillars = [
 	{ label: 'Penetration Testing & Red Teaming', dir: 'pentest', color: 'nodeColor5' },
 	{ label: 'AI & Automation Engineering', dir: 'ai-automation', color: 'nodeColor6' },
 	{ label: 'Detection Engineering & SecOps', dir: 'detection-eng', color: 'nodeColor7' },
+	{ label: 'Cloud & Infrastructure Security', dir: 'cloud-infra', color: 'nodeColor8' },
 ];
 
 // Deploy target. Defaults to the custom domain, which serves at the root path.
@@ -31,7 +32,7 @@ export default defineConfig({
 		starlight({
 			title: 'Paul Marinos',
 			description:
-				'Threat intelligence, identity, application security, GRC, pentesting, AI engineering, and detection engineering — and the connective tissue between them.',
+				'Threat intelligence, identity, application security, GRC, penetration testing, AI engineering, detection engineering, and cloud security — and the connective tissue between them.',
 			social: [
 				{ icon: 'github', label: 'GitHub', href: 'https://github.com/paulmarinos' },
 			],

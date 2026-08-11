@@ -6,8 +6,8 @@ Personal site for paulmarinos.com — Astro + Starlight, deployed to GitHub Page
 
 - **`site-structure.md`** is the content architecture and the source of truth for what gets
   written. Read it before adding content.
-- **Seven pillars**, each a directory under `src/content/docs/`: `threat-intel`, `iam`,
-  `appsec`, `grc`, `pentest`, `ai-automation`, `detection-eng`. The sidebar in
+- **Eight pillars**, each a directory under `src/content/docs/`: `threat-intel`, `iam`,
+  `appsec`, `grc`, `pentest`, `ai-automation`, `detection-eng`, `cloud-infra`. The sidebar in
   `astro.config.mjs` autogenerates from these directories.
 - **Frontmatter is validated** in `src/content.config.ts`. Articles must declare `pillar`,
   `contentType`, `maturity`, `updated`, and at least one `relatedTo` slug pointing *outside*

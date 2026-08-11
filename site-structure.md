@@ -2,7 +2,7 @@
 
 **Status:** v0.1 draft — starting point. Subsections are expected to expand over time.
 
-**Seven top-level sections.** Each is a standalone pillar, but the site's thesis is the *interrelationship* between them (see [Cross-Cutting Threads](#cross-cutting-threads)).
+**Eight top-level sections.** Each is a standalone pillar, but the site's thesis is the *interrelationship* between them (see [Cross-Cutting Threads](#cross-cutting-threads)).
 
 | # | Section | Slug | One-line framing |
 |---|---------|------|------------------|
@@ -13,6 +13,7 @@
 | 5 | Penetration Testing & Red Teaming | `/pentest` | Adversarial validation of everything above |
 | 6 | AI & Automation Engineering | `/ai-automation` | The tooling layer that scales the rest |
 | 7 | Detection Engineering & SecOps | `/detection-eng` | Turning knowledge of attacks into durable, tested detections |
+| 8 | Cloud & Infrastructure Security | `/cloud-infra` | The substrate everything else runs on |
 
 ---
 
@@ -376,6 +377,61 @@
 
 ---
 
+## 8. Cloud & Infrastructure Security
+`/cloud-infra`
+
+The substrate. Every other pillar touches cloud through its own lens — §2 asks who may act
+on it, §3 what runs on it, §5 how to break it, §7 how to see it. This section is the
+platform itself: how it's architected, hardened, keyed, and kept in a known-good state.
+
+**Boundaries.** §2 owns identity *policy* (evaluation logic, roles, federation); §8 owns
+org-level *guardrail architecture* (SCPs and Azure Policy as blast-radius design). §3.6
+owns IaC and container *scanning tools*; §8.5 owns the posture *program* they feed. Where
+both could apply, the test is whether the subject is the workload or the substrate.
+
+### 8.1 Cloud Architecture & Landing Zones
+- Multi-account / multi-subscription structure as blast-radius design
+- AWS Organizations and Control Tower, Azure management groups, GCP folders
+- Environment separation, shared services, hub-and-spoke topologies
+- Org-level guardrails: SCPs, Azure Policy, GCP Org Policy (architecture, not identity — see §2.1)
+- Landing zones as code; baseline drift and re-baselining
+
+### 8.2 Network Security & Segmentation
+- VPC/VNet design, subnet tiering, private endpoints and service endpoints
+- Egress control and DNS security — the exfiltration path nobody instruments
+- Microsegmentation and east-west controls
+- TLS termination, mTLS and service mesh
+- ZTNA vs. VPN, and where each actually helps (ties to §2.4)
+
+### 8.3 Workload & Container Security
+- Minimal base images, image provenance and admission control (OPA/Gatekeeper, Kyverno)
+- Kubernetes hardening: pod security standards, network policy, namespace and RBAC design
+- Runtime security and workload isolation
+- Serverless and managed-service posture — what the provider does and doesn't cover
+- Host hardening and CIS benchmarks
+
+### 8.4 Cryptography & Key Management
+- KMS and HSM design, key hierarchies, envelope encryption
+- Encryption at rest and in transit — what each actually defends against, and what it doesn't
+- Secrets architecture vs. secrets management tooling (ties to §2.3)
+- PKI: internal CAs, certificate lifecycle, rotation and revocation
+- Post-quantum: NIST PQC standards, harvest-now-decrypt-later, crypto agility as a design property
+
+### 8.5 Posture Management & Infrastructure as Code
+- CSPM / CNAPP: what posture tooling genuinely catches, and what it only appears to
+- IaC security across Terraform, CloudFormation and Bicep (tooling detail in §3.6)
+- Drift detection and closed-loop remediation
+- Benchmarks and well-architected security pillars as baselines
+- Prioritizing posture findings so the queue stays finite (ties to §1.4)
+
+### 8.6 Resilience & Recovery *(placeholder — to expand)*
+- Backup and restore as a security control, not an ops concern
+- Immutable and air-gapped backups; restore testing as the only real evidence
+- DDoS and edge protection
+- Multi-region failover and its security implications
+
+---
+
 ## Cross-Cutting Threads
 
 The site's differentiator is the connective tissue. Candidate cross-section pieces:
@@ -387,6 +443,8 @@ The site's differentiator is the connective tissue. Candidate cross-section piec
 - **Automation of the compliance-to-evidence pipeline.** §4.6 × §6.5.
 - **Communication as a technical skill.** §1.5 applied to §5.6 pentest and red team reports and §4.x audit narratives.
 - **Purple team loop.** §5.4/§5.5 emulation → §7.4 detection validation → §7.2 backlog → §1.4 prioritization. The full circuit from adversary technique to tested detection.
+- **The substrate trace.** One misconfigured network path as §8.2 architecture flaw, §5.2 pivot, §7.3 blind spot, and §4.x control gap.
+- **Encryption that proves nothing.** §8.4 key management vs. §4.x "data is encrypted at rest" as an audit answer — what the control actually buys.
 - **The telemetry gap.** §7.3 log coverage analysis as the shared prerequisite for detection, IR, threat hunting, and §4.x audit evidence.
 
 ---
@@ -402,7 +460,8 @@ The site's differentiator is the connective tissue. Candidate cross-section piec
 - Should Frameworks (Zero Trust / ZK / ZKT) stay under IAM or graduate to its own top-level section as agentic identity content grows?
 - Does AI/Automation split into "AI engineering" and "securing AI" once §6.6 fills out?
 - Where exactly is the Threat Intel (§1) / Detection Engineering (§7) boundary? Current split: §1 is analysis and communication of adversary knowledge, §7 is operationalizing it. Hunting (§7.5) is the blurriest case.
-- Does Incident Response (§7.6) eventually warrant its own pillar, or stay under SecOps?
+- Does Incident Response (§7.6) eventually warrant its own pillar, or stay under SecOps? (Strongest ninth-pillar candidate — additive rather than competing with §8.)
+- Does IaC security live in §3.6 (as a scanning tool) or §8.5 (as a posture program)? Current split is tooling vs. programme; watch whether that holds as both fill out.
 
 ---
 
@@ -449,7 +508,7 @@ Enforce the tagging axes at build time via `src/content/config.ts` so tags can't
 ```
 title:        string
 description:  string
-pillar:       enum [threat-intel, iam, appsec, grc, pentest, ai-automation, detection-eng]
+pillar:       enum [threat-intel, iam, appsec, grc, pentest, ai-automation, detection-eng, cloud-infra]
 contentType:  enum [deep-dive, cheatsheet, template, walkthrough, glossary]
 maturity:     enum [foundational, practitioner, advanced]
 cloud:        enum[] [aws, azure, gcp, multi]        # optional

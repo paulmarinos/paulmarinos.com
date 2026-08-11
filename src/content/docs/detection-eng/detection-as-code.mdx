@@ -1,0 +1,116 @@
+---
+title: Detection as Code
+description: Treating detections as software — versioned, reviewed, tested and deployed by pipeline — plus where Sigma's portability genuinely pays and where it costs you.
+pillar: detection-eng
+contentType: deep-dive
+maturity: practitioner
+frameworks: [Sigma, MITRE ATT&CK]
+relatedTo:
+  - detection-eng/detection-lifecycle
+  - appsec
+  - pentest
+updated: 2026-08-11
+sidebar:
+  order: 1
+---
+
+Most detection content is configuration: written in a console, edited in place, owned by
+whoever happened to be on shift. It has no history, no review, no tests, and no way to
+answer "what changed last Tuesday". Detection as code is the position that detections are
+software and should be handled like it.
+
+The payoff is not tooling elegance. It is that you can answer three questions that are
+otherwise unanswerable: what do we detect, when did that change, and does it still work.
+
+## What "as code" actually requires
+
+Version control alone is not it — a repo of rules exported nightly from a console is a
+backup, not a practice. The parts that matter:
+
+- **The repo is the source of truth.** Console edits either don't happen or get overwritten.
+  Anything else produces drift you'll discover during an incident.
+- **Peer review before deploy.** A second reader catches the field that doesn't exist in
+  your schema and the logic that will fire ten thousand times.
+- **Tests that run in CI.** At minimum: the rule compiles, and it fires on a known-true
+  sample without firing on a known-benign one.
+- **Automated deploy.** If shipping is manual, the pipeline is a suggestion.
+
+This is [AppSec's SDLC argument](../../appsec/) applied to detection content — same
+reasoning, same failure mode when skipped.
+
+## Repo structure that survives growth
+
+Organise by data source rather than by ATT&CK tactic. Tactic mapping is metadata and a rule
+often maps to several; data source is the thing that determines whether a rule can work at
+all, and it's what breaks when a pipeline changes.
+
+```
+detections/
+  identity/       entra-signin/, okta/
+  endpoint/       edr/, sysmon/
+  cloud/          cloudtrail/, azure-activity/
+  network/
+tests/            per-rule fixtures: true positives, known benign
+shared/           allowlists, lookup tables, macros
+docs/             conventions, on-call runbook links
+```
+
+When a log source degrades, you need to know instantly which rules just went blind. Grouping
+by data source makes that a directory listing rather than an investigation.
+
+## Metadata is the part people skip
+
+A rule with no metadata is unmaintainable the moment its author leaves. Required fields
+worth enforcing in CI:
+
+| Field | Why it earns its place |
+|---|---|
+| `owner` | Rules without owners are the ones nobody retires |
+| `data_source` | Blast radius when a pipeline breaks |
+| `attack` | Coverage mapping, and the shared vocabulary with [pentest](../../pentest/) |
+| `severity` | Must map to a defined response, not a vibe |
+| `false_positives` | Known benign causes, written by the author while they still remember |
+| `validation` | How this was proven to fire — link the test or the emulation run |
+
+`false_positives` is the highest-value field and the least populated. The author knows what
+will trip the rule; the analyst at 3am does not.
+
+## Sigma, honestly
+
+Sigma is a vendor-neutral rule format with converters to backend query languages. Its real
+benefits are a portable public corpus, a common review language, and freedom from writing
+detections directly in a language you may leave behind.
+
+The costs are worth stating plainly, because Sigma gets recommended as an unqualified good:
+
+- **Conversion is lossy at the edges.** Backends differ in what they can express; complex
+  correlation frequently doesn't survive translation intact.
+- **You still have to read the generated query.** Treating conversion output as unreadable
+  build artefact is how subtly wrong rules ship.
+- **Native features get left on the table.** KQL, SPL and EQL each do things Sigma can't
+  express, and some of those things are exactly what you need.
+
+A workable position: Sigma for the portable majority, native rules where the backend has
+capability you actually need, and no pretence that the split doesn't exist. Record which
+rules are native and why, or the reason gets lost and someone "fixes" them later.
+
+## CI for detection content
+
+A useful pipeline, in increasing order of what it costs to build:
+
+1. **Lint and schema check.** Metadata present, fields exist in the schema, rule compiles.
+2. **Unit test against fixtures.** Fires on the true positive, silent on the benign sample.
+3. **Volume estimate against a historical window.** Catches the rule that would have fired
+   40,000 times last month *before* it fires 40,000 times this month.
+4. **Deploy on merge**, with the rule ID recorded so you can trace an alert back to a commit.
+
+Step 3 is the one that changes analyst quality of life most, and it's the one most often
+missing.
+
+## Where this connects
+
+Everything here is a lifecycle problem underneath — [the detection lifecycle](../detection-lifecycle/)
+is what the pipeline automates. ATT&CK metadata is the handoff vocabulary with
+[pentest and red teaming](../../pentest/), where an emulation run is how a rule earns its
+`validation` field. And the pipeline itself is [AppSec](../../appsec/) practice pointed at
+a different artefact.

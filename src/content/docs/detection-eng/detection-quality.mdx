@@ -1,0 +1,125 @@
+---
+title: Detection Quality & Testing
+description: Precision over recall when base rates are low, unit testing rules against replayed events, adversary emulation as validation, and tuning that narrows without gutting.
+pillar: detection-eng
+contentType: deep-dive
+maturity: advanced
+frameworks: [MITRE ATT&CK, Atomic Red Team]
+attack: [T1078, T1059]
+relatedTo:
+  - threat-intel/statistics
+  - pentest
+  - detection-eng/detection-lifecycle
+  - dfir
+updated: 2026-08-11
+sidebar:
+  order: 4
+---
+
+A detection programme can be measured two ways: by how much it catches, or by how much of
+what it produces is worth an analyst's time. Programmes that optimise the first produce
+queues nobody works, which makes the second the only measure that survives contact with a
+SOC.
+
+## Precision is the binding constraint
+
+The [base rate arithmetic](../../threat-intel/statistics/) settles this. When true positives
+are rare — and they always are — precision is dominated by the false positive rate, not by
+sensitivity. A rule that catches 99% of attacks while firing on 1% of benign events still
+produces a queue that is overwhelmingly noise.
+
+The operational consequences follow directly:
+
+- **Improving recall on a low-precision rule is close to worthless.** Fix precision first.
+- **Alert volume is a bad metric** because it measures the benign denominator.
+- **"We detect technique X" is not a claim about precision**, and coverage maps rarely
+  distinguish the two.
+
+The number worth tracking per rule is the **true positive rate of alerts** — of the alerts
+this rule produced, what fraction were worth working. Rules below a threshold get tuned or
+retired, and that threshold is a programme decision that should be written down.
+
+## Testing detections
+
+Three layers, increasing in cost and confidence:
+
+**Unit tests against fixtures.** A known-true event that must fire the rule, and known-benign
+events that must not. Cheap, runs in CI, catches the field rename that silently broke a
+rule. This is the layer most teams lack and gain most from.
+
+**Replay against historical data.** Run the rule over a past window. Answers "how noisy will
+this be" before analysts find out, and it's the step that makes tuning-before-deploy
+possible.
+
+**Adversary emulation.** Actually execute the technique and check the rule fires. Atomic Red
+Team for atomic techniques, Caldera or a
+[red team engagement](../../pentest/) for chained behaviour. This is the only layer that
+tests the whole path — telemetry present, pipeline delivering, rule correct, alert routed.
+
+The layers fail differently, which is why you want all three. A rule can pass unit tests and
+fail emulation because the agent doesn't deploy to that host tier — a pipeline fact no
+fixture would reveal.
+
+## Emulation as the honest test
+
+Emulation is where coverage claims meet reality, and the failure modes it exposes are
+usually not rule logic:
+
+- The telemetry isn't collected on that platform.
+- The field is present but empty in production.
+- The rule fires but routes to a queue nobody works.
+- The rule fires 40 minutes late because the source batches.
+
+Each of these appears as "covered" on an ATT&CK map and as "not detected" in an incident.
+The purple team loop — emulate, check, fix whichever end was wrong — is the only reliable
+way to keep the map honest. It runs in the opposite direction to the
+[incident loop](../../dfir/), where the technique is real and the gap is discovered
+expensively.
+
+## Coverage mapping, with the caveat
+
+ATT&CK Navigator layers make coverage legible and are consistently over-read. A technique
+marked green usually means "a rule exists". It rarely distinguishes:
+
+- Rule exists vs. rule is **tested**
+- Detects one procedure vs. detects the **technique**
+- Fires in all environments vs. only where the agent runs
+- Alerts vs. alerts **usefully**
+
+Use at least three states — untested, tested, validated by emulation — and treat sub-
+technique granularity carefully. T1078 (Valid Accounts) is not one detectable thing;
+detecting one sub-technique and colouring the parent green overstates coverage
+substantially.
+
+:::note[Verify technique IDs against current ATT&CK]
+The matrix is revised regularly — techniques get renumbered, split and deprecated. Check
+IDs against the current version rather than trusting a reference, including this one.
+:::
+
+## Tuning without gutting
+
+Three moves, in descending order of preference:
+
+1. **Narrow the logic.** Make the rule more specific about what it's looking for. Preserves
+   detection of the behaviour while cutting the benign match. Best option, most work.
+2. **Allowlist specifically.** Exclude a known-benign source, scoped as tightly as possible
+   and with an expiry. `NOT process = "backup.exe"` is defensible; `NOT host LIKE "srv-*"`
+   is a hole with a wildcard.
+3. **Suppress the alert.** Deduplicate or rate-limit while keeping the underlying detection.
+   Useful for genuinely repetitive true positives, dangerous as a substitute for tuning.
+
+What each one costs matters. Allowlists accumulate into an undocumented policy that nobody
+can reconstruct — which is exactly what an attacker abusing an allowlisted path relies on.
+Review them on a schedule, require a reason and an owner, and give them an expiry date.
+
+The gutting failure is a rule narrowed until it only matches the specific procedure from the
+one incident that prompted it. It survives review, produces no noise, and detects nothing —
+and it looks like coverage.
+
+## Where this connects
+
+The maths is [statistics](../../threat-intel/statistics/), applied. Validation comes from
+[pentest and red teaming](../../pentest/), and the results feed
+[the lifecycle](../detection-lifecycle/) as tuning or retirement decisions. Anything you
+learn expensively from an [incident](../../dfir/) should arrive here as a test, so the same
+gap cannot reopen quietly.

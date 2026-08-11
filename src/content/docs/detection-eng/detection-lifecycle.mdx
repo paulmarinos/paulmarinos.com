@@ -1,0 +1,120 @@
+---
+title: Detection Lifecycle
+description: Idea to retirement — where detection ideas come from, the data-availability check that should kill most of them early, and the deprecation discipline nobody has.
+pillar: detection-eng
+contentType: deep-dive
+maturity: practitioner
+relatedTo:
+  - detection-eng/detection-as-code
+  - threat-intel/risk-prioritization
+  - dfir
+  - pentest
+updated: 2026-08-11
+sidebar:
+  order: 2
+---
+
+Detections are usually managed as a growing pile. Rules get added when something goes
+wrong, tuned when they get noisy, and removed approximately never. The pile is treated as
+an asset, when much of it is liability: rules nobody owns, firing on data that stopped
+arriving, against techniques nobody has used in years.
+
+A lifecycle is what turns the pile into an inventory.
+
+## Where detection ideas come from
+
+The best intake sources are the ones grounded in something that actually happened:
+
+| Source | Quality | Why |
+|---|---|---|
+| [Incident lessons](../../dfir/) | Highest | It happened to *you*, and you know exactly what was visible |
+| [Pentest and red team](../../pentest/) | High | Proven reachable in your environment, with a known timeline |
+| [Hunt results](../threat-hunting/) | High | Someone already confirmed the signal exists in your data |
+| Threat intel reporting | Medium | Relevance depends entirely on applicability to your estate |
+| Compliance requirement | Low | Produces rules that satisfy an auditor and detect nothing |
+| Vendor content pack | Low | Written for a generic environment, tuned for none |
+
+The lowest-quality sources generate the most volume, which is why intake needs a filter
+rather than a queue.
+
+## The data availability check
+
+This step should kill more ideas than any other, and it belongs *before* anyone writes
+logic:
+
+1. **Is the telemetry present?** Not "could it be" — is it, today, in the environment you'd
+   deploy to.
+2. **Is it retained long enough?** A rule needing 30 days of history against 7 days of
+   retention is not a rule.
+3. **Is it complete?** Coverage is rarely uniform. A rule that works only where the agent
+   is deployed detects only where the agent is deployed.
+4. **Is the field populated?** Schemas routinely include fields nothing fills in.
+
+Skipping this is the single most common way engineering time gets wasted: a well-crafted
+rule that cannot fire, deployed, and counted as coverage. That is worse than no rule,
+because it appears on the coverage map.
+
+## The path
+
+**Hypothesis → data check → rule → tune → deploy → monitor → retire.**
+
+A few notes on the stages that go wrong:
+
+**Tune before deploy, not after.** Run against a historical window and look at what it would
+have produced. Tuning in production means analysts absorb the noise while you learn.
+
+**Deploy with a defined response.** A rule whose alert has no documented next action will
+be closed as "no action" every time and eventually ignored. If you can't write the response,
+you're not ready to deploy — you have a hunt, not a detection.
+
+**Monitor for silence.** The dangerous failure isn't a noisy rule; it's a rule that quietly
+stopped firing because a log source changed shape three weeks ago. Nobody reports the
+absence of alerts.
+
+## Rule health monitoring
+
+Three classes of failure, all of which need to be detected automatically:
+
+- **Silent failure.** Volume drops to zero. Usually a schema change, an agent rollout, or a
+  pipeline filter — not the disappearance of the attack.
+- **Volume drift.** Slow increase toward unusability, or a step change after an environment
+  change. Alert on rate-of-change, not absolute count.
+- **Data source outage.** The upstream tier died. This should page, because it blinds every
+  rule in that directory at once — which is why
+  [the repo is organised by data source](../detection-as-code/).
+
+The meta-point: you need detections for your detections. Rule health is telemetry like any
+other.
+
+## Backlog prioritization
+
+The backlog will always exceed capacity, which makes this a
+[prioritization problem](../../threat-intel/risk-prioritization/) with the same structure as
+vulnerability triage — and the same trap of scoring everything into an unusable order.
+
+Weight by: is the technique observed against organizations like yours; is the data already
+available (cheap wins first); what does the rule actually enable an analyst to *do*; and
+what does it cost in expected false positives. The last one is routinely omitted from
+prioritization models and is frequently the deciding factor.
+
+## Deprecation discipline
+
+The part nobody does. Rules should be retired when the technique is no longer relevant,
+the underlying vulnerability is remediated everywhere, the data source is gone, or the rule
+has produced no true positives in a long window and nobody will defend it.
+
+That last criterion needs care: a rule that never fires might be worthless, or might be
+covering something rare and serious. The distinction is whether anyone can articulate what
+a true positive would look like. If nobody can, retire it.
+
+Make retirement routine and reviewable — a quarterly pass over rules with no true positives
+and no owner, retired by default unless someone objects. Rules deleted in a reviewed commit
+are recoverable, which is what makes deletion safe enough to actually do.
+
+## Where this connects
+
+The pipeline in [detection as code](../detection-as-code/) is what makes this lifecycle
+enforceable rather than aspirational. [Testing](../detection-quality/) is how a rule earns
+deployment. [Incidents](../../dfir/) and [red team engagements](../../pentest/) are the
+highest-quality intake you have — and the loop only closes if their output lands in this
+backlog rather than in a report nobody re-reads.

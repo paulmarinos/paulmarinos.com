@@ -1,0 +1,113 @@
+---
+title: Program Metrics
+description: Why MTTD and MTTR mislead, the difference between coverage and capability, and a small set of measures that survive being reported quarterly.
+pillar: detection-eng
+contentType: deep-dive
+maturity: foundational
+relatedTo:
+  - threat-intel/data-visualization
+  - grc
+  - detection-eng/detection-quality
+updated: 2026-08-11
+sidebar:
+  order: 7
+---
+
+Detection programmes are measured because they cost money, and the measures chosen tend to
+be the ones that are easy to compute rather than the ones that describe whether the
+programme works. That has a specific cost: teams optimise what is reported.
+
+## Why MTTD and MTTR mislead
+
+Mean time to detect and mean time to respond are the default pair, and both are weaker than
+they look.
+
+**They are means over skewed distributions.** Detection times are heavily long-tailed —
+most incidents found quickly, a few after months. The mean sits in a region where nothing
+actually happens, and one long incident moves it more than a quarter of good work. Report
+medians and percentiles, as with any skewed
+[security distribution](../../threat-intel/statistics/).
+
+**They only include incidents you detected.** The undetected intrusion contributes nothing
+to MTTD. A programme that misses everything subtle has an excellent MTTD, computed over the
+loud incidents it caught. This is survivorship bias determining a headline number.
+
+**The clock start is ambiguous.** Detection time from first malicious action, from first
+observable evidence, or from the alert firing? These differ by weeks, and the choice is
+rarely documented — which makes cross-period comparison unreliable.
+
+**They are improvable without improving.** Narrow the definition of "incident" and both
+numbers get better.
+
+None of that makes them useless. Tracked as distributions, with a documented clock and
+alongside a measure of what you *missed*, they are informative. Reported as two means on a
+slide, they are theatre.
+
+## Coverage versus capability
+
+The distinction most programmes elide.
+
+**Coverage** is a claim about existence: rules exist for these techniques. It is cheap to
+improve and easy to overstate — a rule that fires only where an agent is deployed, or has
+never been tested, still colours a Navigator cell green.
+
+**Capability** is a claim about outcome: when this technique is executed here, we detect it,
+in time, and an analyst can act. It is expensive to establish, because it requires
+[emulation](../detection-quality/), and it is the only one that predicts incident outcomes.
+
+Report them separately, and never let coverage stand in for capability. The honest artefact
+has three states — untested, tested, validated by emulation — and the interesting number is
+the ratio between them.
+
+## Measures worth reporting
+
+A small set, chosen because they resist gaming and describe the programme rather than its
+paperwork:
+
+| Measure | What it tells you |
+|---|---|
+| **Alert true-positive rate**, per rule and overall | Whether the queue is workable at all |
+| **Validated coverage** — techniques confirmed by emulation | Capability, not existence |
+| **Detection health** — rules silent, drifting, or without owners | The decay you're carrying |
+| **Time to answer "are we affected by X?"** | Data accessibility, tested the way leadership tests it |
+| **Backlog age and intake source mix** | Whether high-quality intake is reaching the backlog |
+| **Coverage gaps by log tier** | What you structurally cannot see |
+
+Two properties make this set work. Each maps to an action — a bad number tells you what to
+do. And several get *worse* when the programme is neglected, which is what makes them
+honest: a metric that only improves is a metric being managed rather than measured.
+
+## Reporting to different audiences
+
+The [audience problem](../../threat-intel/data-visualization/) applies with force here.
+
+Engineering wants per-rule health and backlog. Leadership wants trend and consequence: are
+we more capable than last quarter, where did the investment go, what remains uncovered and
+what would it cost. Boards want risk framing, not technique names.
+
+Keep the measures stable across quarters. A dashboard whose metrics change every reporting
+cycle is measuring the reporting cycle. If a measure must be replaced, show both for a
+period rather than silently switching.
+
+This is also where detection metrics meet [GRC](../../grc/): continuous control monitoring
+and detection health are the same telemetry with different consumers, and producing the
+evidence once is cheaper than assembling it twice.
+
+## Team models, briefly
+
+Two shapes dominate. **Embedded** — detection engineers inside the SOC — gives tight feedback
+from analysts and tends toward reactive, ticket-driven work. **Separate** — a detection
+engineering function with its own backlog — protects engineering time and risks drifting
+from operational reality.
+
+The functional difference is usually not the org chart but whether detection engineers are
+on the analyst rotation. Engineers who work the queue they create build different rules.
+
+## Where this connects
+
+The measurement discipline is [statistics](../../threat-intel/statistics/), and the
+presentation discipline is [visualization](../../threat-intel/data-visualization/) — where
+traffic-light dashboards do their damage. Capability claims rest on
+[testing and emulation](../detection-quality/). And the evidence overlaps with
+[GRC](../../grc/) continuous control monitoring closely enough that it should be generated
+once.

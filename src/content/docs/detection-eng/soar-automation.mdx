@@ -1,0 +1,110 @@
+---
+title: SOAR & Automation
+description: Automating enrichment and triage safely, guardrails for automated containment, and where the human approval gate belongs when the action is irreversible.
+pillar: detection-eng
+contentType: deep-dive
+maturity: practitioner
+relatedTo:
+  - ai-automation
+  - dfir
+  - detection-eng/detection-lifecycle
+updated: 2026-08-11
+sidebar:
+  order: 6
+---
+
+SOAR programmes fail in a recognisable way: a platform is bought, a containment playbook is
+built for the impressive demo, it isolates a production host during a false positive, and
+automation is never trusted again.
+
+The failure is one of sequencing. Automation should start where mistakes are cheap and move
+toward expensive actions only as the underlying detections earn it.
+
+## Automate in order of blast radius
+
+| Candidate | Reversible? | Verdict |
+|---|---|---|
+| **Enrichment** — asset, identity, geo, intel lookups | Yes, no side effects | Automate first, always |
+| **Correlation and grouping** of related alerts | Yes | Automate early; large analyst-time win |
+| **Notification** and ticket creation | Mostly | Automate, with dedupe or it becomes noise |
+| **Evidence collection** — snapshot, memory capture | Yes, additive | Automate; it preserves what disappears |
+| **Triage decisions** — close as benign | Recoverable but risky | Only with measured precision |
+| **Containment** — disable account, isolate host, block | Disruptive | Gate on approval, scope tightly |
+| **Destructive** — terminate, delete, revoke broadly | No | Human approval, always |
+
+Enrichment is the highest-value automation in security operations and the least glamorous.
+It is pure analyst time returned with no downside — every alert arriving pre-enriched saves
+minutes of identical lookups, consistently, forever.
+
+## Auto-closing alerts
+
+The tempting one, and the one that needs the most evidence. Closing alerts automatically is
+reasonable *only* when the rule's precision is measured and the closure condition is
+specific.
+
+Two safeguards make it survivable: sample the auto-closed alerts and review them, so the
+automation itself is monitored; and never auto-close on the absence of evidence, only on
+its presence. "No enrichment returned anything" is not benign — it is unknown.
+
+If a rule needs auto-closing to be workable, that is [a tuning problem](../detection-quality/)
+wearing a costume. Fix the rule.
+
+## Guardrails for automated response
+
+Containment automation is defensible with real constraints:
+
+- **Scope limits.** Never isolate more than N hosts, or disable more than N accounts,
+  without a human. A runaway playbook can do more damage in ninety seconds than the
+  intrusion.
+- **Asset criticality checks.** Auto-isolate a developer laptop; never auto-isolate a domain
+  controller or production database. This requires the asset context that
+  [the pipeline](../data-pipeline/) should be adding at ingest.
+- **Time-of-day awareness.** Automation that fires at 3am with nobody watching should be
+  more conservative, not less.
+- **Reversibility by design.** Every containment action needs a documented, tested undo. An
+  isolation you cannot reverse quickly is an outage.
+- **Circuit breakers.** If a playbook triggers unusually often, stop it and page a human.
+  The most likely cause is a broken detection, not an outbreak.
+- **Full audit trail.** Every automated action logged with the triggering alert and the
+  decision path — for [incident reconstruction](../../dfir/) and for the postmortem when
+  automation gets it wrong.
+
+**Identity actions deserve special mention.** Revoking sessions and disabling an account are
+among the fastest and most effective containment moves available, and they are also how you
+lock out an executive mid-board-meeting on a false positive. Scope by account type, and
+prefer session revocation — which forces re-authentication — over disabling, which is
+blunter and more disruptive.
+
+## Where the approval gate belongs
+
+Not on everything: an approval step on enrichment is friction with no benefit, and universal
+gating trains people to approve without reading.
+
+Gate where the action is **disruptive and hard to reverse**, and design the gate so the
+approver can actually decide — the alert, the enrichment, the proposed action, the blast
+radius, and the undo, in one screen. An approval prompt that shows only "Isolate host
+SRV-041? [Y/N]" gets rubber-stamped, which is worse than no gate because it launders the
+decision.
+
+## Agent-assisted triage
+
+LLM-based triage is genuinely promising for the judgement-heavy, high-volume work that
+deterministic automation handles badly — summarising an alert with its context, drafting a
+first-pass assessment, proposing next investigative steps.
+
+The constraints from [AI & Automation](../../ai-automation/) apply directly, and two matter
+most here. Grounding: an assessment that cites the specific evidence is checkable; one that
+reads plausibly is not. And authorization: an agent with tools is a principal with
+permissions, so its blast radius is a scoping decision, not a prompt-engineering one.
+
+The safe shape today is **agent proposes, human disposes** for anything consequential, with
+the agent's reasoning visible rather than summarised. A confident wrong triage decision is
+more expensive than no triage, because it carries the authority of having been checked.
+
+## Where this connects
+
+Automation quality is bounded by [detection quality](../detection-quality/) — automating on
+top of imprecise rules multiplies the error rather than absorbing it. Containment overlaps
+directly with [incident response](../../dfir/), where the same actions are taken manually
+under judgement. And the agent-assisted layer is [AI engineering](../../ai-automation/)
+pointed at the SOC queue.

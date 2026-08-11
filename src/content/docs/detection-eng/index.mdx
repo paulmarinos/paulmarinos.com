@@ -39,14 +39,13 @@ useless. Both are engineering problems with engineering fixes.
 
 | Subsection | Focus |
 |---|---|
-| **Detection as Code** | Versioned reviewed tested rules, repo structure and peer review, CI/CD for detection content, Sigma and backend conversion, KQL/SPL/EQL, metadata standards |
-| **Detection Lifecycle** | Idea intake from intel/pentest/incidents/hunts, hypothesis → data check → rule → tune → deploy → monitor → retire, backlog prioritization, rule health, deprecation discipline |
-| **Data Pipeline & Log Engineering** | Log tiers, cloud telemetry, normalization (OCSF, ECS, ASIM), enrichment joins, Cribl/Vector/Fluent Bit and cost control, coverage gap analysis |
-| **Detection Quality & Testing** | Precision and recall, unit testing against synthetic and replayed events, Atomic Red Team validation, ATT&CK Navigator coverage, tuning without gutting, the alert fatigue math |
-| **Threat Hunting** | Hypothesis-driven vs. baseline-driven, structured methodology and documentation, converting hunts to detections, cloud and identity hunting, measuring value |
-| **Incident Response Operations** | NIST SP 800-61 lifecycle and playbooks, triage and severity declaration, cloud IR specifics, identity-centric containment, evidence handling, blameless postmortems |
-| **SOAR & Automation** | Automation candidates, playbook guardrails, agent-assisted triage, human approval gates |
-| **Program Metrics** | MTTD/MTTR and their limits, coverage vs. capability reporting, team models |
+| [Detection as Code](./detection-as-code/) | Versioned reviewed tested rules, repo structure and peer review, CI/CD for detection content, Sigma and backend conversion, KQL/SPL/EQL, metadata standards |
+| [Detection Lifecycle](./detection-lifecycle/) | Idea intake from intel/pentest/incidents/hunts, hypothesis → data check → rule → tune → deploy → monitor → retire, backlog prioritization, rule health, deprecation discipline |
+| [Data Pipeline & Log Engineering](./data-pipeline/) | Log tiers, cloud telemetry, normalization (OCSF, ECS, ASIM), enrichment joins, Cribl/Vector/Fluent Bit and cost control, coverage gap analysis |
+| [Detection Quality & Testing](./detection-quality/) | Precision and recall, unit testing against synthetic and replayed events, Atomic Red Team validation, ATT&CK Navigator coverage, tuning without gutting, the alert fatigue math |
+| [Threat Hunting](./threat-hunting/) | Hypothesis-driven vs. baseline-driven, structured methodology and documentation, converting hunts to detections, cloud and identity hunting, measuring value |
+| [SOAR & Automation](./soar-automation/) | Automation candidates, playbook guardrails, agent-assisted triage, human approval gates |
+| [Program Metrics](./program-metrics/) | MTTD/MTTR and their limits, coverage vs. capability reporting, team models |
 
 :::tip[The thread worth following]
 **The purple team loop.** [Pentest](../pentest/) emulation → detection validation → backlog →

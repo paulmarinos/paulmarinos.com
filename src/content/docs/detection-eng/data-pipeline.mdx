@@ -1,0 +1,132 @@
+---
+title: Data Pipeline & Log Engineering
+description: Log tiers by detective value, normalization schemas, cost control that doesn't blind you, and coverage gap analysis — knowing what you can't see.
+pillar: detection-eng
+contentType: deep-dive
+maturity: practitioner
+frameworks: [OCSF, ECS, ASIM]
+cloud: [aws, azure, multi]
+relatedTo:
+  - detection-eng/detection-quality
+  - cloud-infra
+  - grc
+  - threat-intel/statistics
+updated: 2026-08-11
+sidebar:
+  order: 3
+---
+
+Every detection is downstream of a pipeline decision somebody made, often years ago and
+usually for cost reasons. The rule you cannot write because the field isn't collected is
+invisible on any coverage map — it never becomes a gap, because it never becomes a
+candidate.
+
+That makes log engineering the substrate of detection, and coverage gap analysis the most
+underrated activity in the pillar.
+
+## Log tiers by detective value
+
+Not all telemetry is equal, and the ranking is fairly stable across environments:
+
+| Tier | Detective value | Notes |
+|---|---|---|
+| **Identity** | Highest | Most intrusions transit identity. Sign-ins, token issuance, MFA events, privilege changes |
+| **Endpoint** | High | Process execution and parent-child lineage is the richest behavioural signal available |
+| **Cloud control plane** | High | CloudTrail, Azure Activity — where privilege escalation and persistence actually happen |
+| **Application** | Medium, underused | Highest business context, least instrumented. [AppSec](../../appsec/) can fix this |
+| **Network** | Medium, falling | Encryption has eroded content inspection; flow and DNS still carry weight |
+
+Identity first is the practical takeaway. If budget forces a choice, identity and cloud
+control plane telemetry buy more detection than anything else per gigabyte.
+
+## Cloud telemetry specifics
+
+Cloud logging has traps that are structural rather than incidental:
+
+- **Control plane vs. data plane.** CloudTrail management events are on by default; S3 object-
+  level access is not. The gap between "we log CloudTrail" and "we can see who read the
+  bucket" has surprised many teams mid-incident.
+- **Regional and per-account scope.** Trails configured per region or per account leave the
+  rest silent. Organization-wide configuration is a
+  [landing zone decision](../../cloud-infra/), not a SOC one.
+- **Retention vs. queryability.** Logs archived to cheap storage are retained, not
+  available. During an incident the difference matters enormously.
+- **Latency.** Some sources are near-real-time, some batch on tens of minutes. Rules with
+  time-window logic need to know which.
+
+## Normalization
+
+Three schemas dominate: **OCSF** (vendor-neutral, growing adoption), **ECS** (Elastic's,
+widely used beyond Elastic) and **ASIM** (Microsoft Sentinel). Pick one and treat it as an
+interface, because normalization is what lets a detection outlive the tool it was written
+against.
+
+The tradeoff worth naming: normalization loses information. Mapping a rich vendor event
+into a normalized schema drops fields that didn't map. Keep the raw event alongside the
+normalized one — storage is cheaper than the investigation you couldn't complete because
+the field you needed was discarded at ingest.
+
+## Enrichment at ingest
+
+Enrichment done in the pipeline is done once; enrichment done at query time is done every
+time, by every analyst, inconsistently. Worth doing at ingest:
+
+- **Asset context** — criticality, owner, environment. Turns "a host" into "a production
+  database".
+- **Identity context** — is this account privileged, service, or human.
+- **Geo and ASN** — cheap, and useful for both detection and triage.
+- **Threat intel joins** — with care, since a large indicator list joined against every
+  event is a cost and false-positive problem.
+
+Asset criticality is the highest-value and hardest, because it depends on an inventory most
+organizations don't reliably have. It's also what makes severity mean something.
+
+## Cost control without going blind
+
+Pipeline tools — Cribl, Vector, Fluent Bit — sit between sources and destination and let
+you route, trim and reshape. Used well they cut cost substantially; used badly they are how
+detection dies quietly.
+
+Safe reductions: dropping duplicate fields, verbose debug logging, and health-check noise;
+routing high-volume low-value data to cheap storage while keeping it queryable; sampling
+genuinely repetitive events.
+
+Dangerous reductions: dropping fields "nobody uses" — someone's rule uses them; sampling
+authentication events, where the rare event *is* the signal; and shortening retention below
+realistic dwell time, which guarantees investigations run out of data before they run out
+of questions.
+
+The rule that prevents most damage: **any pipeline change that drops a field must be
+reviewed against the detections that reference it.** With the repo
+[organised by data source](../detection-as-code/), that's a grep.
+
+:::caution[Sampling and base rates]
+Sampling interacts badly with rare events. If an attack signal appears in one event per
+million and you sample at 10%, you have not reduced cost by 90% — you have reduced
+detection probability to 10%. See [the base rate maths](../../threat-intel/statistics/).
+:::
+
+## Coverage gap analysis
+
+The discipline of knowing what you cannot see. Done properly it produces a matrix of data
+sources against environments, showing where telemetry is present, partial, or absent — and,
+separately, where it is present but untested.
+
+Two distinctions that must stay visible:
+
+- **No coverage** vs. **no data about coverage.** These demand opposite responses and look
+  identical on most dashboards.
+- **Collected** vs. **queryable** vs. **retained long enough**. A source can pass one and
+  fail the others.
+
+This artefact serves more than detection. It is the same evidence [GRC](../../grc/) needs
+for logging and monitoring controls, and the thing [forensics](../../dfir/) discovers the
+hard way when an investigation hits a wall. Producing it once, deliberately, is cheaper
+than three teams discovering it separately.
+
+## Where this connects
+
+Pipeline decisions bound [detection quality](../detection-quality/) — you cannot tune what
+you never collected. What's observable at all is set by
+[architecture](../../cloud-infra/), since network design decides whether east-west traffic
+is loggable in the first place. And coverage evidence is shared with [GRC](../../grc/).

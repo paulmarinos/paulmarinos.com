@@ -1,0 +1,114 @@
+---
+title: Threat Hunting
+description: Hypothesis-driven versus baseline hunting, methodology that produces something whether or not you find anything, and converting hunts into permanent detections.
+pillar: detection-eng
+contentType: deep-dive
+maturity: advanced
+frameworks: [MITRE ATT&CK]
+attack: [T1078]
+relatedTo:
+  - detection-eng/detection-quality
+  - dfir
+  - iam
+  - threat-intel/collection-sourcing
+updated: 2026-08-11
+sidebar:
+  order: 5
+---
+
+Hunting is the discipline of looking for what your detections would miss. That framing
+matters, because a hunt programme that finds things your rules would have caught anyway is
+measuring its own redundancy.
+
+It also sits on a boundary worth being precise about. Hunting is discovery in an
+environment presumed healthy; [forensics](../../dfir/) is reconstruction of an incident
+already known to have happened. The techniques overlap heavily; the question does not.
+
+## Two modes
+
+**Hypothesis-driven.** Start from a specific, falsifiable claim: *"An adversary using valid
+stolen credentials would appear as authentication from a new ASN followed by privilege
+enumeration within the hour."* Then look for it. Structured, repeatable, and the mode that
+converts cleanly into detections.
+
+**Baseline or anomaly-driven.** Start from the data: what is unusual here? Stack-count
+process names, look at the rare tail, examine what only happened once. Better at finding
+the genuinely unexpected, much worse at producing a defensible report when it finds nothing.
+
+Most mature programmes run mostly hypothesis-driven with periodic baseline sweeps. The
+common failure is calling unstructured log browsing "hunting" — enjoyable, occasionally
+lucky, and impossible to evaluate or repeat.
+
+## A hunt that produces value either way
+
+The test of methodology is whether a hunt that finds nothing still leaves something behind.
+A structured hunt should produce four artefacts regardless of outcome:
+
+1. **The hypothesis**, written before looking, specific enough to be wrong.
+2. **The data assessment** — what you queried, over what window, and *what you couldn't
+   query*. This is often the most valuable output: hunts are the fastest way to discover
+   [coverage gaps](../data-pipeline/), because you go looking for data you don't routinely
+   use.
+3. **The findings**, including the negative result stated properly — "no evidence of X in
+   the 90-day window, in the environments where Y is collected" is a real conclusion with
+   real caveats.
+4. **The disposition** — a new detection, a coverage gap ticket, a tuning change, or an
+   explicit "nothing to do, revisit if intel changes".
+
+Hunts that end without disposition are the reason hunt programmes get cut. The work
+happened; nothing downstream changed.
+
+## Where to hunt
+
+**Identity** is the highest-yield surface, for the same reason it's the highest-value
+[log tier](../data-pipeline/): most intrusions transit it. Impossible-travel patterns,
+authentication from new infrastructure, MFA fatigue patterns, token reuse, service accounts
+behaving interactively, and dormant accounts waking up.
+T1078 (Valid Accounts) is deliberately hard to detect with rules — legitimate credentials
+used legitimately-shaped — which makes it exactly the kind of thing hunting exists for. The
+[IAM pillar](../../iam/) is where the underlying mechanics live.
+
+**Cloud control plane** is second: enumeration bursts, role assumption chains, changes to
+logging configuration, and new principals created outside the pipeline.
+
+Both are places where the signal is behavioural and contextual rather than atomic — which
+is precisely where rules struggle and analysts do well.
+
+## Turning hunts into detections
+
+The conversion is the point, and it needs a filter. Not every finding should become a rule:
+if the pattern is rare enough that a rule would produce constant false positives, the honest
+output is a recurring hunt rather than a detection.
+
+A finding is a good detection candidate when the behaviour is describable in logic, the
+telemetry supporting it is reliably available, and a defined response exists. When those
+hold, the finding enters [the lifecycle](../detection-lifecycle/) as a normal backlog item
+with an unusually strong provenance: you already know the signal exists in your data,
+because you just found it there.
+
+When they don't hold, write it up as a repeatable hunt with its queries saved. A documented
+hunt someone can re-run quarterly is worth more than a rule that gets disabled in a month.
+
+## Measuring a hunt programme
+
+Findings-per-hunt is the wrong metric — it rewards hunting where you already look. Better
+signals:
+
+- **Detections created** from hunt output.
+- **Coverage gaps identified** — arguably the largest durable value.
+- **Time to answer a question.** "Are we affected by X?" arriving from leadership is the
+  test hunt programmes actually get graded on, and the answer speed depends on data
+  accessibility built beforehand.
+- **Techniques ruled out**, with the caveats stated honestly.
+
+A hunt programme that has found no intrusions may be working perfectly. One that cannot
+answer "are we affected by this" within a day is not, regardless of what it has found.
+
+## Where this connects
+
+Hunting consumes [collection](../../threat-intel/collection-sourcing/) and produces intel
+back. Its findings feed [the lifecycle](../detection-lifecycle/) and its coverage
+discoveries feed [the pipeline](../data-pipeline/). And it shares almost all of its
+technique with [forensics](../../dfir/) while asking a different question — which is why
+the boundary between them blurs during a long-running compromise, and why that remains an
+open question in the site structure.

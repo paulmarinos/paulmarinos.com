@@ -1,0 +1,128 @@
+---
+title: Verification & Evaluation
+description: Grounding and citation enforcement, hallucination detection that works, the real pitfalls of LLM-as-judge, and why a golden dataset is the thing most AI programs skip.
+pillar: ai-automation
+contentType: deep-dive
+maturity: advanced
+relatedTo:
+  - ai-automation/rag
+  - ai-automation/security-applications
+  - detection-eng/detection-quality
+updated: 2026-08-11
+sidebar:
+  order: 3
+---
+
+Verification is the half of AI engineering that decides whether a system is usable in a serious
+context, and it's the half most often skipped because it's harder and less visible than making
+the demo work. In security specifically the stakes are asymmetric: **a confident wrong answer is
+worse than no answer**, because it carries the authority of having been generated and gets acted
+on. Everything here follows from that asymmetry.
+
+## Grounding and citation enforcement
+
+Grounding means the output is traceable to source material rather than the model's parametric
+memory. The strong version isn't a prompt asking for citations — it's an *architecture* that
+makes ungrounded claims detectable:
+
+- **Require citations to retrieved context**, and *verify* the cited passage actually supports
+  the claim. Models cite fluently and sometimes wrongly; an unverified citation is decoration.
+- **Constrain answers to the provided context**, and make "the sources don't answer this" a
+  first-class, acceptable output — the [RAG failure](../rag/) of synthesizing from irrelevant
+  chunks is a grounding failure.
+- **Surface the sources to the user**, so a human can check. This is the decisive advantage of
+  retrieval over [long context](../rag/): you can show your work, which is exactly what a
+  security reviewer needs.
+
+Grounding is also why RAG suits security: the ability to say *which source* drove a conclusion
+is the difference between an analyst trusting the output and re-doing it by hand.
+
+## Hallucination detection
+
+Hallucination — confident, fluent, wrong — is intrinsic to how these models work, not a bug to
+be fully patched. So the goal is detection and containment, not elimination:
+
+- **Grounding checks** — does every claim trace to a source? Ungrounded assertion is the most
+  detectable failure and the highest-value one to catch.
+- **Self-consistency** — sample several times; genuine knowledge is stable across samples,
+  fabrication tends to vary. Costs more inference, buys a real signal.
+- **A separate verification pass** — a second model, or the same one with a different prompt,
+  checks the answer against the sources. Related to LLM-as-judge, with its caveats below.
+- **Structural constraints** — where the output has a checkable shape (a valid ID, an existing
+  file path, a real CVE), validate it. The cheapest and most reliable check when available.
+
+None is complete alone; layered, they move the residual error rate to where a domain can
+tolerate it. The framing that transfers directly from security:
+[precision, recall, and base rates](../../detection-eng/detection-quality/) apply to a
+hallucination detector exactly as to a detection rule — a checker that flags everything is as
+useless as one that flags nothing, and the base rate of errors sets what precision you need.
+
+## LLM-as-judge — uses and real pitfalls
+
+Using a model to evaluate another model's output is genuinely useful — it scales evaluation past
+what humans can label — and it has failure modes you must design around, not wish away:
+
+- **Position and verbosity bias** — judges favour the first option, or the longer answer,
+  independent of quality. Randomize order; control for length.
+- **Self-preference** — a model tends to rate its own family's outputs higher. Use a different
+  model as judge where the stakes justify it.
+- **Correlated blind spots** — the judge shares the generator's failure modes, so it confidently
+  ratifies confident errors. This is the deepest problem: the judge is weakest exactly where you
+  most need it, on the plausible-but-wrong output.
+- **Gameable criteria** — vague rubrics get optimized toward superficial features rather than
+  quality.
+
+Use LLM-as-judge for scale and triage; anchor it to human judgment on a sampled subset; and
+never let it be the *only* check on anything consequential. It's a force multiplier on
+evaluation, not a replacement for ground truth.
+
+## Golden datasets and regression testing
+
+The discipline that separates an AI *program* from an AI *demo*, and the one most teams skip
+because it's unglamorous work with no immediate payoff. A golden dataset is a curated set of
+inputs with known-correct outputs, and it's what lets you answer the questions that otherwise go
+unanswered:
+
+- **Did that prompt change help, or just help the one case I looked at?**
+- **Did upgrading the model regress anything?**
+- **Is retrieval better or worse after the reindex?**
+
+Without it, every change is a vibe and the system is unimprovable in any defensible way — you're
+guessing. This is [detection unit-testing](../../detection-eng/detection-as-code/) for AI:
+known inputs, expected outputs, run on every change, in CI. Building the golden set is tedious
+and it is the highest-leverage investment in the whole pipeline, because it converts "seems
+better" into "measurably better or not."
+
+## Guardrails and schema validation
+
+Guardrails constrain what the system can output, and the reliable ones are deterministic:
+
+- **Schema validation** — force structured output and validate it. A response that must be JSON
+  matching a schema is checkable by code, not vibes, and this is the single most useful
+  reliability technique for anything programmatic.
+- **Content filters** on input and output, with the honest caveat that model-based filters are
+  themselves [injectable](../securing-ai/) and shouldn't be the only layer.
+- **Allow/deny constraints** on actions — which belong to [tool-use authorization](../securing-ai/),
+  because for anything with side effects the guardrail is an access-control decision, not a
+  content one.
+
+Prefer deterministic guardrails (schemas, validators, permission checks) over asking the model
+nicely. Code that rejects malformed output is reliable; a prompt requesting good behaviour is a
+suggestion.
+
+## Human-in-the-loop
+
+The final and most important guardrail: for consequential actions, a human decides. The design
+question is *where* the checkpoint goes, and the [SOAR analysis](../../detection-eng/soar-automation/)
+applies exactly — gate on the disruptive, irreversible actions, not on everything, because
+universal gating trains people to approve without reading. The checkpoint must show enough to
+make a real decision: the proposed action, the evidence, the reasoning, and the blast radius. A
+rubber-stamp is worse than no gate, because it launders an unreviewed decision as a reviewed one.
+
+## Where this connects
+
+Verification is what makes [RAG](../rag/) trustworthy and what makes
+[security applications](../security-applications/) safe to deploy. The precision-and-base-rate
+reasoning is [detection quality](../../detection-eng/detection-quality/) applied to model output,
+and the human-checkpoint design is [SOAR's approval gates](../../detection-eng/soar-automation/).
+Deterministic guardrails on *actions* are [securing AI systems](../securing-ai/).

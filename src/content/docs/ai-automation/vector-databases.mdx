@@ -1,0 +1,125 @@
+---
+title: Vector Databases & Embeddings
+description: What embeddings actually encode, the index types and the recall-latency-cost triangle they trade against, and why metadata filtering is where multi-tenant security lives.
+pillar: ai-automation
+contentType: deep-dive
+maturity: practitioner
+relatedTo:
+  - ai-automation/rag
+  - data-privacy
+  - detection-eng/data-pipeline
+updated: 2026-08-11
+sidebar:
+  order: 2
+---
+
+Vector search is the retrieval engine underneath [RAG](../rag/) and semantic search, and it's
+usually treated as a black box that "finds similar things." Understanding what embeddings
+encode and how the indexes trade accuracy for speed is what separates a system that works at
+scale from one that's fast, cheap, and subtly wrong.
+
+## What embeddings actually encode
+
+An embedding maps text (or images, or code) to a vector such that semantic similarity becomes
+geometric proximity. Things that mean similar things land near each other; "distance" becomes
+"relatedness."
+
+Two properties matter more than the mechanism, because they explain the failures:
+
+- **They encode the model's notion of similarity, not yours.** An embedding trained on general
+  web text may consider two security terms similar because they co-occur in prose, while a
+  practitioner considers them opposites. The geometry is inherited from training data, and it
+  is not neutral.
+- **Similarity is not relevance, and not truth.** The nearest vector to a query is the most
+  *similar* passage, which may be one that shares vocabulary while contradicting the answer.
+  This is the root of [naive RAG's](../rag/) retrieval failures — the index did its job; its job
+  just wasn't what you needed.
+
+The practical consequence: **the embedding model is a design decision, not a default.** A
+domain-appropriate model, or a reranker on top of a general one, frequently matters more than
+the vector database.
+
+## Similarity metrics and index types
+
+**Metrics** — cosine similarity (angle, the usual default), dot product, Euclidean distance.
+Cosine dominates because it ignores magnitude and compares direction, which is usually what
+"semantic similarity" should mean. Match the metric to how the embeddings were trained; a
+mismatch quietly degrades everything.
+
+**Index types** are where the real engineering trade lives. Exact nearest-neighbour search is
+linear in corpus size — fine for thousands of vectors, impossible for millions — so production
+uses *approximate* nearest neighbour (ANN):
+
+- **HNSW** (hierarchical navigable small world) — a graph-based index, the common default.
+  Excellent recall and speed; higher memory cost, since the graph lives in RAM.
+- **IVF** (inverted file) — partition the space into clusters, search only the nearest few.
+  Faster to build and lighter, at some recall cost.
+- **PQ** (product quantization) — compress vectors to shrink memory dramatically, trading
+  precision for footprint. Often combined with IVF (IVFPQ) for very large corpora.
+
+The unifying idea: **ANN indexes trade recall for speed and memory, and the tuning parameters
+are that trade made explicit.** There is no free accuracy — pretending otherwise is how a
+system ends up fast and quietly missing the right answers.
+
+## The recall / latency / cost triangle
+
+Every vector search decision is a point in this triangle, and you can optimize any two:
+
+- **Recall** — did you find the truly nearest vectors? ANN sacrifices some by design.
+- **Latency** — how fast per query.
+- **Cost** — memory and compute, which scale hard with dimension and corpus size.
+
+The trap is optimizing latency and cost while never *measuring* recall, because low recall is
+invisible — the system returns results, they look plausible, and nobody notices the better
+answer was never retrieved. Measure recall against a ground-truth set, exactly as
+[RAG evaluation](../rag/) demands, or you're flying blind on the one axis that determines
+whether answers are right.
+
+## The landscape, and how to choose
+
+- **pgvector** — vectors in PostgreSQL. The pragmatic default: if your data is already in
+  Postgres, this avoids a second system, and it's enough for a very large fraction of real
+  workloads. Underrated because it's unglamorous.
+- **Qdrant, Weaviate, Milvus** — purpose-built vector databases, stronger at scale, richer
+  filtering, more operational surface.
+- **Pinecone** — managed, trades control for not operating it yourself.
+
+The honest guidance: **start with pgvector unless you have a reason not to.** Most "we need a
+vector database" is met by the database you already run, and adopting a specialized system
+before you've hit its limits adds operational cost for capability you aren't using. Reach for a
+dedicated store when scale, filtering, or latency genuinely demand it.
+
+## Hybrid search
+
+Dense vector search and sparse keyword search ([BM25](../rag/)) fail in opposite directions:
+dense misses exact terms — error codes, identifiers, proper nouns — that keyword search matches
+exactly, and keyword misses paraphrase that dense handles. **Hybrid search fuses both**, and
+the fusion method (reciprocal rank fusion is the common, robust choice) matters. For technical
+and security content — full of exact strings that must match — hybrid is frequently not
+optional, because the exact-match cases are the ones users least tolerate getting wrong.
+
+## Metadata filtering and multi-tenancy — where security lives
+
+This is the part with direct security weight, and it's easy to get subtly wrong. Real systems
+filter vector search by metadata: this tenant, this classification, this date range, documents
+this user may see.
+
+The correctness question is **when the filter is applied**. Retrieve-then-filter can return
+fewer results than requested (you asked for 10, filtered to 3) or leak information through
+timing and counts. Filter-then-search needs the index to support it efficiently. Get this wrong
+in a multi-tenant system and you have **cross-tenant retrieval** — one customer's query
+returning another's documents, which is both a [data-privacy](../../data-privacy/) breach and
+exactly the [tenant-boundary failure](../../pentest/specialized-testing/) that RAG pentesting
+probes.
+
+The rule: **a vector store holding multiple tenants' or classifications' data is an access-
+control system, and it has to be tested like one.** "The embedding is just math" ends the moment
+the index holds data with different audiences.
+
+## Where this connects
+
+Embeddings and vector search are the engine [RAG](../rag/) runs on. Multi-tenancy and metadata
+filtering are [data-privacy](../../data-privacy/) and access control — a vector store is a data
+store that [nobody classified](../../data-privacy/) unless you make them. And an embedding
+pipeline over sensitive content is a [data-handling](../../detection-eng/data-pipeline/) decision
+with the same collection-and-retention questions as any other.

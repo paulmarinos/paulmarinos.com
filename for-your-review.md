@@ -36,6 +36,14 @@ ones where being wrong is most visible to a knowledgeable reader.
   CodeQL, SonarQube, Checkov, tfsec, Terrascan, Sigstore, SLSA levels, OIDC patterns. Less
   volatile than the pentest tooling but still worth confirming the SLSA level descriptions and
   the GitHub Actions OIDC snippet against current docs.
+- [ ] **The entire AI & Automation pillar (§6) is inherently perishable.** RAG techniques,
+  vector-DB landscape, agent frameworks (LangGraph/CrewAI/AutoGen/MCP), and the OWASP LLM Top 10
+  all move fast. Written to lean on *durable* framing over version-specific detail, and
+  `securing-ai` and `rag` both carry in-page "verify against current sources" cautions. Two
+  places most likely to date: the **vector-DB landscape** in `vector-databases` (pgvector/
+  Qdrant/Weaviate/Milvus/Pinecone positioning) and the **agent-framework** names in
+  `agent-orchestration`. Note: this pillar deliberately names no LLM provider or model — it's
+  written about the engineering patterns, not a specific vendor's API.
 
 ## 2. Opinionated stances — confirm you'd defend these
 
@@ -61,6 +69,16 @@ the only reasonable view. Since this is your portfolio, the opinions should be *
 - [ ] **`pentest/red-team-operations` (§5.5)** — "an engagement that evades everything and
   reports 'we won' has failed at its actual job." A deliberate reframing of red-team success
   that not everyone shares.
+- [ ] **`ai-automation/agent-orchestration` (§6.4)** — "start with one agent; multi-agent as a
+  starting architecture is complexity chosen ahead of need," and "frameworks can obscure what's
+  happening — the core loop is simple enough to write directly." Opinionated against the
+  multi-agent-framework default.
+- [ ] **`ai-automation/vector-databases` (§6.2)** — "start with pgvector unless you have a
+  reason not to." A real position against reaching for a dedicated vector DB.
+- [ ] **`ai-automation/securing-ai` (§6.6)** — states prompt injection "is not fully solved and
+  may not be fully solvable," and that the real control is authorization/blast-radius, not
+  prompt hardening. Defensible and important, but a strong claim worth confirming you'd stand
+  behind — it's the load-bearing argument of the pillar and the hinge to IAM §2.4.
 
 ## 3. Sensitive / dual-use framing — confirm the guardrails read right
 
@@ -118,7 +136,7 @@ runnable exploit material. Worth confirming the *fixes* are how you'd actually w
 
 ## Status
 
-Pillars complete: **Threat Intelligence (§1), Application Security (§3), Penetration Testing &
-Red Teaming (§5), Detection Engineering & SecOps (§7), Incident Response & Digital Forensics
-(§9).** IAM (§2) in progress. Remaining: GRC (§4), Cloud & Infrastructure (§8), AI & Automation
-(§6), Data Security & Privacy (§10).
+Pillars complete: **Threat Intelligence (§1), Identity & Access Management (§2), Application
+Security (§3), AI & Automation Engineering (§6), Penetration Testing & Red Teaming (§5),
+Detection Engineering & SecOps (§7), Incident Response & Digital Forensics (§9).** Remaining:
+GRC (§4), Cloud & Infrastructure Security (§8), Data Security & Privacy Engineering (§10).

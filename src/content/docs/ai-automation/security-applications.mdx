@@ -1,0 +1,115 @@
+---
+title: Security Applications
+description: Where AI genuinely helps security operations — triage enrichment, report drafting, scanning augmentation, evidence automation — and the guardrails each one needs.
+pillar: ai-automation
+contentType: deep-dive
+maturity: practitioner
+relatedTo:
+  - ai-automation/verification
+  - detection-eng/soar-automation
+  - threat-intel/report-writing
+  - grc
+updated: 2026-08-11
+sidebar:
+  order: 5
+---
+
+The constraint on most security programs is analyst hours, not knowledge. That makes AI's
+promise here specific and real: automate the high-volume, judgment-adjacent work that
+deterministic automation handles badly, and give the humans back their time for the work that
+needs them. The promise is also where the [asymmetry](../verification/) bites hardest — in
+security, a confident wrong answer isn't a bad suggestion, it's a misdirected response. So every
+application below is paired with the guardrail that makes it safe rather than just impressive.
+
+## Triage and alert enrichment
+
+The highest-value, lowest-risk application, and the place to start. Enrichment — gathering the
+context an analyst would gather by hand — is high-volume, well-defined, and mostly non-
+destructive:
+
+- Pull the asset, identity, and geo context for an alert.
+- Summarize related alerts and recent history for the same entities.
+- Draft a first-pass assessment: what this looks like, what to check next.
+
+This directly attacks alert fatigue, and it's safe because enrichment is
+[additive and reversible](../../detection-eng/soar-automation/) — it adds context, it doesn't
+act. The guardrail is grounding: an enrichment that [cites the specific evidence](../verification/)
+is checkable; one that reads plausibly is a liability. The safe shape is **agent proposes, human
+disposes** for anything consequential, with the reasoning shown rather than summarized.
+
+## Report and finding drafting
+
+Drafting is a strong fit because the human stays in the loop by construction — nothing ships
+unreviewed. Summarizing an incident timeline, drafting a [pentest finding](../../pentest/report-writeups/)
+from evidence, turning technical detail into an [executive summary](../../threat-intel/report-writing/):
+all real time savings on work that's mostly translation and structure.
+
+The value is amplified by [report writing](../../threat-intel/report-writing/) being a genuine
+skill the model can encode — BLUF structure, calibrated confidence, audience-appropriate
+framing. The guardrail is that the human owns the facts and the confidence levels; the model
+drafts the prose. A model that invents a finding, or overstates confidence to sound decisive, is
+producing exactly the [hallucination](../verification/) that costs the most here.
+
+## Code review and scanning augmentation
+
+AI review complements [SAST](../../appsec/code-scanning/) precisely where static analysis is
+blind: SAST is strong on data-flow bugs and structurally can't see
+[authorization and business-logic flaws](../../appsec/insecure-coding/), which need
+understanding of *intent*. A model reasoning about what code is trying to do can flag the
+missing ownership check a taint analyzer never will.
+
+The guardrail is the same [precision discipline](../../appsec/code-scanning/) that governs any
+scanning program: a reviewer with 90% false positives gets ignored, and the real findings get
+ignored with it. Tune for precision, surface findings [where developers work](../../appsec/code-scanning/),
+and treat AI review as another input to triage — not an oracle, and not a gate that blocks the
+build on a confident guess.
+
+## Compliance evidence automation
+
+Among the highest-ROI applications, and one of the best-suited. Much
+[compliance evidence collection](../../grc/) is gathering, correlating, and formatting data that
+already exists to show a control operated — repetitive, well-defined, and voluminous. Drafting
+control narratives, mapping evidence to requirements, and flagging gaps are exactly what this
+technology is good at.
+
+The guardrail is verifiability, and it's non-negotiable here: evidence must trace to its source,
+because an auditor will check and a fabricated citation is a fraud rather than an error. This is
+[grounding](../verification/) with a regulator as the reader — the same discipline as citation
+enforcement, at higher stakes. Done right it turns the [auditor into a downstream consumer of an
+API](../../grc/) rather than a fire drill.
+
+## Threat intel summarization
+
+[Collection](../../threat-intel/collection-sourcing/) scales past human reading capacity, and
+summarization pipelines — digesting reports, extracting indicators and TTPs, correlating across
+sources — are a natural fit. The guardrail is the one this whole pillar keeps returning to:
+**hallucinated intel is the failure mode that discredits the program.** A summarization step that
+subtly misattributes a technique or invents an indicator poisons everything downstream, and it
+does so invisibly, wearing the same confident tone as the correct output. Grounding, citation to
+the source report, and human validation on anything that will drive action are the price of
+using it at all.
+
+## The pattern across all of these
+
+Every application follows one shape: **AI handles volume and drafting; humans hold judgment and
+accountability.** The systems that work keep the human on the consequential decision and use the
+model to make that decision cheaper to reach — more context, faster, better organized. The
+systems that fail try to remove the human from a decision that needed one, usually because the
+demo made removal look safe.
+
+Two design rules make the difference:
+
+- **Ground everything.** Output that cites its evidence is checkable and correctable; output that
+  reads well is neither. In security, checkable beats fluent every time.
+- **Gate on consequence, not on everything.** [Enrichment runs free; destructive action needs a
+  human](../../detection-eng/soar-automation/). Universal gating trains people to approve blindly,
+  which is worse than no gate.
+
+## Where this connects
+
+These applications are [orchestration](../agent-orchestration/) and [RAG](../rag/) pointed at
+security work, made safe by [verification](../verification/). They land operationally in
+[SOAR and triage](../../detection-eng/soar-automation/), draw on
+[report-writing](../../threat-intel/report-writing/) as an encodable skill, and pay off most in
+[compliance evidence](../../grc/). And each one is only as safe as its
+[securing-AI](../securing-ai/) posture — an assisted-triage agent is still an agent with tools.

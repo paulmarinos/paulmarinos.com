@@ -1,0 +1,125 @@
+---
+title: Retrieval-Augmented Generation
+description: Why naive RAG fails, what advanced retrieval actually fixes, and the honest question underneath all of it — retrieval versus long context, and when each wins.
+pillar: ai-automation
+contentType: deep-dive
+maturity: practitioner
+relatedTo:
+  - ai-automation/vector-databases
+  - ai-automation/verification
+  - threat-intel/collection-sourcing
+updated: 2026-08-11
+sidebar:
+  order: 1
+---
+
+Retrieval-augmented generation is the default architecture for making a language model answer
+from a specific body of knowledge rather than its training data. The idea is simple — fetch
+relevant documents, put them in the prompt, generate an answer grounded in them — and the
+simple version fails in ways that are worth understanding before reaching for the fixes.
+
+## Naive RAG and where it breaks
+
+The baseline pipeline: chunk documents, embed the chunks, store the vectors, embed the query,
+retrieve the nearest chunks, stuff them into the prompt. It works in a demo and disappoints in
+production, for reasons that are structural rather than bugs:
+
+- **Retrieval is only as good as the embedding.** Semantic similarity is not relevance. The
+  nearest vector to a question is frequently a chunk that *sounds* like the question rather than
+  one that *answers* it.
+- **Chunking destroys context.** Split a document into 500-token windows and you sever the
+  sentence from the section that gives it meaning. The chunk that contains the answer may be
+  useless without the one before it.
+- **The query and the answer live in different vector neighbourhoods.** A short question and the
+  passage that answers it often don't embed close together — questions and answers are written
+  differently.
+- **No notion of enough.** Naive RAG retrieves a fixed *k* whether the answer needs one chunk
+  or ten, and whether the corpus contains the answer at all. It will confidently synthesize
+  from irrelevant chunks rather than say "not found."
+
+The through-line: retrieval quality is the ceiling on answer quality, and naive retrieval has a
+low ceiling.
+
+## Advanced RAG — what each technique actually fixes
+
+The advanced techniques are not a menu to apply wholesale; each targets a specific failure
+above.
+
+- **Query rewriting** — reformulate the user's question into better retrieval queries.
+  Addresses the query/answer mismatch and vague or conversational questions.
+- **HyDE (Hypothetical Document Embeddings)** — generate a hypothetical *answer*, embed that,
+  and retrieve against it. A direct fix for the question/answer neighbourhood problem: answers
+  embed near answers.
+- **Hybrid search** — combine dense (semantic) with sparse (keyword/BM25) retrieval. Semantic
+  search misses exact terms — error codes, names, IDs — that keyword search nails, and
+  [vice versa](../vector-databases/). Fusing them covers both.
+- **Reranking** — retrieve a broad candidate set cheaply, then use a more expensive
+  cross-encoder to reorder by actual relevance. The single highest-leverage upgrade for most
+  systems, because it decouples "cast a wide net" from "pick the best."
+- **Contextual retrieval and chunk enrichment** — prepend document- or section-level context to
+  each chunk before embedding, so the chunk carries the context that naive chunking severed.
+
+The order of return-on-effort in practice is usually: reranking first, then hybrid search, then
+better chunking, then query transformation. Reach for query rewriting and HyDE when the
+mismatch is genuinely the problem, not as a default.
+
+## Modular and agentic RAG
+
+Beyond the linear pipeline, retrieval becomes a *step the system can choose to take*, more than
+once, adapting to the query:
+
+- **Decide whether to retrieve at all** — some questions don't need it, and retrieving anyway
+  adds noise.
+- **Retrieve, assess, retrieve again** — if the first pass was insufficient, reformulate and go
+  back, rather than answering from thin evidence.
+- **Route to different sources** — a code question and a policy question want different indexes.
+
+This is [agent orchestration](../agent-orchestration/) applied to retrieval, and it trades
+latency and cost for the ability to handle queries a fixed pipeline can't. Use it when query
+variety is genuinely high; a single well-tuned pipeline beats an agentic one on a narrow
+domain.
+
+## GraphRAG and knowledge graphs
+
+Vector retrieval finds semantically similar chunks; it's poor at questions requiring
+*relationships* across documents — "how does X connect to Y," "what are all the things
+affecting Z." GraphRAG builds a knowledge graph from the corpus and retrieves over structure
+as well as similarity, which is powerful for multi-hop and aggregation questions and expensive
+to build and maintain. The security-relevant instance is exactly a graph question — this is the
+same shape as [the cross-pillar graph on this site](../../) or an
+[attack-path graph](../../pentest/cloud-pentesting/), where the value is in the edges.
+
+## The honest question: retrieval vs. long context
+
+As context windows grow, "just put everything in the prompt" becomes viable for more cases, and
+it's worth being honest about the trade rather than defending RAG reflexively:
+
+- **Long context wins** when the corpus is small enough to fit, when relationships across the
+  whole body matter, and when retrieval failures would be costly. No retrieval step means no
+  retrieval errors.
+- **Retrieval wins** on cost (you don't pay to process the whole corpus per query), on scale
+  (corpora far exceeding any context window), on freshness (update the index, not the model),
+  and on *auditability* — retrieval tells you which sources informed the answer, which matters
+  enormously for [grounding and citation](../verification/).
+- **The pragmatic answer is often both** — retrieve to narrow the field, then use a large
+  context window generously rather than stuffing in the minimum. The false economy is
+  retrieving too little to save tokens and starving the model of the context it needed.
+
+## Chunking and evaluation
+
+Chunking is the most under-appreciated lever — it determines what retrieval can even return.
+Fixed-size windows are simple and sever meaning; semantic and structural chunking (by section,
+by function, by logical unit) preserve more but need document-aware processing. There's no
+universal answer, which is the point: **you have to evaluate it**, and evaluation is where RAG
+programs most often skip the hard part. Measure retrieval separately from generation — did the
+right chunks come back — because an answer can be wrong for retrieval reasons or generation
+reasons, and conflating them makes the system unimprovable. That measurement discipline is
+[verification and evaluation](../verification/).
+
+## Where this connects
+
+RAG rests on [embeddings and vector search](../vector-databases/), and its output is only
+trustworthy with [grounding and evaluation](../verification/). Retrieval as an adaptive step is
+[agent orchestration](../agent-orchestration/). And the whole pattern is
+[collection and sourcing](../../threat-intel/collection-sourcing/) for a machine reader — with
+the same failure mode, that a confident answer from bad sources is worse than no answer.

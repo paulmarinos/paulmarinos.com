@@ -1,0 +1,142 @@
+---
+title: Incident Response Operations
+description: Playbooks that survive contact, severity declaration, identity-centric containment as the fastest lever, and why cloud IR is a different discipline.
+pillar: dfir
+contentType: deep-dive
+maturity: practitioner
+frameworks: [NIST SP 800-61]
+cloud: [aws, azure, multi]
+relatedTo:
+  - dfir/investigation-method
+  - iam
+  - cloud-infra
+  - detection-eng/soar-automation
+updated: 2026-08-11
+sidebar:
+  order: 1
+---
+
+Incident response is the one security discipline practised under time pressure, with
+incomplete information, in front of people who want an answer now. Everything that is
+merely inconvenient on a normal day — unclear ownership, missing telemetry, an undocumented
+system — becomes expensive simultaneously.
+
+Which is why most of the work happens before the incident. A response capability is
+largely a set of decisions made in advance so that fewer have to be made badly at 2am.
+
+## The lifecycle, and where it actually bends
+
+NIST SP 800-61's phases — preparation, detection and analysis, containment/eradication/
+recovery, post-incident — are a sound scaffold and a poor description of a live incident,
+because real ones loop. You contain, discover the scope was wrong, return to analysis,
+contain again.
+
+The phase that decides the outcome is **preparation**, and it is measured concretely: do
+you have current asset ownership, is your logging retained long enough,
+[can you get the data](../../detection-eng/data-pipeline/), does anyone have authority to
+disconnect a production system at 3am without a meeting.
+
+## Severity declaration
+
+Severity is the most consequential early decision, because it determines who wakes up and
+how much disruption is authorised. Declare against defined, observable criteria rather than
+a feeling about badness:
+
+| Level | Criteria | Response |
+|---|---|---|
+| **Critical** | Confirmed compromise of production data, privileged identity, or a system whose loss stops the business | Full team, exec notified, disruption pre-authorised |
+| **High** | Confirmed compromise, contained blast radius | Core team, business hours plus on-call |
+| **Medium** | Suspected compromise, or confirmed on a low-value asset | Standard queue, defined SLA |
+| **Low** | Policy violation, unsuccessful attempt worth recording | Ticket |
+
+Two rules that prevent the common failures. **Severity can go up** — it is a working
+hypothesis, and teams under-declare far more often than they over-declare. And
+**declaration must be someone's explicit job**, or an incident spends its first hour being
+discussed rather than declared.
+
+Under-declaring is more dangerous than over-declaring, because early containment options
+close as an intruder progresses.
+
+## Incident command
+
+Above medium severity, separate the roles. One person coordinates and does not investigate;
+one keeps the timeline; the rest do technical work. This feels like overhead at three people
+and is essential at ten.
+
+The failure it prevents: the most senior technical responder becomes both the best
+investigator and the communications channel, and does neither well. Whoever is answering
+the executive's questions is not reading logs.
+
+## Containment, in order of speed
+
+**Identity actions are almost always the fastest and highest-value lever.** Revoking
+sessions, rotating credentials and disabling accounts cut access in seconds, across every
+system that trusts that identity — while host isolation addresses one machine at a time.
+For an intruder using [valid credentials](../../iam/), which is the common case, host
+containment can be nearly irrelevant.
+
+Sequencing that matters:
+
+- **Revoke sessions, don't just reset passwords.** A password reset with live tokens still
+  valid changes nothing. Token and refresh-token revocation is the actual control.
+- **Rotate what the credential could reach**, not just the credential. Access keys, service
+  principals, and anything in a secret store the identity could read.
+- **Preserve before you destroy.** Snapshot and capture memory *before* isolating or
+  rebuilding — see [order of volatility](../digital-forensics/). Rebuilding a host is how
+  the evidence of how they got in gets deleted.
+- **Watch for tripwires.** Aggressive containment tells a capable intruder they are seen.
+  Sometimes that's fine; sometimes it triggers destruction. That's a judgement call and
+  should be made deliberately, not by accident.
+
+Automated containment is [SOAR territory](../../detection-eng/soar-automation/), and the
+guardrails there apply with force: scope limits, asset criticality checks, and a tested
+undo.
+
+## Cloud IR is a different discipline
+
+The instincts from on-premise response mislead in cloud environments:
+
+- **You may never get the disk.** Managed services expose no host. Investigation runs on
+  control plane logs, and if [those weren't configured](../../cloud-infra/) organization-wide,
+  the evidence does not exist.
+- **Snapshot before terminate**, and remember autoscaling terminates instances on its own
+  schedule. Evidence evaporates without anyone deciding to destroy it.
+- **Blast radius follows IAM, not network.** Scoping means enumerating what the compromised
+  role could assume and reach — a permissions question, not a topology one.
+- **The control plane is the crown jewel.** An intruder with control plane access can create
+  their own persistence, disable logging, and exfiltrate without touching a host.
+
+## Communications
+
+Run a single timeline of facts with confidence levels attached, and update it rather than
+sending fresh narratives — divergent accounts across channels create their own incident.
+
+Distinguish what is **confirmed**, **suspected**, and **unknown**, in those words. Executives
+can work with "unknown, we'll know by 4pm"; they cannot work with an answer that turns out
+to have been a guess. Assume anything written may be read by counsel, a regulator, or
+opposing counsel later, and write accordingly — precisely, without speculation about blame.
+
+Regulatory clocks may already be running: notification deadlines are measured in hours in
+some regimes, and [that assessment](../evidence-legal/) should begin early rather than after
+technical work completes.
+
+## Postmortems
+
+The output is not a document, it is a set of owned changes. Write the timeline in the order
+things were *known*, not the order they occurred — that single discipline is what makes a
+retrospective blameless in substance rather than tone, because it shows why a reasonable
+person made the call they made.
+
+Then: what made this hard, what worked, what changes, who owns each change, by when.
+Actions without owners and dates are how the same incident recurs with a different date.
+
+The highest-value output goes back to [detection engineering](../../detection-eng/detection-lifecycle/)
+as backlog items — an incident is the highest-provenance detection idea available, because
+you know exactly what was visible and what wasn't.
+
+## Where this connects
+
+Containment is an [identity](../../iam/) operation before it is a host operation. Scoping
+depends on [architecture](../../cloud-infra/). Evidence preservation constrains everything
+here — see [digital forensics](../digital-forensics/) — and the reconstruction that answers
+"what happened" is [investigation method](../investigation-method/).

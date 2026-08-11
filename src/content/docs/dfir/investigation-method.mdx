@@ -1,0 +1,146 @@
+---
+title: Timeline & Investigation Method
+description: Super-timelines and pivoting, proving the boundary of a compromise rather than assuming it, and hypothesis discipline when the answer is wanted in an hour.
+pillar: dfir
+contentType: deep-dive
+maturity: advanced
+frameworks: [ICD 203]
+relatedTo:
+  - threat-intel/report-writing
+  - dfir/digital-forensics
+  - detection-eng/threat-hunting
+updated: 2026-08-11
+sidebar:
+  order: 3
+---
+
+Artefacts are not an investigation. Method is what turns a pile of evidence into a defensible
+account of what happened, and it is the part most likely to be skipped when everyone wants
+an answer within the hour.
+
+Two questions carry the weight: **what happened**, and **how far did it go**. The second is
+harder, gets less attention, and is where investigations most often go wrong.
+
+## Building a timeline
+
+A super-timeline merges every timestamped artefact — file system, execution, logs, identity,
+network — into one ordered sequence. Its value is that it makes correlation visible:
+a login, a process, a file write and an outbound connection within the same minute is a
+story that no single source tells.
+
+Practical discipline:
+
+- **Normalise to UTC immediately.** Mixed timezones produce false sequencing, and false
+  sequencing produces false causation.
+- **Record the source of every entry.** Different artefacts carry different reliability, and
+  you will need to defend individual entries.
+- **Timestamps are attacker-modifiable.** Corroborate anything load-bearing across
+  independent sources.
+- **Note the gaps.** A period with no entries is a finding — either nothing happened, or you
+  can't see it, and [those are different](../digital-forensics/).
+
+Pivoting is the core motion: from a suspicious process to its parent, to the file it wrote,
+to the account that ran it, to that account's other activity. Each pivot is a hypothesis
+about relatedness, and it should be recorded as such.
+
+## Root cause versus proximate cause
+
+The proximate cause is what you found first — the malware, the exfiltration, the alert. The
+root cause is why it was possible.
+
+> **Proximate:** a workstation ran a malicious macro.
+> **Deeper:** the user received it because a filtering rule had an exception.
+> **Root:** exceptions were added without review or expiry, and nobody owned the list.
+
+Stopping at the proximate cause produces remediation that prevents this exact incident.
+Reaching root cause produces remediation that prevents a class of them. The test: if your
+fix is "remove that malware", you haven't finished.
+
+The counterweight worth naming — root cause analysis can regress indefinitely toward
+"insufficient budget", which is true and useless. Stop at the deepest level where someone
+can own a change.
+
+## Establishing patient zero
+
+The first compromised asset anchors the timeline and bounds the investigation window. It is
+also frequently misidentified: the noisiest host is usually where the intruder ended up, not
+where they started.
+
+Work backwards from earliest confirmed activity, and keep asking what preceded it. The
+common failure is stopping when you find *a* plausible entry point — plausible is not
+confirmed, and a wrong patient zero produces a scope that is wrong in the direction that
+matters.
+
+## Scoping: proving the boundary
+
+This is the highest-stakes part of the work. Scope is a claim about the *boundary* of a
+compromise, and it is far easier to assume a boundary than to prove one.
+
+The failure is systematic: an intrusion is found on three hosts, those are remediated, the
+incident is closed, and the intruder returns through the access nobody looked for. The scope
+was an assumption presented as a conclusion.
+
+What proving looks like in practice:
+
+- **Enumerate what the compromised identity could reach**, not what you saw it reach.
+  Cloud blast radius follows [permissions](../../iam/), not network topology.
+- **Search for the behaviour everywhere**, not just where you found it. If the technique
+  worked once it likely worked elsewhere.
+- **Account for the whole timeline.** Quiet periods need explanation. Dwell time is usually
+  longer than first estimated.
+- **Check the persistence you'd use.** Enumerate the mechanisms available in the
+  environment and verify each, rather than only finding the ones that announced themselves.
+- **State residual uncertainty.** "We assess with moderate confidence the compromise was
+  limited to X, on the basis of Y; we could not verify Z" is a real conclusion. "Contained"
+  as an unqualified claim rarely is.
+
+## Hypothesis discipline under time pressure
+
+Investigations go wrong through premature commitment: an early theory becomes the frame, and
+subsequent evidence is read as confirming it. Pressure makes this worse, because a
+confident narrative is what everyone is asking for.
+
+Two countermeasures that cost little:
+
+**Hold competing hypotheses explicitly.** Write down two or three accounts consistent with
+the evidence, and record what would distinguish them. It converts "am I right" into "which
+test settles this", which is answerable.
+
+**Separate observation from inference in your notes.** "Process X ran at 14:02" is an
+observation. "The attacker ran X" is an inference. Keeping them visually distinct means a
+second reader — or you, tomorrow — can re-derive the conclusion rather than inherit it.
+
+Use [calibrated confidence language](../../threat-intel/report-writing/) from the start.
+Retrofitting confidence onto findings written as bare assertions never works, because the
+assertions have already been quoted.
+
+## Reproducible documentation
+
+The standard: a second analyst, given your notes and the same evidence, reaches the same
+conclusion — or identifies exactly where they diverge.
+
+That requires recording queries actually run (including those returning nothing — negative
+results are evidence), the source of each finding, the reasoning connecting evidence to
+conclusion, and what you did not check and why. The last is what makes the report honest,
+and it is what makes the *next* investigation cheaper.
+
+## The boundary with hunting
+
+Worth stating precisely, because the techniques are nearly identical.
+[Threat hunting](../../detection-eng/threat-hunting/) is discovery in an environment presumed
+healthy; investigation is reconstruction of an incident known to have occurred. The question
+differs, and so does the standard of proof: a hunt can end with "nothing found, here are the
+gaps", while an investigation must produce a defensible boundary.
+
+The blur is real during a long-running compromise, where hunting turns up something and
+becomes an investigation mid-query. The practical resolution is that **the activity changes
+discipline when an incident is declared** — same analyst, same tools, different obligations
+around evidence handling, documentation and scope proof.
+
+## Where this connects
+
+Method consumes [forensic artefacts](../digital-forensics/) and produces the account that
+[response](../incident-response/) acts on. Its rigour is
+[report writing](../../threat-intel/report-writing/) under time pressure. And its output is
+the highest-provenance input the
+[detection backlog](../../detection-eng/detection-lifecycle/) ever receives.

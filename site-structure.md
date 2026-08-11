@@ -549,7 +549,7 @@ The site's differentiator is the connective tissue. Candidate cross-section piec
 - Does AI/Automation split into "AI engineering" and "securing AI" once §6.6 fills out?
 - Where exactly is the Threat Intel (§1) / Detection Engineering (§7) boundary? Current split: §1 is analysis and communication of adversary knowledge, §7 is operationalizing it. Hunting (§7.5) is the blurriest case.
 - ~~Does Incident Response warrant its own pillar?~~ Resolved: graduated to §9 alongside forensics and malware analysis. §7 is now purely detection engineering.
-- Is threat hunting (§7.5) on the right side of the §7/§9 line? Current split: hunting is hypothesis-driven discovery against a healthy environment, forensics is reconstruction of a known incident. The boundary blurs during a long-running compromise.
+- ~~Is threat hunting (§7.5) on the right side of the §7/§9 line?~~ Resolved once both were written: hunting is discovery in an environment presumed healthy, investigation is reconstruction of a known incident. The blur during a long-running compromise resolves on declaration — the activity changes discipline when an incident is declared, taking on evidence-handling, documentation and scope-proof obligations. Same analyst, same tools, different standard. Stated in §7.5 and §9.3.
 - Does §10.6 (data governance for AI) stay in Data Security, or migrate to §6 as that pillar's "securing AI" half fills out?
 - Does IaC security live in §3.6 (as a scanning tool) or §8.5 (as a posture program)? Current split is tooling vs. programme; watch whether that holds as both fill out.
 

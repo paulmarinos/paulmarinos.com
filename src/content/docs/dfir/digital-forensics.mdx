@@ -1,0 +1,107 @@
+---
+title: Digital Forensics
+description: Order of volatility, what only memory will tell you, forensics in cloud environments where you never get the disk, and what absence of evidence is actually worth.
+pillar: dfir
+contentType: deep-dive
+maturity: advanced
+cloud: [aws, azure, multi]
+relatedTo:
+  - dfir/investigation-method
+  - cloud-infra
+  - detection-eng/data-pipeline
+updated: 2026-08-11
+sidebar:
+  order: 2
+---
+
+Forensics is the discipline of recovering what happened from what remains. Its constraint
+is that evidence decays continuously — some of it in seconds — and that most of the decay is
+caused by responders rather than adversaries.
+
+## Order of volatility
+
+Collect in order of how fast the evidence disappears. Getting this wrong destroys the most
+informative material first:
+
+1. **CPU registers and cache** — gone instantly, rarely practical
+2. **Memory** — lost on power-off; contains what exists nowhere else
+3. **Network state** — active connections, ARP, routing; seconds to minutes
+4. **Running processes** — the process list dies with the process
+5. **Disk** — durable, survives reboot
+6. **Logs shipped off-host** — durable, subject to retention
+7. **Backups and archives** — durable, slow to access
+
+The practical implication reverses the instinct of most responders: **capture memory before
+isolating the host**, because network isolation frequently prompts a reboot, and a reboot
+destroys tier 2 entirely.
+
+## Memory forensics
+
+Memory contains a category of evidence that exists nowhere else: injected code and
+fileless malware that never touched disk, decrypted configuration and keys, credentials
+cached by the OS, network connections already closed, and the command lines of processes
+that have since exited.
+
+Volatility is the standard toolkit. The workflow is consistent regardless of case: identify
+the profile, list processes and look for lineage that shouldn't exist, examine network
+artefacts, hunt injected regions, and extract suspicious sections for
+[malware analysis](../malware-analysis/).
+
+The recurring finding is a process whose *parent* is wrong — a browser spawning a shell, a
+document reader spawning a script interpreter. Lineage is usually more diagnostic than any
+individual binary.
+
+## Disk forensics
+
+Slower and durable. What it yields that memory does not: execution artefacts (prefetch,
+shimcache, amcache on Windows), file system timestamps across multiple attributes,
+deleted-but-recoverable content, and persistence mechanisms.
+
+Two cautions worth internalising. **Timestamps are attacker-modifiable** — timestomping is
+cheap, so corroborate across multiple timestamp attributes and independent sources rather
+than trusting one. And **write-blocking matters** when the evidence may be contested;
+mounting a volume read-write to "just check something" is how a defensible investigation
+stops being defensible.
+
+## Cloud and SaaS forensics
+
+The largest practical shift in the discipline, because the assumptions underneath disk
+forensics often don't hold.
+
+- **There may be no host.** Serverless and managed services expose no disk. The evidence is
+  control plane logs and whatever the service records — and if
+  [that wasn't configured in advance](../../cloud-infra/), it does not exist retroactively.
+- **Snapshot before anything terminates.** Autoscaling destroys instances on its own
+  schedule, so evidence disappears without anyone deciding to destroy it.
+- **Identity is the primary artefact.** Sign-in logs, token issuance, role assumption chains
+  and consent grants carry the story that process lists carry on-premise.
+- **SaaS gives you what the vendor logs.** Not what you'd like — audit log depth and
+  retention vary enormously, and are often a licensing tier rather than a technical limit.
+
+The uncomfortable consequence: cloud forensic capability is decided months earlier by
+[pipeline and architecture choices](../../detection-eng/data-pipeline/). By incident time,
+your evidence set is already fixed.
+
+## Anti-forensics, and what absence means
+
+Adversaries clear logs, timestomp, use fileless techniques, and delete tooling. This creates
+the analytical trap the discipline most needs discipline about: **absence of evidence is
+ambiguous**, and reading it as absence of activity is how investigations conclude wrongly.
+
+An empty log can mean nothing happened, logging wasn't enabled, the data aged out, the
+event went somewhere you didn't look, or someone cleared it. Those demand different
+responses, and distinguishing them is often possible: a *gap* in a log with continuous
+coverage either side is itself evidence, and log clearing usually leaves its own artefact.
+
+State the ambiguity explicitly in findings. "No evidence of exfiltration" and "evidence of
+no exfiltration" are entirely different claims, and only one of them is usually available.
+That distinction is [confidence language](../../threat-intel/report-writing/) doing real
+work under pressure.
+
+## Where this connects
+
+Acquisition sequence is constrained by [response operations](../incident-response/) —
+containment and preservation compete, and the order matters. What can be recovered at all is
+set by [pipeline and architecture](../../detection-eng/data-pipeline/) long beforehand.
+Extracted samples go to [malware analysis](../malware-analysis/), and the artefacts assemble
+into [a timeline](../investigation-method/).

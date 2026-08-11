@@ -1,0 +1,118 @@
+---
+title: Evidence Handling & Legal
+description: Chain of custody as a process rather than a form, legal hold and privilege, notification clocks that start before the investigation finishes, and working with external IR.
+pillar: dfir
+contentType: deep-dive
+maturity: foundational
+frameworks: [GDPR, NIS2]
+relatedTo:
+  - grc
+  - data-privacy
+  - dfir/incident-response
+updated: 2026-08-11
+sidebar:
+  order: 5
+---
+
+Most incidents never reach a courtroom, which is the reason evidence handling is treated as
+optional — and the reason it is missing on the one that does. The cost of a defensible
+process is small and paid during the incident; the cost of an indefensible one is paid
+later, by someone else, under conditions nobody controls.
+
+:::note[Not legal advice]
+This describes how technical responders work alongside legal, not what the law requires.
+Obligations vary by jurisdiction, sector and contract, and the specifics change. Involve
+counsel early and let them own the legal determinations.
+:::
+
+## Chain of custody
+
+Chain of custody is a process, not a form: an unbroken, documented account of who held each
+piece of evidence, when, and what they did to it. It exists to answer one question — could
+this have been altered?
+
+In practice:
+
+- **Record acquisition** — what, when (UTC), by whom, using what method and version.
+- **Hash at acquisition**, and verify after every transfer. A hash recorded at collection
+  and re-verified later is most of the argument.
+- **Work on copies.** The original is preserved and untouched; analysis happens on a
+  verified duplicate.
+- **Log every transfer** — who to whom, when, why.
+- **Restrict access**, and make access itself auditable.
+
+Sound acquisition order is [a forensics question](../digital-forensics/): capture volatile
+evidence first, because a defensible process that collected the wrong things in the wrong
+order is still an investigation that lost its evidence.
+
+## Legal hold and privilege
+
+**Legal hold** suspends routine deletion once litigation or investigation is reasonably
+anticipated. It is easy to breach without noticing — log rotation, backup expiry, and
+automated cleanup keep running unless someone stops them. The practical requirement is
+knowing which systems have automatic deletion and how to suspend it *before* you need to,
+because the deletion that matters usually happens quietly.
+
+This intersects directly with [retention and deletion](../../data-privacy/), and the tension
+is real: privacy programmes are engineered to delete data on schedule, and legal hold
+requires precisely the opposite for a defined scope. Both are compliance obligations, and
+resolving the conflict is a design problem rather than an incident-time one.
+
+**Privilege.** Organizations often run incident response under attorney-client privilege,
+with counsel engaging the responders. Whether that holds depends on jurisdiction and how the
+engagement is structured — it is not conferred by adding a header to a document.
+
+What responders need to know is narrower and practical: write as if the document will be
+read by opposing counsel. State facts and confidence, avoid speculation about blame, and
+don't editorialise about colleagues or prior decisions. This is the same discipline as
+[calibrated confidence language](../../threat-intel/report-writing/), for a different
+reader.
+
+## Notification clocks
+
+Regulatory notification deadlines frequently start before the investigation finishes, which
+creates the hardest tension in incident response: obligations run on the clock, and
+technical certainty arrives later.
+
+The structural points that hold across regimes:
+
+- **The clock usually starts at awareness**, not at confirmation. Deciding when you "became
+  aware" is a legal determination.
+- **Deadlines can be short** — hours in some sectors and jurisdictions.
+- **Multiple regimes can apply at once**, with different triggers and different clocks:
+  privacy regulators, sector regulators, contractual obligations to customers, and
+  securities disclosure.
+- **What was accessed drives the obligation**, which makes
+  [data classification](../../data-privacy/) an incident-response dependency. Knowing which
+  records were in a compromised store is the difference between a scoped notification and a
+  worst-case one.
+
+The practical move is to start the assessment early and in parallel with technical work,
+rather than treating it as a downstream step. Determine what regimes could apply and what
+would trigger them while the investigation is still running — see [GRC](../../grc/) for the
+regulatory landscape.
+
+## Working with counsel, law enforcement and external IR
+
+**Counsel** should be engaged early on anything plausibly notifiable. They own the legal
+determinations; you own the facts and their confidence levels. The failure mode is
+responders making legal calls implicitly — deciding something "isn't really a breach" is not
+a technical judgement.
+
+**Law enforcement** may help with attribution and infrastructure takedown, rarely with your
+recovery timeline. Engagement is a business decision with consequences: it may constrain
+what you can disclose and when.
+
+**External IR firms** are usually retained for surge capacity or specialist skill. Two things
+determine whether that goes well, and both are pre-incident: a retainer agreed in advance
+(negotiating scope and rates mid-incident is expensive and slow), and access arrangements
+that don't require inventing an onboarding process on day one.
+
+## Where this connects
+
+Evidence handling constrains [response operations](../incident-response/) — preservation and
+containment compete, and the order is a decision. Acquisition technique is
+[forensics](../digital-forensics/). Notification obligations rest on
+[data classification](../../data-privacy/) and the regulatory landscape in
+[GRC](../../grc/), which is also where the legal-hold-versus-deletion conflict has to be
+designed out rather than discovered.

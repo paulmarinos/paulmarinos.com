@@ -1,0 +1,110 @@
+---
+title: Multi-Cloud & Federation
+description: What SAML, OIDC and SCIM each actually do, federation patterns that avoid standing credentials, and machine-to-machine auth beyond the shared secret.
+pillar: iam
+contentType: deep-dive
+maturity: practitioner
+cloud: [aws, azure, gcp, multi]
+frameworks: [SAML, OIDC, SCIM, OAuth2]
+relatedTo:
+  - iam/aws-identity
+  - appsec/cicd-security
+  - cloud-infra
+updated: 2026-08-11
+sidebar:
+  order: 3
+---
+
+Once an organization has more than one cloud and more than one SaaS application, the
+interesting identity questions stop being "how do I configure IAM here" and become "how do
+identities flow between systems that don't share a directory." The answer is a small set of
+protocols people routinely confuse, and confusing them produces real misconfigurations.
+
+## SAML, OIDC, SCIM — how they actually differ
+
+They get lumped together as "SSO stuff." They do different jobs:
+
+- **SAML** — authentication via signed XML assertions. The mature enterprise SSO protocol:
+  the identity provider vouches for the user to a service provider. Verbose, XML, and the
+  signature is load-bearing — most SAML vulnerabilities are signature-handling flaws (unsigned
+  assertions accepted, signature wrapping, comment-injection into the parsed NameID).
+- **OIDC** — authentication layered on OAuth 2.0, using signed JSON tokens (JWTs). The modern
+  default, especially for new applications and APIs. Same job as SAML — prove who the user is —
+  with better ergonomics for mobile and API contexts.
+- **OAuth 2.0** — *authorization*, not authentication, and conflating the two is the classic
+  error. OAuth grants an application access to resources on a user's behalf; it does not, by
+  itself, tell you who the user is. OIDC exists precisely because people were misusing OAuth as
+  authentication.
+- **SCIM** — provisioning, not login at all. It syncs identity *lifecycle* — create, update,
+  deactivate users — from a source of truth to downstream applications. It's the plumbing that
+  makes [joiner/mover/leaver](../frameworks/) work across systems, and its absence is why
+  deprovisioning is the step organizations most often miss.
+
+The one-line map: **SAML and OIDC prove who you are, OAuth grants access to things, SCIM keeps
+the account list in sync.** Findings cluster where these are mixed up — OAuth used as
+authentication, or SCIM missing so deactivated users keep access downstream.
+
+## Federated access patterns
+
+The goal of federation is a single identity source with **no standing credentials** in the
+downstream systems. The winning pattern everywhere is short-lived, exchanged credentials
+rather than stored ones:
+
+- **Human access** — a central IdP (Entra, Okta, Google) federates into each cloud's console
+  and CLI via SAML/OIDC. One place to enforce MFA, one place to deprovision, and no per-cloud
+  passwords.
+- **Workload access** — [OIDC federation](../../appsec/cicd-security/): a workload presents a
+  signed token proving its identity, and the target cloud exchanges it for temporary
+  credentials. This is what replaces the long-lived access key, and it's the single
+  highest-value federation pattern because it removes the credential that would otherwise leak.
+- **Cross-cloud** — the same token-exchange idea between providers, so a workload in one cloud
+  reaches another without a stored secret.
+
+The through-line is the same as [AWS temporary credentials](../aws-identity/): a credential
+that expires on its own beats one that's valid until someone notices it leaked. Federation is
+that principle applied across trust boundaries.
+
+## Secrets management
+
+Even with federation, some secrets remain — database passwords, third-party API keys, signing
+material. The discipline is that secrets live in a purpose-built store (HashiCorp Vault, AWS
+Secrets Manager, Azure Key Vault, GCP Secret Manager), never in code, config files, or
+[environment variables committed to git](../../appsec/insecure-coding/).
+
+What a real secrets store buys beyond "not in the repo":
+
+- **Dynamic secrets** — generated on demand, scoped, and short-lived, so there's no long-lived
+  shared password to steal. The Vault pattern, and the strongest version of the idea.
+- **Rotation** without a code change or redeploy.
+- **Audit** — every access logged, which turns secret retrieval into a
+  [detection signal](../../detection-eng/).
+- **Access via [identity](../aws-identity/)**, not a bootstrap secret — the workload
+  authenticates as itself to fetch what it needs.
+
+The honest note: a secrets manager still has a **bootstrap problem** — the workload needs *some*
+identity to authenticate to the store. Federation and managed identity are what solve it
+cleanly; a secret used to fetch secrets has only moved the problem.
+
+## Machine-to-machine auth and mTLS
+
+Service-to-service authentication is where "just use an API key" quietly becomes the weakest
+link, because that key is a long-lived shared secret sitting in configuration.
+
+- **mTLS** — both sides present certificates, so authentication is mutual and identity-bound.
+  The certificate *is* the identity, and a [service mesh](../../cloud-infra/) can manage
+  issuance and rotation so it doesn't become an operational burden.
+- **OAuth client credentials** — the token-based equivalent for service-to-service, with the
+  same short-lived-over-standing advantage.
+- **Workload identity** — the cleanest option where available: the platform issues the
+  identity, so there's no secret to provision at all.
+
+The direction of travel across all of these is the same: replace the standing shared secret
+with a short-lived, identity-bound, rot-able credential.
+
+## Where this connects
+
+Workload federation is [OIDC in the pipeline](../../appsec/cicd-security/), and the
+short-lived-credential logic is [AWS](../aws-identity/) and [Azure](../azure-identity/) applied
+across boundaries. Secret access is a [detection](../../detection-eng/) signal and a
+[cloud-architecture](../../cloud-infra/) concern. And federation for *non-human, autonomous*
+actors is where this runs out of road — that's [Frameworks](../frameworks/).

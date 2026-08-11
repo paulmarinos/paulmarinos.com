@@ -1,0 +1,115 @@
+---
+title: AWS Identity
+description: How IAM policy evaluation actually resolves, why iam:PassRole is the privesc primitive, and the misconfigurations that turn a foothold into account takeover.
+pillar: iam
+contentType: deep-dive
+maturity: practitioner
+cloud: [aws]
+attack: [T1078, T1548]
+relatedTo:
+  - iam/frameworks
+  - pentest/cloud-pentesting
+  - cloud-infra
+updated: 2026-08-11
+sidebar:
+  order: 1
+---
+
+AWS IAM is the control plane for everything in an AWS account, which makes its
+misconfigurations the highest-leverage findings in the environment. The difference between
+"an attacker got a foothold" and "an attacker owns the account" is almost always a chain of
+IAM permissions followed in the right order.
+
+Understanding it starts with one thing most people skip: how a policy decision is actually
+reached.
+
+## Policy evaluation logic
+
+When a principal makes a request, AWS evaluates every applicable policy and resolves them in
+a fixed order. The order is the whole game, because it determines what can override what:
+
+1. **Explicit `Deny`** — anywhere, in any policy type, wins immediately. Nothing overrides it.
+2. **Service Control Policies (SCPs)** — the [organization guardrail](../../cloud-infra/). An
+   action not permitted by SCP is denied regardless of what the account grants.
+3. **Permission boundaries** — a ceiling on what an identity policy can grant.
+4. **Identity and resource policies** — the actual grants. Access requires an `Allow` here and
+   no `Deny` above.
+
+The mental model: **deny by default, explicit deny always wins, and every layer can only take
+away.** An `Allow` is necessary but never sufficient — it can be overridden by any `Deny`, any
+SCP, or a boundary above it. This is [fail-closed design](../../appsec/secure-coding/)
+implemented as an authorization engine, and reasoning about access without knowing the order
+produces confident wrong conclusions.
+
+## Roles, users, and why temporary credentials win
+
+- **Users** are long-lived identities with long-lived credentials — access keys that don't
+  rotate unless someone rotates them. Every one is a standing liability.
+- **Roles** are assumed temporarily via STS, yielding short-lived credentials that expire.
+  Nothing persistent to steal.
+
+The security argument is decisive: **prefer roles and temporary credentials everywhere.** A
+leaked access key is valid until someone notices and revokes it; leaked STS credentials expire
+on their own. Long-lived access keys — especially unrotated ones — are among the most common
+serious findings, and the fix is architectural: use roles, and for the build system use
+[OIDC federation](../../appsec/cicd-security/) so no key exists to leak.
+
+## Cross-account trust and the confused deputy
+
+A role's trust policy says who may assume it. Get it wrong and you've handed the role away.
+
+The **confused deputy** is the classic failure: a role trusts a third-party service (say a
+monitoring vendor) to assume it, but the trust policy doesn't pin *which customer's* instance
+of that service. Another customer of the same vendor can then assume your role. The fix is the
+**`ExternalId`** condition — a shared secret proving the assumption is on your behalf — and its
+absence in a cross-account trust policy is a finding every time.
+
+The general rule: **a trust policy is as much an authorization decision as any permission
+policy**, and an over-broad one (`Principal: *`, or an unpinned account) is a door with no
+lock.
+
+## The misconfigurations that chain
+
+Cloud privilege escalation is composition — no single permission is the bug, the *sequence*
+is. The primitives that recur:
+
+- **`iam:PassRole` + a compute service.** The dominant AWS privesc. Permission to pass a role
+  to EC2, Lambda, or ECS, plus permission to launch that compute, means inheriting any role
+  you can pass. It usually looks like a legitimate deployment permission, which is why it
+  survives review.
+- **Policy manipulation.** `iam:CreatePolicyVersion`, `iam:AttachUserPolicy`, or editing an
+  assumable role's trust — permission to change permissions is permission to grant yourself
+  anything.
+- **Wildcard actions.** `Action: "*"` or `s3:*` on `Resource: "*"` grants far more than
+  intended and is the raw material most escalation chains start from.
+- **Unrotated access keys** as the initial foothold — the leaked credential that shouldn't
+  still be valid.
+
+These are the paths [cloud pentesting](../../pentest/cloud-pentesting/) enumerates and chains;
+this is the same map read defensively. The one to internalize is `iam:PassRole` — if you learn
+to spot one privesc primitive, make it that one.
+
+## Solutions that actually scale
+
+- **Permission boundaries** cap what an identity policy can grant, so delegating IAM
+  administration doesn't mean delegating unlimited privilege.
+- **SCPs** enforce guardrails org-wide — deny whole regions, deny disabling CloudTrail, deny
+  root actions. This is [architecture, not identity](../../cloud-infra/), and it's the layer
+  that survives a mistake at the account level.
+- **Access Analyzer** finds resources shared outside the account and, more usefully, generates
+  least-privilege policies from observed CloudTrail activity — least privilege derived from
+  what was actually used, not guessed.
+- **Least privilege from CloudTrail.** The honest way to right-size a policy: grant broadly,
+  observe real usage, then scope to it. Guessing the permission set up front produces either
+  over-grant or a stream of access-denied tickets.
+
+The recurring theme: the tools exist and the failure is not turning them on. An unrotated key,
+a wildcard action, an unpinned trust policy — none are subtle, and all are everywhere.
+
+## Where this connects
+
+These misconfigurations are what [cloud pentesting](../../pentest/cloud-pentesting/) exploits
+and what [cloud architecture](../../cloud-infra/) constrains with boundaries and SCPs. The
+temporary-credential argument is [OIDC in the build pipeline](../../appsec/cicd-security/), and
+the fail-closed evaluation order is [secure-coding](../../appsec/secure-coding/) at platform
+scale. Where identity for *non-human* actors goes next is [Frameworks](../frameworks/).

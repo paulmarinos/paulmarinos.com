@@ -1,0 +1,100 @@
+---
+title: Governance of Identity
+description: Joiner/mover/leaver automation, entitlement review that survives scale, and identity threat detection — the operational discipline that keeps access matching reality.
+pillar: iam
+contentType: deep-dive
+maturity: practitioner
+relatedTo:
+  - iam/multi-cloud-federation
+  - grc
+  - detection-eng/threat-hunting
+updated: 2026-08-11
+sidebar:
+  order: 5
+---
+
+Everything else in this pillar is about configuring access correctly. Governance is about
+keeping it correct as thousands of people and workloads join, change roles, and leave over
+years. Without it, access only accumulates — nobody's permissions ever shrink — and the
+environment drifts toward a state where everyone can reach everything and nobody can say why.
+
+This is the operational, unglamorous half of identity, and it's where most real-world identity
+risk actually lives. It's also the placeholder the site structure marks for expansion.
+
+## Joiner / mover / leaver
+
+The lifecycle every identity follows, and each transition is a distinct failure mode:
+
+- **Joiner** — new identity, appropriate access. The failure is over-provisioning at the start:
+  cloning a similar user's access, which copies their accumulated cruft on day one.
+- **Mover** — role change. The **most-neglected** transition and the source of the worst drift.
+  People change teams and *gain* new access without *losing* the old — "privilege creep." After
+  a few moves, a long-tenured employee holds access matching no current role, and that
+  over-entitled account is exactly what an attacker wants.
+- **Leaver** — departure, all access revoked. Conceptually simple, operationally leaky: the
+  forgotten SaaS app with local accounts, the personal access token, the shared credential, the
+  access in a system that [SCIM](../multi-cloud-federation/) doesn't reach.
+
+Automation is the only thing that makes this reliable at scale, driven from an authoritative
+source (usually HR) through [SCIM](../multi-cloud-federation/) to downstream systems. The
+mover case is the one worth engineering hardest, because it's the one manual processes handle
+worst — nobody files a ticket to *remove* the access they no longer need.
+
+## Entitlement review at scale
+
+Access recertification — periodically confirming people should still have what they have —
+is a real control and a real failure mode. Done badly it's rubber-stamping: a manager handed a
+list of 400 entitlements they don't understand approves all of them in one click, and the
+review has produced a compliance artifact and zero security.
+
+What makes review meaningful rather than theatrical:
+
+- **Risk-based scope.** Review privileged and sensitive access often and carefully; low-risk
+  access rarely. Reviewing everything equally guarantees everything is reviewed carelessly —
+  the same [prioritization](../../threat-intel/risk-prioritization/) logic as everywhere else.
+- **Comprehensible context.** "Sarah has `prod-db-admin`, last used 6 months ago" enables a
+  decision; a raw role name does not.
+- **Highlight the anomalies.** Surface the outliers — access nobody else on the team has, access
+  never used, access that predates the person's current role. Those are where the review earns
+  its cost.
+- **Revocation that works.** A review that flags access for removal and doesn't reliably remove
+  it is worse than none, because it manufactures false assurance.
+
+## Identity Threat Detection and Response (ITDR)
+
+Because [identity is the primary attack surface](../../detection-eng/data-pipeline/), it needs
+its own detection discipline — and it sits at the seam between this pillar and
+[detection engineering](../../detection-eng/). ITDR watches the identity fabric itself:
+
+- **Authentication anomalies** — impossible travel, new-infrastructure logins, MFA fatigue
+  patterns, token replay.
+- **Privilege changes** — role grants, new admin assignments, trust-policy edits, especially
+  outside a change process.
+- **Directory attacks** — the [Entra and AD techniques](../../pentest/cloud-pentesting/) —
+  enumeration, consent-grant abuse, sync-account misuse.
+- **Dormant-account activity** — an unused account waking up is one of the higher-signal events
+  in security, precisely because it should never happen.
+
+ITDR overlaps [threat hunting](../../detection-eng/threat-hunting/) heavily: identity is the
+richest hunting ground, for the same reason it's the richest detection surface — most
+intrusions transit it, and the behavioural signals (a service account behaving interactively,
+a human account behaving programmatically) are exactly what rules struggle with and analysts
+catch.
+
+## Governance is where identity meets compliance
+
+Joiner/mover/leaver, access review, and least privilege are control requirements in
+[every compliance framework](../../grc/) — SOC 2, ISO 27001, FedRAMP all mandate them. That's
+an opportunity, not just an obligation: the identity governance you build for security produces
+the [evidence](../../grc/) an auditor needs, generated as a byproduct rather than assembled
+before each audit. Identity is where a lot of "compliance as code" actually pays off, because
+the access data is already structured and already being collected.
+
+## Where this connects
+
+Governance operationalizes [AWS](../aws-identity/) and [Azure](../azure-identity/) identity —
+PIM, Access Reviews and least-privilege generation are governance tools. It rests on
+[SCIM provisioning](../multi-cloud-federation/), feeds [detection](../../detection-eng/threat-hunting/)
+through ITDR, and produces [GRC](../../grc/) evidence as a byproduct. And governing the lifecycle
+of *autonomous agent* identities — at machine speed and scale — is the open problem in
+[Frameworks](../frameworks/).

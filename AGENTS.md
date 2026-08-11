@@ -54,6 +54,11 @@ Personal site for paulmarinos.com — Astro + Starlight, deployed to GitHub Page
   defined" and killed the graph script before it could draw, leaving the skeleton
   placeholder visible. It was there for two glob tests, so it is replaced with a small
   browser-safe glob-to-RegExp compiler (also drops a Node library from the client bundle).
+  A fifth hunk changes `updateCenterTransform` in `components/graph/simulator.ts` to centre
+  the graph's bounding box instead of the current page's node. The stock behaviour pins the
+  current node to the middle, which leaves the cluster leaning whenever that node is not
+  itself central — 48px of lean on a 608px box, with lopsided margins. Margins are now
+  symmetric to the pixel on every page, and the current node keeps its own highlight.
   A fourth hunk lowers the Pixi `resolution` in `components/graph/renderer.ts` from 4 to 2.
   At 4 the backing store is 16x the CSS area, so a content-width graph runs to several
   megapixels and silently fails to draw on software renderers and low-end GPUs — which is

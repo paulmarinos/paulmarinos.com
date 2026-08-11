@@ -84,6 +84,42 @@ index 2a7c42d..bda4730 100644
  			resizeTo: this.container,
  		} as PIXI.ApplicationOptions);
  		this.container.appendChild(this.app.canvas);
+diff --git a/node_modules/starlight-site-graph/components/graph/simulator.ts b/node_modules/starlight-site-graph/components/graph/simulator.ts
+index 79cdefa..a0b9944 100644
+--- a/node_modules/starlight-site-graph/components/graph/simulator.ts
++++ b/node_modules/starlight-site-graph/components/graph/simulator.ts
+@@ -311,7 +311,30 @@ export class GraphSimulator {
+ 		let x;
+ 		let y;
+ 
+-		if (this.currentNode) {
++		// Centre the graph's bounding box rather than the current page's node.
++		// Pinning the current node to the middle leaves the cluster leaning
++		// whenever that node is not itself central — measured at 48px of lean on a
++		// 608px box for a typical pillar page, with uneven margins either side.
++		// The current node keeps its own highlight, so "you are here" is not lost.
++		const bounds = this.nodes.length ? this.nodes.reduce(
++			(acc, n) => {
++				if (!Number.isFinite(n.x) || !Number.isFinite(n.y)) return acc;
++				acc.minX = Math.min(acc.minX, n.x!);
++				acc.maxX = Math.max(acc.maxX, n.x!);
++				acc.minY = Math.min(acc.minY, n.y!);
++				acc.maxY = Math.max(acc.maxY, n.y!);
++				acc.ok = true;
++				return acc;
++			},
++			{ minX: Infinity, maxX: -Infinity, minY: Infinity, maxY: -Infinity, ok: false },
++		) : { ok: false } as { minX: number; maxX: number; minY: number; maxY: number; ok: boolean };
++
++		if (bounds.ok) {
++			const centreX = (bounds.minX + bounds.maxX) / 2;
++			const centreY = (bounds.minY + bounds.maxY) / 2;
++			x = this.container.clientWidth / (2 * this.scale) - this.scale * centreX;
++			y = this.container.clientHeight / (2 * this.scale) - this.scale * centreY;
++		} else if (this.currentNode) {
+ 			x = this.container.clientWidth / (2 * this.scale) - this.scale * this.currentNode.x!;
+ 			y = this.container.clientHeight / (2 * this.scale) - this.scale * this.currentNode.y!;
+ 		} else {
 diff --git a/node_modules/starlight-site-graph/config/index.ts b/node_modules/starlight-site-graph/config/index.ts
 index 8a38bbf..5c59fc0 100644
 --- a/node_modules/starlight-site-graph/config/index.ts

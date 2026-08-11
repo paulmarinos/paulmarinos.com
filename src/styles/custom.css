@@ -25,17 +25,27 @@
 /*
  * Graph + backlinks placement.
  *
- * 72rem is Starlight's own breakpoint for the right sidebar (see
- * TwoColumnContent.astro). Above it the panels live in the sidebar; below it
- * the sidebar is gone, so the copies rendered in Footer.astro take over.
- * Exactly one copy is visible at any width.
+ * The graph lives at the bottom of the content column at every width, spanning
+ * the full content measure. Backlinks live in the right sidebar on wide screens
+ * and move into the footer once Starlight hides that sidebar below 72rem — its
+ * own breakpoint, from TwoColumnContent.astro. Exactly one copy of the backlinks
+ * is visible at any width.
+ *
+ * `--slsg-graph-width` is the plugin's own variable; setting it to 100% makes the
+ * graph fill the content column instead of the 250px sidebar default.
  */
-.slsg-mobile-panels {
-	display: grid;
-	gap: 1.5rem;
+.slsg-page-graph {
 	margin-block: 2.5rem 1rem;
 	padding-top: 2rem;
 	border-top: 1px solid var(--sl-color-hairline, var(--border));
+	--slsg-graph-width: 100%;
+	--slsg-graph-height: 24rem;
+}
+
+.slsg-mobile-panels {
+	display: grid;
+	gap: 1.5rem;
+	margin-block: 1.5rem 1rem;
 }
 
 @media (min-width: 72rem) {
@@ -44,32 +54,17 @@
 	}
 }
 
-/* The splash landing page renders its own graph inline (see index.mdx), and it
-   has no right sidebar at any width — so the footer copy would be a duplicate
-   on narrow screens. `data-has-hero` is Starlight's marker for splash pages. */
-:root[data-has-hero] .slsg-mobile-panels {
-	display: none;
+/* Shorter graph on narrow screens, where 24rem eats the viewport. */
+@media (max-width: 50rem) {
+	.slsg-page-graph {
+		--slsg-graph-height: 18rem;
+	}
 }
 
-/* Give the graph a usable height on narrow screens — the sidebar sizing is
-   tuned for a narrow column and reads as a sliver at full width.
-   The plugin sizes the graph off `--slsg-graph-height` (default 250px); the
-   element's class is `slsg-graph-component`, not `graph-component`. */
-.slsg-mobile-panels .slsg-graph-panel {
-	--slsg-graph-height: 20rem;
-}
-
-/* The landing page is splash-templated: no sidebar and no footer panels, so it
-   renders its own graph inline (see index.mdx).
-   Height is safe to override; width is NOT. The renderer only draws correctly at
-   the plugin's default `--slsg-graph-width` (250px) — any other value, percentage
-   or length, produces an empty canvas, and a resize does not recover it. So the
-   graph is centred at its native width rather than stretched. Use the fullscreen
-   control in the graph for a large view. */
 .slsg-landing-graph {
-	--slsg-graph-height: 22rem;
-	display: flex;
-	justify-content: center;
+	--slsg-graph-width: 100%;
+	--slsg-graph-height: 24rem;
+	display: block;
 	margin-top: 1rem;
 }
 

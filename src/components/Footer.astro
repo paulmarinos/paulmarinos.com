@@ -1,26 +1,40 @@
 ---
 /**
- * Footer override — carries the mobile rendering of the graph and backlinks.
+ * Footer override — carries the page graph, and the mobile copy of backlinks.
  *
- * Starlight hides the right sidebar below 72rem, which took the graph with it.
- * The footer renders inside the main column at every width, so the panels go
- * here and CSS shows them only below that breakpoint (see custom.css). Above
- * it, PageSidebar.astro is responsible and this block is hidden — so exactly
- * one copy is ever visible.
+ * The graph renders here at every width rather than in the right sidebar, so it
+ * gets the full content measure instead of a ~250px column. It sits after the
+ * article body and before the default footer (pagination, edit link, last
+ * updated), so the reading order is content -> graph -> backlinks -> navigation.
+ *
+ * Backlinks are the opposite: they live in the right sidebar on wide screens
+ * (PageSidebar.astro) and only appear here once that sidebar is hidden below
+ * 72rem. See custom.css — exactly one copy is visible at any width.
  */
 import Default from '@astrojs/starlight/components/Footer.astro';
 import { PageGraph, PageBacklinks } from 'starlight-site-graph/components';
+
+// The splash landing page renders its own graph inline as "The map" (index.mdx).
+// Skipping these at render time rather than hiding them in CSS avoids booting a
+// second WebGL context on that page purely to keep it invisible.
+const isSplash = Astro.locals.starlightRoute?.entry?.data?.template === 'splash';
 ---
 
-<div class="slsg-mobile-panels not-content">
+{!isSplash && (
+<div class="slsg-page-graph not-content">
 	<PageGraph class="slsg-graph-panel">
 		<h2 slot="title">{Astro.locals.t('starlight-site-graph.graph')}</h2>
 	</PageGraph>
+</div>
+)}
 
+{!isSplash && (
+<div class="slsg-mobile-panels not-content">
 	<PageBacklinks class="slsg-backlinks-panel">
 		<h2 slot="title">{Astro.locals.t('starlight-site-graph.backlinks')}</h2>
 	</PageBacklinks>
 </div>
+)}
 
 <Default>
 	<slot />

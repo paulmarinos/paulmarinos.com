@@ -1,28 +1,20 @@
 ---
 /**
- * Right-sidebar override.
+ * Right-sidebar override: table of contents, then backlinks.
  *
- * `starlight-site-graph` ships its own PageSidebar that renders the graph
- * *above* the table of contents. "On this page" is the primary navigation aid,
- * so it comes first here and the graph and backlinks sit underneath it.
+ * The graph is deliberately NOT here. It lives at the bottom of the content
+ * column at every width (see Footer.astro) so it can use the full content
+ * measure — in a ~250px sidebar the labels overlap and clip.
  *
- * The plugin's own override is disabled via `overridePageSidebar: false` in
- * astro.config.mjs, so this file is the only PageSidebar in play.
- *
- * This whole column is hidden by Starlight below 72rem — the mobile rendering
- * of the graph lives in Footer.astro instead.
+ * The plugin's own PageSidebar is disabled via `overridePageSidebar: false`.
  */
 import Default from '@astrojs/starlight/components/PageSidebar.astro';
-import { PageGraph, PageBacklinks } from 'starlight-site-graph/components';
+import { PageBacklinks } from 'starlight-site-graph/components';
 ---
 
 <Default>
 	<slot />
 </Default>
-
-<PageGraph class="right-sidebar-panel slsg-graph-panel">
-	<h2 slot="title">{Astro.locals.t('starlight-site-graph.graph')}</h2>
-</PageGraph>
 
 <PageBacklinks class="right-sidebar-panel slsg-backlinks-panel">
 	<h2 slot="title">{Astro.locals.t('starlight-site-graph.backlinks')}</h2>

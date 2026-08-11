@@ -54,12 +54,21 @@ Personal site for paulmarinos.com — Astro + Starlight, deployed to GitHub Page
   defined" and killed the graph script before it could draw, leaving the skeleton
   placeholder visible. It was there for two glob tests, so it is replaced with a small
   browser-safe glob-to-RegExp compiler (also drops a Node library from the client bundle).
-- **Do not override `--slsg-graph-width`.** The renderer only draws correctly at the
-  plugin's 250px default; any other value — percentage or explicit length — produces an
-  empty canvas, and a resize event does not recover it. `--slsg-graph-height` is safe to
-  override, and is used for the mobile and landing-page copies. The landing graph is
-  therefore centred at its native width rather than stretched; fullscreen is the large view.
-  Verified in a headless browser, not by grep: this class of bug is invisible in the HTML.
+  A fourth hunk lowers the Pixi `resolution` in `components/graph/renderer.ts` from 4 to 2.
+  At 4 the backing store is 16x the CSS area, so a content-width graph runs to several
+  megapixels and silently fails to draw on software renderers and low-end GPUs — which is
+  what made every attempt to widen the graph produce a blank canvas. At 2 it is still beyond
+  retina density for this content.
+- **Graph placement.** The graph renders at the bottom of the content column at every width
+  (`src/components/Footer.astro`), spanning the full content measure via
+  `--slsg-graph-width: 100%`. It is deliberately not in the right sidebar — at ~250px the
+  node labels overlap and clip. Backlinks are the mirror image: right sidebar on wide
+  screens (`PageSidebar.astro`), footer below 72rem. The splash landing page renders its own
+  graph inline as "The map" in `index.mdx`, and `Footer.astro` skips both blocks there via
+  `template === 'splash'` — at render time rather than in CSS, so that page does not boot a
+  second WebGL context only to hide it.
+  Invariant: exactly one graph and one backlinks panel visible at any width. Verify in a
+  headless browser, not by grep — this class of bug is invisible in the HTML.
 - **Panel placement is ours, not the plugin's.** `overridePageSidebar: false` disables the
   plugin's own right-sidebar override. `src/components/PageSidebar.astro` renders the table
   of contents first, then graph, then backlinks. `src/components/Footer.astro` renders a

@@ -67,6 +67,23 @@ index 454814d..23a23c0 100644
  			return !pattern.startsWith('!');
  		}
  	}
+diff --git a/node_modules/starlight-site-graph/components/graph/renderer.ts b/node_modules/starlight-site-graph/components/graph/renderer.ts
+index 2a7c42d..bda4730 100644
+--- a/node_modules/starlight-site-graph/components/graph/renderer.ts
++++ b/node_modules/starlight-site-graph/components/graph/renderer.ts
+@@ -39,7 +39,11 @@ export class GraphRenderer {
+ 		await this.app.init({
+ 			antialias: true,
+ 			backgroundAlpha: 0,
+-			resolution: Object.keys(this.context.sitemap).length > 5000 ? 2 : 4,
++			// Resolution 4 allocates a backing store 16x the CSS area, which puts a
++			// content-width graph into the multi-megapixel range and fails to draw
++			// (blank canvas) on software renderers and low-end GPUs. 2 is already
++			// beyond retina density for this content and keeps labels crisp.
++			resolution: Math.min(2, Math.max(1, globalThis.devicePixelRatio || 1) * 2),
+ 			resizeTo: this.container,
+ 		} as PIXI.ApplicationOptions);
+ 		this.container.appendChild(this.app.canvas);
 diff --git a/node_modules/starlight-site-graph/config/index.ts b/node_modules/starlight-site-graph/config/index.ts
 index 8a38bbf..5c59fc0 100644
 --- a/node_modules/starlight-site-graph/config/index.ts

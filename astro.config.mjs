@@ -3,6 +3,7 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import starlightThemeBlack from 'starlight-theme-black';
 import starlightSiteGraph from 'starlight-site-graph';
+import starlightLinksValidator from 'starlight-links-validator';
 
 // The ten pillars. Order here is the order in the sidebar; `color` is the graph
 // node colour, following the plugin's red -> purple ramp in sidebar order.
@@ -89,6 +90,28 @@ export default defineConfig({
 						linkDistance: 150,
 					},
 					sitemapConfig: {
+						// The backlinks panel lists inbound pages, and its anchors were
+						// being counted as *outbound* edges — invisible while every pillar's
+						// inbound and outbound sets are identical, but it would make the
+						// arrows meaningless as soon as articles exist. The Related block
+						// is deliberately not excluded: those links are meant to be edges.
+						ignoreLinksInSelectors: [
+							'header',
+							'footer',
+							'nav',
+							'.right-sidebar',
+							'.site-title',
+							'.slsg-backlinks-panel',
+							// theme-black renders the whole sidebar again as a <div
+							// class="mobile-nav">, not a <nav>, so the tag-based exclusion
+							// above misses it and every page gained an edge to every pillar.
+							// Invisible on pillar pages, which already link to all the
+							// others; wrong on articles.
+							'.mobile-nav',
+							// theme-black's Pagination override renders prev/next outside
+							// <footer>, so "next page" was becoming a content edge too.
+							'.nav-buttons',
+						],
 						// One colour per pillar, driven by the table above.
 						// Globs are written both bare and `**/`-prefixed so they match
 						// whether or not a base path is prepended to the node key.
@@ -103,6 +126,25 @@ export default defineConfig({
 							pillars.map(({ dir }) => [dir, [`${dir}/**`, `**/${dir}/**`]]),
 						),
 					},
+				}),
+				// Fails the build on broken internal links. This is what gives
+				// `relatedTo` referential integrity — the content schema only checks
+				// that at least one entry points outside the article's own pillar, not
+				// that the target exists.
+				starlightLinksValidator({
+					// Internal links are written relative (`../iam/`) on purpose: markdown
+					// links are not base-prefixed by Astro, so absolute ones would 404
+					// under the temporary /paulmarinos.com preview base.
+					//
+					// Known gap, measured rather than assumed: with this false the plugin
+					// *skips* relative links rather than resolving them, and with it true
+					// it rejects them for being relative regardless of whether they
+					// resolve. So prose links are effectively unvalidated while the base
+					// path exists. Absolute links are still checked, and `relatedTo` is
+					// enforced independently in src/components/RelatedArticles.astro.
+					// When the custom domain lands and base becomes '/', switch prose
+					// links to absolute and turn this back on for full coverage.
+					errorOnRelativeLinks: false,
 				}),
 			],
 			editLink: {

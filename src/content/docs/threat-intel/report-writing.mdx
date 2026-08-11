@@ -1,0 +1,110 @@
+---
+title: Report Writing
+description: BLUF structure, calibrated confidence language, and source grading — the difference between a finding that changes a decision and one that gets filed.
+pillar: threat-intel
+contentType: deep-dive
+maturity: foundational
+frameworks: [ICD 203, Admiralty]
+relatedTo:
+  - threat-intel/risk-prioritization
+  - pentest
+  - grc
+updated: 2026-08-11
+sidebar:
+  order: 1
+---
+
+An intelligence product has exactly one job: change what somebody does. Judged that way,
+most reporting fails not because the analysis was wrong but because the reader could not
+extract a decision from it in the ninety seconds they gave it.
+
+The craft here is unglamorous and learnable. Three things carry most of the weight — where
+you put the finding, how you express uncertainty, and whether the reader can tell good
+sourcing from bad.
+
+## BLUF, and why burying the finding is the default failure
+
+Analysts reconstruct their reasoning path in the order they walked it: collection, then
+analysis, then conclusion. Readers need the reverse. **Bottom Line Up Front** means the
+first paragraph contains the judgement, the confidence, and the recommended action — and
+the rest of the document exists to support anyone who wants to challenge it.
+
+The test is blunt: delete everything after the first paragraph. If the reader can still act
+correctly, the structure is right.
+
+> **Buried:** "Between 14 and 22 July, telemetry showed anomalous authentication from three
+> ASNs previously associated with… *(four paragraphs)* …we therefore assess the finance
+> team's SSO tenant was likely targeted."
+>
+> **BLUF:** "We assess with **moderate confidence** that the finance team's SSO tenant was
+> targeted between 14–22 July. Recommend enforcing phishing-resistant MFA for that group
+> this week. Supporting detail follows."
+
+## Confidence language that means something
+
+Two independent things get confused constantly, and separating them is most of the value:
+
+- **Likelihood** — how probable is the thing?
+- **Confidence** — how good is the evidence and reasoning behind that estimate?
+
+You can be highly confident that something is unlikely. Collapsing the two produces
+sentences that feel rigorous and say nothing.
+
+ICD 203 exists because words like "possible" vary wildly between readers. Adopt a fixed
+ladder, publish it in an appendix, and never step outside it:
+
+| Term | Rough probability |
+|---|---|
+| Almost certainly | 95–99% |
+| Very likely | 80–95% |
+| Likely | 55–80% |
+| Roughly even chance | 45–55% |
+| Unlikely | 20–45% |
+| Very unlikely | 5–20% |
+| Almost certainly not | 1–5% |
+
+Two rules make it work. Never pair a term with a number in the same sentence — pick one
+register. And never hedge into uselessness: "may or may not" is not analysis, and a reader
+who wanted no answer would not have asked.
+
+## Source grading
+
+The Admiralty scale grades source reliability (A–F) and information credibility (1–6)
+*independently*, which is the point: a normally-reliable source can report something
+implausible, and an untested source can be right.
+
+Grade the source separately from the claim, and state it where the claim is made rather
+than in a methodology section nobody reaches.
+
+## What every report needs
+
+- **The "so what".** A finding with no consequence attached is trivia. Say what changes.
+- **A named audience.** Engineer, director and board need different documents — not the
+  same document at different lengths. [Communication](../) is a technical
+  skill, and this is where it starts.
+- **Falsifiability.** State what evidence would change the judgement. It is the fastest way
+  to signal that the analysis is honest.
+- **A recommendation you'd defend.** "Continue monitoring" is what analysts write when they
+  don't want to be wrong.
+
+## Failure modes worth naming
+
+- **Unqualified confidence.** A judgement with no confidence marker reads as certainty, and
+  will be quoted as certainty.
+- **Volume as rigour.** Length signals effort, not quality. A weekly digest nobody finishes
+  has a readership of zero.
+- **Passive attribution.** "It is assessed that" hides who assessed it and how well.
+- **Recommendations without an owner.** If nobody is named, nothing happens.
+- **Stale confidence.** Judgements written months ago get re-quoted at their original
+  confidence long after the evidence moved.
+
+## Where this connects
+
+The same discipline governs a [pentest finding](../../pentest/) — description, impact,
+evidence, reproduction, remediation is BLUF wearing different clothes, and severity
+justification is confidence language under another name. It governs
+[audit narratives](../../grc/) too, where the reader is a downstream consumer with their own
+evidentiary standard.
+
+And it is what makes [prioritization](../risk-prioritization/) legible: a
+defensible model that nobody can follow will lose to a bad model that fits on a slide.

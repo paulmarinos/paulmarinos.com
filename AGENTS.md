@@ -9,6 +9,36 @@ Personal site for paulmarinos.com — Astro + Starlight, deployed to GitHub Page
 - **Ten pillars**, each a directory under `src/content/docs/`: `threat-intel`, `iam`,
   `appsec`, `grc`, `pentest`, `ai-automation`, `detection-eng`, `cloud-infra`, `dfir`, `data-privacy`. The sidebar in
   `astro.config.mjs` autogenerates from these directories.
+- **`relatedTo` is enforced in two places, for two different reasons.**
+  `src/content.config.ts` checks the *shape* — at least one entry outside the article's own
+  pillar. `src/components/RelatedArticles.astro` checks that each target *exists* and throws
+  at build time otherwise. The second check is not redundant:
+  `starlight-links-validator` only inspects links written in markdown, so it never sees
+  links emitted by a component.
+- **Broken internal links fail the build** via `scripts/check-graph-links.mjs`, wired into
+  the `build` script. The graph plugin already resolves every link and marks unmatched
+  targets as sitemap nodes with `exists: false`, with `backlinks` naming the offending
+  pages — so this reads that back rather than re-implementing a link checker. It is what
+  actually covers relative links; see the next point for why the plugin cannot.
+- **Link depth is the easiest mistake to make.** Links are relative, so depth follows page
+  depth: from a pillar page (`/iam/`) use `../appsec/`; from an article (`/iam/foo/`) use
+  `../../appsec/`, and `../bar/` for a sibling article. Getting this wrong silently creates
+  phantom graph nodes instead of 404ing loudly — which is what `check-graph-links` catches.
+- **Chrome must be excluded from graph edges.** Edges come from links in generated HTML, so
+  any navigation rendered into the page body becomes a false edge. `ignoreLinksInSelectors`
+  in `astro.config.mjs` therefore extends the plugin's defaults with `.slsg-backlinks-panel`
+  (inbound links were being counted as outbound), `.mobile-nav` (theme-black re-renders the
+  entire sidebar as a `<div>`, not a `<nav>`, so every page gained an edge to every pillar)
+  and `.nav-buttons` (pagination prev/next). All three were invisible while only pillar
+  pages existed, because those already link to each other. Re-check this list when adding
+  any component that renders links.
+- **Prose links are currently unvalidated by the plugin, and that is a known gap.** All internal links are
+  written relative (`../iam/`) because markdown links are not base-prefixed by Astro and
+  absolute ones would 404 under the temporary `/paulmarinos.com` base. Measured: with
+  `errorOnRelativeLinks: false` the validator skips relative links; with it `true` it
+  rejects them for being relative whether or not they resolve. Either way relative links go
+  unchecked. Absolute links are checked. Resolve this by switching prose links to absolute
+  and enabling the option once the custom domain makes base `/`.
 - **Frontmatter is validated** in `src/content.config.ts`. Articles must declare `pillar`,
   `contentType`, `maturity`, `updated`, and at least one `relatedTo` slug pointing *outside*
   their own pillar — the build fails otherwise. This is deliberate: it enforces the

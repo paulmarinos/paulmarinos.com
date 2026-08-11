@@ -13,12 +13,15 @@
  */
 import Default from '@astrojs/starlight/components/Footer.astro';
 import { PageGraph, PageBacklinks } from 'starlight-site-graph/components';
+import RelatedArticles from './RelatedArticles.astro';
 
 // The splash landing page renders its own graph inline as "The map" (index.mdx).
 // Skipping these at render time rather than hiding them in CSS avoids booting a
 // second WebGL context on that page purely to keep it invisible.
 const isSplash = Astro.locals.starlightRoute?.entry?.data?.template === 'splash';
 ---
+
+<RelatedArticles />
 
 {!isSplash && (
 <div class="slsg-page-graph not-content">

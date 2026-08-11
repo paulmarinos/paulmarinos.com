@@ -1,0 +1,77 @@
+---
+/**
+ * Renders the `relatedTo` frontmatter as a list of real links.
+ *
+ * `relatedTo` is validated at build time (every article needs at least one
+ * entry outside its own pillar) but was previously invisible to readers, which
+ * had the discipline enforced and unused.
+ *
+ * Rendering it here matters for a second reason: graph edges are parsed from
+ * real links in page content, so these become actual edges. The enforced
+ * cross-link rule and the graph stop being two parallel mechanisms.
+ *
+ * Referential integrity is enforced here, not by `starlight-links-validator`:
+ * that plugin only inspects links written in markdown, so it never sees links
+ * emitted by a component. An unresolvable `relatedTo` entry therefore throws and
+ * fails the build. The content schema checks only the shape of the field (at
+ * least one entry outside the article's own pillar), never that the target
+ * exists — these two checks together are what make the field trustworthy.
+ *
+ * The wrapper is a <section>, not a <nav>: the graph plugin's
+ * `ignoreLinksInSelectors` excludes nav/header/footer, and these links are
+ * meant to be counted.
+ */
+import { getCollection } from 'astro:content';
+
+const entry = Astro.locals.starlightRoute?.entry;
+const related: string[] = entry?.data?.relatedTo ?? [];
+const pillar: string | undefined = entry?.data?.pillar;
+
+const base = import.meta.env.BASE_URL.endsWith('/')
+	? import.meta.env.BASE_URL
+	: `${import.meta.env.BASE_URL}/`;
+
+// Map content ids to titles so links read as article names, not slugs.
+// Content ids look like `iam/index` or `threat-intel/report-writing`.
+const titles = new Map<string, string>();
+if (related.length > 0) {
+	for (const doc of await getCollection('docs')) {
+		titles.set(doc.id.replace(/\/index$/, '').replace(/\.mdx?$/, ''), doc.data.title);
+	}
+}
+
+const items = related.map((slug) => {
+	const key = slug.replace(/^\/+|\/+$/g, '');
+	const label = titles.get(key);
+
+	if (label === undefined) {
+		throw new Error(
+			`[relatedTo] "${entry?.id ?? 'unknown page'}" links to "${slug}", which does not exist. ` +
+				`Expected a docs entry with id "${key}" or "${key}/index". ` +
+				`Fix the slug or write the target before referencing it.`,
+		);
+	}
+
+	return {
+		href: `${base}${key}/`,
+		label,
+		crossPillar: !pillar || !key.startsWith(`${pillar}/`),
+	};
+});
+---
+
+{
+	items.length > 0 && (
+		<section class="related-articles" aria-labelledby="related-articles-heading">
+			<h2 id="related-articles-heading">Related</h2>
+			<ul>
+				{items.map((item) => (
+					<li>
+						<a href={item.href}>{item.label}</a>
+						{item.crossPillar && <span class="related-cross">cross-pillar</span>}
+					</li>
+				))}
+			</ul>
+		</section>
+	)
+}

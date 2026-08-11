@@ -1,0 +1,107 @@
+---
+title: Risk Prioritization
+description: CVSS, EPSS, SSVC and KEV are answering different questions. Picking the wrong one produces a defensible-looking queue nobody can finish.
+pillar: threat-intel
+contentType: deep-dive
+maturity: practitioner
+frameworks: [CVSS, EPSS, SSVC, KEV, FAIR]
+relatedTo:
+  - threat-intel/report-writing
+  - appsec
+  - cloud-infra
+  - detection-eng
+updated: 2026-08-11
+sidebar:
+  order: 4
+---
+
+Most vulnerability programmes fail arithmetic before they fail security. An organization
+with 40,000 open findings and capacity for 400 fixes a quarter does not have a
+prioritization problem in the abstract — it has a 100:1 problem, and any scheme that
+doesn't cut the queue by two orders of magnitude is decoration.
+
+That framing matters because the common scoring systems are not competitors. They answer
+different questions, and most arguments about them are really arguments about which
+question was being asked.
+
+## What each one is actually for
+
+| System | Question it answers | What it is not |
+|---|---|---|
+| **CVSS** | How bad is this flaw if exploited, in the abstract? | Not a measure of likelihood, and not a priority |
+| **EPSS** | How likely is exploitation in the next 30 days? | Not a measure of impact on *you* |
+| **KEV** | Is this being exploited right now, confirmed? | Not exhaustive — absence proves little |
+| **SSVC** | What should we *do*, given our context? | Not a score; a decision tree |
+
+The single most common error is treating CVSS base score as a priority. It was never
+designed as one — the specification says so explicitly. A 9.8 on a service reachable only
+from a management VLAN with no data behind it can rank far below a 6.5 on an
+internet-facing authentication path.
+
+## Why severity alone produces an unworkable queue
+
+The distributions are the argument. CVSS clusters heavily in the 7–10 band, so "critical
+and high" routinely selects 40–60% of findings — no reduction worth the name.
+
+Exploitation, by contrast, is rare. Only a small minority of published CVEs are ever
+exploited in the wild. That asymmetry is the entire opportunity: a signal correlated with
+*actual* exploitation cuts far more aggressively than one correlated with theoretical
+severity.
+
+This is the same base-rate reasoning that governs detection quality — a rule firing on a
+rare event needs precision proportional to its rarity, or the queue drowns. The maths is
+identical; only the queue differs.
+
+:::caution[Check the numbers before you quote them]
+Published figures for "percentage of CVEs ever exploited" and EPSS coverage move as the
+data grows. Cite the current KEV catalog and EPSS documentation rather than a number
+remembered from a conference talk — including from this page.
+:::
+
+## A prioritization model that survives challenge
+
+The useful move is to stop scoring and start deciding. Four inputs, in order of how much
+they usually change the answer:
+
+1. **Confirmed exploitation** — KEV membership, or credible reporting. This is a near-binary
+   escalation, not a modifier.
+2. **Exploitation likelihood** — EPSS, used as a threshold rather than a number to average.
+3. **Exposure** — is the asset reachable by the actor you're worried about? This is where
+   [architecture](../../cloud-infra/) does more for the queue than any score: segmentation
+   changes reachability, and reachability changes priority.
+4. **Business consequence** — what breaks, and who notices. The only input that can't be
+   bought from a vendor.
+
+Anything that clears all four is not a prioritization question, it's an incident waiting
+for a date. Everything else is a queue you can defend.
+
+### Where quantification helps, and where it doesn't
+
+FAIR and loss-exceedance curves are genuinely useful at portfolio level — deciding between
+funding an IAM programme and an AppSec one. They are usually a poor fit for ranking
+individual findings, because the input uncertainty swamps the difference between finding
+#300 and finding #700. Use quantification for budget arguments and ordinal methods for
+queues.
+
+## Common failure modes
+
+- **Averaging scores.** Combining CVSS and EPSS into a blended number destroys the
+  information that made them useful separately.
+- **Re-scoring everything by hand.** If prioritization costs more analyst time than
+  remediation saves, it has failed regardless of accuracy.
+- **Treating absence of KEV as safety.** It's a catalog of *confirmed* exploitation, not a
+  complete one.
+- **Never revisiting.** EPSS moves daily. A queue ordered once is a snapshot presented as a
+  policy.
+- **Prioritizing without capacity data.** You cannot tell whether a model works without
+  knowing how many fixes per quarter the organization actually lands.
+
+## Why this sits in Threat Intelligence
+
+Prioritization is where intelligence either changes a decision or doesn't. Every other
+pillar inherits this problem — [AppSec](../../appsec/) backlogs, posture findings from
+[cloud](../../cloud-infra/), the detection backlog in
+[detection engineering](../../detection-eng/) — and each tends to reinvent a local scheme.
+The methods are the same; only the queue changes. Getting the argument right once, and
+[writing it down so it survives a hostile reading](../report-writing/), is
+what makes it reusable.

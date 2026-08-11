@@ -145,3 +145,59 @@
 :root[data-theme='light'] {
 	--slsg-node-color-external: #c2418a;
 }
+
+/*
+ * Related articles — rendered from `relatedTo` by src/components/RelatedArticles.astro,
+ * immediately after the article body and before the graph.
+ */
+.related-articles {
+	margin-block: 2.5rem 0;
+	padding-top: 2rem;
+	border-top: 1px solid var(--sl-color-hairline, var(--border));
+}
+
+.related-articles h2 {
+	font-size: 0.875rem;
+	font-weight: 500;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: var(--muted-foreground, var(--sl-color-gray-3));
+	margin: 0 0 0.75rem;
+}
+
+.related-articles ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: grid;
+	gap: 0.5rem;
+}
+
+.related-articles li {
+	display: flex;
+	align-items: baseline;
+	gap: 0.6rem;
+}
+
+.related-articles a {
+	/* The theme is monochrome; browser-default blue reads as unstyled here. */
+	color: inherit;
+	font-weight: 500;
+	text-decoration: none;
+	border-bottom: 1px solid var(--sl-color-hairline, var(--border));
+}
+
+.related-articles a:hover {
+	border-bottom-color: currentColor;
+}
+
+.related-cross {
+	font-size: 0.7rem;
+	letter-spacing: 0.03em;
+	text-transform: uppercase;
+	padding: 0.1rem 0.4rem;
+	border-radius: 999px;
+	border: 1px solid var(--sl-color-hairline, var(--border));
+	color: var(--muted-foreground, var(--sl-color-gray-3));
+	white-space: nowrap;
+}

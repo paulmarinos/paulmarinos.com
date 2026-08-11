@@ -1,3 +1,72 @@
+diff --git a/node_modules/starlight-site-graph/components/graph/preprocess-sitemap.ts b/node_modules/starlight-site-graph/components/graph/preprocess-sitemap.ts
+index 454814d..23a23c0 100644
+--- a/node_modules/starlight-site-graph/components/graph/preprocess-sitemap.ts
++++ b/node_modules/starlight-site-graph/components/graph/preprocess-sitemap.ts
+@@ -1,5 +1,3 @@
+-import micromatch from 'micromatch';
+-
+ import type { LinkData, NodeData } from './types';
+ import type { Sitemap } from '../../config';
+ import type { GraphComponent } from './graph-component';
+@@ -14,6 +12,49 @@ export type GraphData = {
+ 	links: LinkData[];
+ };
+ 
++/**
++ * Browser-safe glob matching.
++ *
++ * This module runs on the client, and `micromatch` is Node-only — it reads
++ * `process.platform` at import time, which throws "process is not defined" in a
++ * browser and kills the graph component before it can render. It was pulled in
++ * for the two glob tests below, so it is replaced with a small compiler for the
++ * subset of glob syntax the graph config actually uses (`**`, `*`, `?`).
++ */
++const globCache = new Map<string, RegExp>();
++
++function globToRegExp(glob: string): RegExp {
++	const cached = globCache.get(glob);
++	if (cached) return cached;
++
++	let source = '';
++	for (let i = 0; i < glob.length; i++) {
++		const char = glob[i]!;
++		if (char === '*') {
++			if (glob[i + 1] === '*') {
++				// `**` crosses separators; `**/` may also match zero directories.
++				if (glob[i + 2] === '/') {
++					source += '(?:.*\\/)?';
++					i += 2;
++				} else {
++					source += '.*';
++					i += 1;
++				}
++			} else {
++				source += '[^/]*';
++			}
++		} else if (char === '?') {
++			source += '[^/]';
++		} else {
++			source += char.replace(/[.+^${}()|[\]\\]/g, '\\$&');
++		}
++	}
++
++	const re = new RegExp(`^${source}$`);
++	globCache.set(glob, re);
++	return re;
++}
++
+ function firstMatchingPattern(
+ 	text: string,
+ 	patterns: string | string[],
+@@ -21,7 +62,7 @@ function firstMatchingPattern(
+ ): boolean | undefined {
+ 	const patternList = typeof patterns === 'string' ? [patterns] : patterns;
+ 	for (const pattern of patternList) {
+-		if (micromatch.isMatch(text, pattern.startsWith('!') ? pattern.slice(1) : pattern)) {
++		if (globToRegExp(pattern.startsWith('!') ? pattern.slice(1) : pattern).test(text)) {
+ 			return !pattern.startsWith('!');
+ 		}
+ 	}
 diff --git a/node_modules/starlight-site-graph/config/index.ts b/node_modules/starlight-site-graph/config/index.ts
 index 8a38bbf..5c59fc0 100644
 --- a/node_modules/starlight-site-graph/config/index.ts

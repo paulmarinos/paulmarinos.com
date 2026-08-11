@@ -52,15 +52,24 @@
 }
 
 /* Give the graph a usable height on narrow screens — the sidebar sizing is
-   tuned for a narrow column and reads as a sliver at full width. */
-.slsg-mobile-panels .slsg-graph-panel .graph-component {
-	height: 20rem;
+   tuned for a narrow column and reads as a sliver at full width.
+   The plugin sizes the graph off `--slsg-graph-height` (default 250px); the
+   element's class is `slsg-graph-component`, not `graph-component`. */
+.slsg-mobile-panels .slsg-graph-panel {
+	--slsg-graph-height: 20rem;
 }
 
-/* The landing page is splash-templated: no sidebar, no footer panels. Its
-   graph is placed inline in index.mdx and gets more room than the sidebar one. */
-.slsg-landing-graph .graph-component {
-	height: 26rem;
+/* The landing page is splash-templated: no sidebar and no footer panels, so it
+   renders its own graph inline (see index.mdx).
+   Height is safe to override; width is NOT. The renderer only draws correctly at
+   the plugin's default `--slsg-graph-width` (250px) — any other value, percentage
+   or length, produces an empty canvas, and a resize does not recover it. So the
+   graph is centred at its native width rather than stretched. Use the fullscreen
+   control in the graph for a large view. */
+.slsg-landing-graph {
+	--slsg-graph-height: 22rem;
+	display: flex;
+	justify-content: center;
 	margin-top: 1rem;
 }
 

@@ -48,6 +48,18 @@ Personal site for paulmarinos.com — Astro + Starlight, deployed to GitHub Page
   targets, so under the dotted preview base the graph split into two disconnected halves and
   rendered empty. Node keys and link targets now both keep the base verbatim, matching
   Astro's `BASE_URL`. Both hunks are in `sitemap/build.ts`.
+  A third hunk fixes the graph rendering as an empty box: `components/graph/
+  preprocess-sitemap.ts` runs on the *client* but imported `micromatch`, which is
+  Node-only and reads `process.platform` at import time. That threw "process is not
+  defined" and killed the graph script before it could draw, leaving the skeleton
+  placeholder visible. It was there for two glob tests, so it is replaced with a small
+  browser-safe glob-to-RegExp compiler (also drops a Node library from the client bundle).
+- **Do not override `--slsg-graph-width`.** The renderer only draws correctly at the
+  plugin's 250px default; any other value — percentage or explicit length — produces an
+  empty canvas, and a resize event does not recover it. `--slsg-graph-height` is safe to
+  override, and is used for the mobile and landing-page copies. The landing graph is
+  therefore centred at its native width rather than stretched; fullscreen is the large view.
+  Verified in a headless browser, not by grep: this class of bug is invisible in the HTML.
 - **Panel placement is ours, not the plugin's.** `overridePageSidebar: false` disables the
   plugin's own right-sidebar override. `src/components/PageSidebar.astro` renders the table
   of contents first, then graph, then backlinks. `src/components/Footer.astro` renders a

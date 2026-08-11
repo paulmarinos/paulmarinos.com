@@ -1,10 +1,10 @@
 ---
 title: Paul Marinos
-description: Threat intelligence, identity, application security, GRC, penetration testing, AI engineering, detection engineering, and cloud security — and the connective tissue between them.
+description: Threat intelligence, identity, application security, GRC, penetration testing, AI engineering, detection engineering, cloud security, incident response, and data privacy — and the connective tissue between them.
 contentType: landing
 template: splash
 hero:
-  tagline: Eight pillars of security work, and the connective tissue between them.
+  tagline: Ten pillars of security work, and the connective tissue between them.
   actions:
     - text: Start with the thesis
       link: '#the-thesis'
@@ -30,7 +30,7 @@ finding*, an *IAM design failure*, a *control gap* an auditor will flag, a *dete
 opportunity* nobody built, and a *risk* somebody has to prioritize against forty others.
 Same fact, five vocabularies, five audiences.
 
-This site covers eight pillars in depth, but the argument it's making is about how they
+This site covers ten pillars in depth, but the argument it's making is about how they
 compose.
 
 ## The pillars
@@ -76,6 +76,16 @@ compose.
 		href="cloud-infra/"
 		description="The substrate everything else runs on — landing zones and segmentation, workload hardening, key management, and posture that stays finite."
 	/>
+	<LinkCard
+		title="Incident Response & Digital Forensics"
+		href="dfir/"
+		description="What happens once prevention has already failed — containment, disk and memory forensics, timeline reconstruction, and malware analysis."
+	/>
+	<LinkCard
+		title="Data Security & Privacy Engineering"
+		href="data-privacy/"
+		description="Protecting the thing all of it exists to protect — classification, tokenization, retention and deletion that actually deletes."
+	/>
 </CardGrid>
 
 ## The map
@@ -88,13 +98,15 @@ to any node.
 
 ## Cross-cutting threads
 
-The pieces that only make sense because all eight pillars are here:
+The pieces that only make sense because all ten pillars are here:
 
 - **One finding, five lenses.** A single IAM misconfiguration traced through pentest, AppSec, GRC, detection, and intel — and reported five different ways.
 - **The purple team loop.** Adversary emulation → detection validation → backlog → prioritization. The full circuit from technique to tested detection.
 - **Agentic AI identity.** Zero Knowledge Trust, agent orchestration, and tool-use authorization are one problem: scoped, revocable, auditable authority for a non-human actor.
 - **Risk prioritization as the universal problem.** The same methods applied to AppSec backlogs, GRC findings, and pentest reports.
 - **The substrate trace.** One misconfigured network path as an architecture flaw, a pentest pivot, a detection blind spot, and a control gap.
+- **Alert to answer.** A detection fires, response contains it, forensics reconstructs it, malware analysis says what it could do — and the lesson returns as a tested rule.
+- **Deletion nobody can prove.** Defensible deletion against audit evidence and forensics, where the data an organization swore was gone is what the investigation recovers.
 - **The telemetry gap.** Log coverage analysis as the shared prerequisite for detection, IR, hunting, and audit evidence.
 - **Communication as a technical skill.** The same discipline behind a good intel product, a good pentest report, and a good audit narrative.
 

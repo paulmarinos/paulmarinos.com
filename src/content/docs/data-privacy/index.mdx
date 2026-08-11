@@ -1,0 +1,60 @@
+---
+title: Data Security & Privacy Engineering
+description: Protecting the thing all of it exists to protect.
+pillar: data-privacy
+contentType: landing
+sidebar:
+  label: Overview
+  order: 0
+---
+
+Strip away the frameworks, the pipelines and the adversary emulation and what remains is
+data somebody would rather you didn't have. Every other pillar is instrumental to that;
+this one is about the data itself — where it is, what shape it's in, what's been done to
+protect it, and whether it can actually be deleted.
+
+The split worth holding onto: [GRC](../grc/) owns the *obligation*, and this pillar owns
+the *engineering*. "We comply with the retention schedule" is a control statement.
+Deleting a record from primary storage, replicas, backups, logs, caches, a warehouse, and
+a set of model weights is a systems problem, and nothing about the regulation makes it
+easier.
+
+## Why it matters
+
+Data protection is the discipline most likely to be declared done on the strength of a
+policy. Classification schemes get written and never applied; DLP gets bought and tuned
+into silence; "encrypted at rest" gets asserted about a system where every service can
+read the key.
+
+It is also the pillar with the sharpest asymmetry. Most controls degrade gracefully — a
+weak one still helps. Pseudonymization that turns out to be reversible does not partially
+work; it fails entirely, and usually only becomes visible after the data is out.
+
+## How this connects
+
+- **→ [GRC](../grc/):** obligation vs. engineering. GDPR, the state privacy patchwork and the AI Act say what must be true; this pillar is how it becomes true in a running system.
+- **→ [Cloud & Infrastructure Security](../cloud-infra/):** §8.4 owns key material and cryptographic primitives; this pillar owns what happens to the data itself. Encryption is the mechanism, not the control.
+- **→ [Incident Response & Digital Forensics](../dfir/):** what was accessed drives notification obligations, and forensics routinely recovers data an organization believed was deleted — the sharpest test of §10.3.
+- **→ [AI & Automation](../ai-automation/):** training-data provenance, PII in prompts and embeddings, and deletion when data is baked into weights. Vector stores are a data store nobody classified.
+- **→ [Application Security](../appsec/):** minimization and purpose limitation are design constraints, and most leakage is an application handing out more than it should.
+- **→ [IAM](../iam/):** access to data is the enforcement point; classification without authorization is a label.
+- **→ [Detection Engineering](../detection-eng/):** egress and insider-risk detection is where DLP either earns its keep or generates the noise that discredits it.
+- **→ [Threat Intelligence](../threat-intel/):** exfiltration is the objective in most reporting, which makes data flow the thing worth prioritizing around.
+
+## What's here
+
+| Subsection | Focus |
+|---|---|
+| **Classification & Discovery** | Schemes that survive contact with users, automated discovery and labelling at scale, data mapping and lineage, shadow data in copies, exports and analytics stores |
+| **Protection & Transformation** | Tokenization, masking and format-preserving encryption, pseudonymization vs. anonymization, re-identification risk and k-anonymity, differential privacy, confidential computing and its limits |
+| **Lifecycle, Retention & Deletion** | Retention schedules and defensible deletion, deleting from systems never designed to forget, right-to-erasure as an engineering problem, residency and transfer mechanisms |
+| **Privacy Engineering** | Minimization and purpose limitation as constraints, privacy by design, LINDDUN threat modelling, consent and preference management as system state, PIAs that inform design |
+| **DLP & Egress** | Programme design and why most DLP is theatre, egress paths across endpoint, SaaS, cloud storage and AI tooling, insider risk and its detection tradeoffs |
+| **Data Governance for AI** | Training-data provenance and consent, PII in prompts, embeddings and vector stores, memorization and extraction risk, deletion when data is in the weights |
+
+:::tip[The thread worth following]
+**Deletion nobody can prove.** §10.3 defensible deletion, read against
+[GRC](../grc/) audit evidence and [forensics](../dfir/) — where the data an organization
+swore was gone is exactly what the investigation recovers. Three pillars, one claim, and
+only one of them can settle it.
+:::

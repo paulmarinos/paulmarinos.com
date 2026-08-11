@@ -6,8 +6,8 @@ Personal site for paulmarinos.com — Astro + Starlight, deployed to GitHub Page
 
 - **`site-structure.md`** is the content architecture and the source of truth for what gets
   written. Read it before adding content.
-- **Eight pillars**, each a directory under `src/content/docs/`: `threat-intel`, `iam`,
-  `appsec`, `grc`, `pentest`, `ai-automation`, `detection-eng`, `cloud-infra`. The sidebar in
+- **Ten pillars**, each a directory under `src/content/docs/`: `threat-intel`, `iam`,
+  `appsec`, `grc`, `pentest`, `ai-automation`, `detection-eng`, `cloud-infra`, `dfir`, `data-privacy`. The sidebar in
   `astro.config.mjs` autogenerates from these directories.
 - **Frontmatter is validated** in `src/content.config.ts`. Articles must declare `pillar`,
   `contentType`, `maturity`, `updated`, and at least one `relatedTo` slug pointing *outside*
@@ -59,6 +59,11 @@ Personal site for paulmarinos.com — Astro + Starlight, deployed to GitHub Page
   megapixels and silently fails to draw on software renderers and low-end GPUs — which is
   what made every attempt to widen the graph produce a blank canvas. At 2 it is still beyond
   retina density for this content.
+- **Pillar colours run out at nine.** The plugin only exposes `nodeColor1..9`, and there are
+  ten pillars. `dfir` therefore reuses `detection-eng`'s `nodeColor7` and is distinguished by
+  `shape: 'square'` — chosen because DFIR graduated out of §7, so a shared colour reads as
+  lineage rather than collision. An eleventh pillar needs the same treatment (pick a parent,
+  pick a shape), not a new colour.
 - **Graph layout knobs.** `linkDistance` is set to 150 in `astro.config.mjs`; the plugin
   defaults it to 0, which leaves layout to repulsion alone and clumps nodes with
   overlapping labels. There is no fit-to-bounds — zoom is pinned at `scale` and centred on

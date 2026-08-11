@@ -1,8 +1,8 @@
 # paulmarinos.com
 
-Personal site — security engineering across eight pillars: threat intelligence, identity &
+Personal site — security engineering across ten pillars: threat intelligence, identity &
 access management, application security, GRC, penetration testing & red teaming, AI &
-automation engineering, detection engineering & SecOps, and cloud & infrastructure security.
+automation engineering, detection engineering & SecOps, cloud & infrastructure security, incident response & digital forensics, and data security & privacy engineering.
 
 Built with [Astro](https://astro.build) + [Starlight](https://starlight.astro.build),
 deployed to GitHub Pages.
@@ -11,7 +11,7 @@ deployed to GitHub Pages.
 
 ## Content architecture
 
-[`site-structure.md`](./site-structure.md) is the plan of record — the eight pillars, their
+[`site-structure.md`](./site-structure.md) is the plan of record — the ten pillars, their
 subsections, the cross-cutting threads, and the build order.
 
 ## Local development
@@ -49,7 +49,7 @@ Articles are validated at build time. Required:
 ```yaml
 title: string
 description: string
-pillar: threat-intel | iam | appsec | grc | pentest | ai-automation | detection-eng | cloud-infra
+pillar: threat-intel | iam | appsec | grc | pentest | ai-automation | detection-eng | cloud-infra | dfir | data-privacy
 contentType: deep-dive | cheatsheet | template | walkthrough | glossary
 maturity: foundational | practitioner | advanced
 updated: YYYY-MM-DD

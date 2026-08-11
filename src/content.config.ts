@@ -12,6 +12,8 @@ export const PILLARS = [
 	'ai-automation',
 	'detection-eng',
 	'cloud-infra',
+	'dfir',
+	'data-privacy',
 ] as const;
 
 // 'landing' is the pillar overview page; everything else is an article.

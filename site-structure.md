@@ -2,7 +2,7 @@
 
 **Status:** v0.1 draft — starting point. Subsections are expected to expand over time.
 
-**Eight top-level sections.** Each is a standalone pillar, but the site's thesis is the *interrelationship* between them (see [Cross-Cutting Threads](#cross-cutting-threads)).
+**Ten top-level sections.** Each is a standalone pillar, but the site's thesis is the *interrelationship* between them (see [Cross-Cutting Threads](#cross-cutting-threads)).
 
 | # | Section | Slug | One-line framing |
 |---|---------|------|------------------|
@@ -14,6 +14,8 @@
 | 6 | AI & Automation Engineering | `/ai-automation` | The tooling layer that scales the rest |
 | 7 | Detection Engineering & SecOps | `/detection-eng` | Turning knowledge of attacks into durable, tested detections |
 | 8 | Cloud & Infrastructure Security | `/cloud-infra` | The substrate everything else runs on |
+| 9 | Incident Response & Digital Forensics | `/dfir` | What happens once prevention has already failed |
+| 10 | Data Security & Privacy Engineering | `/data-privacy` | Protecting the thing all of it exists to protect |
 
 ---
 
@@ -177,27 +179,20 @@
 - APAC: PIPL, APPI, PDPA variants
 - Cross-border transfer mechanisms
 
-### 4.4 Data Handling
-- Classification schemes that survive contact with users
-- Data residency and sovereignty
-- Retention and defensible deletion
-- DLP program design
-- Privacy engineering: minimization, pseudonymization, purpose limitation
-
-### 4.5 Compliance Mapping
+### 4.4 Compliance Mapping
 - Control crosswalks and the common-control approach
 - Mapping one control set to many frameworks (OSCAL, SCF)
 - Evidence collection and audit readiness
 - Avoiding duplicate work across SOC 2 / ISO / FedRAMP
 
-### 4.6 GRC Engineering
+### 4.5 GRC Engineering
 - Compliance as code (OSCAL, OPA/Rego, Conftest)
 - Automated evidence pipelines
 - Continuous control monitoring
 - Policy-as-code and drift detection
 - Treating auditors as a downstream consumer of an API
 
-### 4.7 Risk Management *(placeholder — to expand)*
+### 4.6 Risk Management *(placeholder — to expand)*
 - Risk register mechanics
 - Qualitative vs. quantitative (FAIR)
 - Third-party/vendor risk
@@ -356,21 +351,13 @@
 - Hunting in cloud and identity data specifically
 - Measuring hunt program value
 
-### 7.6 Incident Response Operations
-- IR lifecycle (NIST SP 800-61) and playbook design
-- Triage workflows and severity declaration
-- Cloud IR specifics: snapshotting, credential revocation, blast radius scoping
-- Identity-centric containment (ties to §2)
-- Forensic evidence handling and chain of custody
-- Postmortems and blameless retrospectives
-
-### 7.7 SOAR & Automation
+### 7.6 SOAR & Automation
 - Automation candidates: enrichment, triage, containment, notification
 - Playbook design and safe-guardrails for automated response
 - Agent-assisted triage (ties to §6.5)
 - Human approval gates for destructive actions
 
-### 7.8 Program Metrics *(placeholder — to expand)*
+### 7.7 Program Metrics *(placeholder — to expand)*
 - MTTD/MTTR and their limitations
 - Coverage vs. capability reporting
 - Detection engineering team models and staffing
@@ -432,6 +419,105 @@ both could apply, the test is whether the subject is the workload or the substra
 
 ---
 
+## 9. Incident Response & Digital Forensics
+`/dfir`
+
+What happens once prevention has already failed. §7 builds the detections that fire; this
+section is everything after the alert is believed — containment, evidence, reconstruction,
+and the answer to "what actually happened".
+
+**Boundary with §7.** §7 owns detection engineering: writing, testing and maintaining the
+rules. §9 owns response and investigation. Threat hunting stays in §7.5 because it is
+hypothesis-driven discovery against a healthy environment; forensics here is
+reconstruction of a known incident.
+
+### 9.1 Incident Response Operations
+- IR lifecycle (NIST SP 800-61) and playbook design
+- Triage workflows, severity declaration, and incident command
+- Identity-centric containment — usually the fastest lever (ties to §2)
+- Cloud IR: snapshotting, credential revocation, blast radius scoping (ties to §8)
+- Communications during an incident: stakeholders, counsel, customers, regulators
+- Postmortems and blameless retrospectives
+
+### 9.2 Digital Forensics
+- Order of volatility and sound acquisition
+- Disk forensics: file systems, deleted data, artefacts of execution
+- Memory forensics (Volatility) — what only RAM will tell you
+- Cloud and SaaS forensics where you never get the disk
+- Endpoint, browser and mobile artefacts
+- Anti-forensics and what absence of evidence is worth
+
+### 9.3 Timeline & Investigation Method
+- Building a super-timeline and pivoting across artefact sources
+- Root cause vs. proximate cause; establishing patient zero
+- Scoping: proving the boundary of a compromise rather than assuming it
+- Hypothesis discipline and confidence language under time pressure (ties to §1.1)
+- Documenting an investigation so a second analyst reaches the same conclusion
+
+### 9.4 Malware Analysis & Reverse Engineering
+- Triage: static properties, strings, packing, similarity
+- Dynamic analysis and sandboxing; detonation safety
+- Unpacking and basic RE workflow
+- Extracting IOCs and behavioural signatures that feed §7 and §1
+- Capability assessment: what the sample can actually do
+
+### 9.5 Evidence Handling & Legal *(placeholder — to expand)*
+- Chain of custody and defensible process
+- Legal hold, privilege, and working with counsel
+- Regulatory breach notification clocks (ties to §4)
+- Working with law enforcement and external IR firms
+
+---
+
+## 10. Data Security & Privacy Engineering
+`/data-privacy`
+
+Protecting the thing all of it exists to protect. §4 owns the obligation — what the
+regulation requires. This section owns the engineering: how data is found, classified,
+minimised, transformed and deleted in systems that are already running.
+
+**Boundary with §4 and §8.** §4 is the regulatory requirement and audit evidence. §8.4 is
+the key material and cryptographic primitives. §10 is the data itself — its lifecycle,
+shape, and the controls applied to it.
+
+### 10.1 Classification & Discovery
+- Classification schemes that survive contact with users
+- Automated discovery and labelling at scale
+- Data mapping and lineage: knowing where it flows, not just where it sits
+- Shadow data — copies, exports, backups, and analytics stores
+
+### 10.2 Protection & Transformation
+- Tokenization, masking and format-preserving encryption
+- Pseudonymization vs. anonymization, and why the difference is legal as well as technical
+- Re-identification risk and k-anonymity in practice
+- Differential privacy — where it genuinely applies
+- Encryption in use: confidential computing and its limits (ties to §8.4)
+
+### 10.3 Lifecycle, Retention & Deletion
+- Retention schedules and defensible deletion
+- Deletion in systems that were never designed to forget — backups, logs, caches, derived data
+- Right-to-erasure requests as an engineering problem
+- Residency and sovereignty; cross-border transfer mechanisms (ties to §4.3)
+
+### 10.4 Privacy Engineering
+- Minimization and purpose limitation as design constraints
+- Privacy by design, and threat modelling for privacy (LINDDUN)
+- Consent and preference management as system state
+- Privacy impact assessments that inform design rather than document it
+
+### 10.5 Data Loss Prevention & Egress
+- DLP programme design, and why most DLP is theatre
+- Egress paths: endpoint, SaaS, cloud storage, AI tooling (ties to §8.2)
+- Insider risk and the detection tradeoffs it forces (ties to §7)
+
+### 10.6 Data Governance for AI *(placeholder — to expand)*
+- Training-data provenance, licensing and consent
+- PII in prompts, embeddings and vector stores (ties to §6.2)
+- Model memorization and extraction risk
+- Retention and deletion when data is baked into weights
+
+---
+
 ## Cross-Cutting Threads
 
 The site's differentiator is the connective tissue. Candidate cross-section pieces:
@@ -440,11 +526,13 @@ The site's differentiator is the connective tissue. Candidate cross-section piec
 - **IAM misconfig as the shared root cause.** Same finding, four different reporting audiences.
 - **Agentic AI identity.** §2.4 (Zero Knowledge Trust) × §6.4 (orchestration) × §6.6 (securing AI).
 - **Risk prioritization as the universal problem.** §1.4 methods applied to AppSec backlogs, GRC findings, and pentest reports.
-- **Automation of the compliance-to-evidence pipeline.** §4.6 × §6.5.
+- **Automation of the compliance-to-evidence pipeline.** §4.5 × §6.5.
 - **Communication as a technical skill.** §1.5 applied to §5.6 pentest and red team reports and §4.x audit narratives.
 - **Purple team loop.** §5.4/§5.5 emulation → §7.4 detection validation → §7.2 backlog → §1.4 prioritization. The full circuit from adversary technique to tested detection.
 - **The substrate trace.** One misconfigured network path as §8.2 architecture flaw, §5.2 pivot, §7.3 blind spot, and §4.x control gap.
 - **Encryption that proves nothing.** §8.4 key management vs. §4.x "data is encrypted at rest" as an audit answer — what the control actually buys.
+- **Alert to answer.** §7 fires a detection, §9.1 contains it, §9.3 reconstructs it, §9.4 tells you what the malware did — and §7.2 turns the lesson back into a rule.
+- **Deletion nobody can prove.** §10.3 defensible deletion against §4 audit evidence and §9.2 forensics, where the data you swore was gone is exactly what the investigation recovers.
 - **The telemetry gap.** §7.3 log coverage analysis as the shared prerequisite for detection, IR, threat hunting, and §4.x audit evidence.
 
 ---
@@ -460,7 +548,9 @@ The site's differentiator is the connective tissue. Candidate cross-section piec
 - Should Frameworks (Zero Trust / ZK / ZKT) stay under IAM or graduate to its own top-level section as agentic identity content grows?
 - Does AI/Automation split into "AI engineering" and "securing AI" once §6.6 fills out?
 - Where exactly is the Threat Intel (§1) / Detection Engineering (§7) boundary? Current split: §1 is analysis and communication of adversary knowledge, §7 is operationalizing it. Hunting (§7.5) is the blurriest case.
-- Does Incident Response (§7.6) eventually warrant its own pillar, or stay under SecOps? (Strongest ninth-pillar candidate — additive rather than competing with §8.)
+- ~~Does Incident Response warrant its own pillar?~~ Resolved: graduated to §9 alongside forensics and malware analysis. §7 is now purely detection engineering.
+- Is threat hunting (§7.5) on the right side of the §7/§9 line? Current split: hunting is hypothesis-driven discovery against a healthy environment, forensics is reconstruction of a known incident. The boundary blurs during a long-running compromise.
+- Does §10.6 (data governance for AI) stay in Data Security, or migrate to §6 as that pillar's "securing AI" half fills out?
 - Does IaC security live in §3.6 (as a scanning tool) or §8.5 (as a posture program)? Current split is tooling vs. programme; watch whether that holds as both fill out.
 
 ---
@@ -508,7 +598,7 @@ Enforce the tagging axes at build time via `src/content/config.ts` so tags can't
 ```
 title:        string
 description:  string
-pillar:       enum [threat-intel, iam, appsec, grc, pentest, ai-automation, detection-eng, cloud-infra]
+pillar:       enum [threat-intel, iam, appsec, grc, pentest, ai-automation, detection-eng, cloud-infra, dfir, data-privacy]
 contentType:  enum [deep-dive, cheatsheet, template, walkthrough, glossary]
 maturity:     enum [foundational, practitioner, advanced]
 cloud:        enum[] [aws, azure, gcp, multi]        # optional
@@ -533,7 +623,7 @@ Stock Starlight is instantly recognizable. Since the site doubles as a portfolio
 Astro islands, added only where they earn their place:
 - ATT&CK coverage matrix (§5.4 / §7.4)
 - Cross-pillar relationship graph — the visual thesis of the site
-- Compliance framework crosswalk table (§4.5), filterable
+- Compliance framework crosswalk table (§4.4), filterable
 - Chart components for §1.3 data visualization articles
 
 ### Build Order

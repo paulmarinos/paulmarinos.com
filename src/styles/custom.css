@@ -201,3 +201,26 @@
 	color: var(--muted-foreground, var(--sl-color-gray-3));
 	white-space: nowrap;
 }
+
+/*
+ * "Report an error" footer link (src/components/Footer.astro) — the correction
+ * channel that replaced the editLink. Deliberately quiet: a small muted offer,
+ * not a call to action, so it signals openness to fixes without reframing the
+ * site as community-editable.
+ */
+.report-error {
+	margin-top: 2.5rem;
+	font-size: 0.8125rem;
+	color: var(--muted-foreground, var(--sl-color-gray-3));
+	text-align: center;
+}
+
+.report-error a {
+	color: inherit;
+	text-decoration: underline;
+	text-underline-offset: 2px;
+}
+
+.report-error a:hover {
+	color: var(--foreground, var(--sl-color-white));
+}

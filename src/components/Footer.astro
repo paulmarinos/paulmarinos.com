@@ -19,6 +19,15 @@ import RelatedArticles from './RelatedArticles.astro';
 // Skipping these at render time rather than hiding them in CSS avoids booting a
 // second WebGL context on that page purely to keep it invisible.
 const isSplash = Astro.locals.starlightRoute?.entry?.data?.template === 'splash';
+
+// "Report an error" opens a GitHub issue pre-filled with the current page. It's
+// the correction channel that replaces the removed editLink: readers can flag a
+// mistake without being invited to fork/PR-edit, so authorship and voice stay ours.
+const here = new URL(Astro.url.pathname, Astro.site ?? 'https://www.paulmarinos.com').href;
+const reportUrl =
+	'https://github.com/paulmarinos/paulmarinos.com/issues/new' +
+	`?title=${encodeURIComponent(`Error report: ${Astro.url.pathname}`)}` +
+	`&body=${encodeURIComponent(`Page: ${here}\n\nWhat looks wrong:\n`)}`;
 ---
 
 <RelatedArticles />
@@ -42,3 +51,10 @@ const isSplash = Astro.locals.starlightRoute?.entry?.data?.template === 'splash'
 <Default>
 	<slot />
 </Default>
+
+{!isSplash && (
+	<p class="report-error not-content">
+		Spotted an error on this page?{' '}
+		<a href={reportUrl} target="_blank" rel="noopener noreferrer">Report it</a>.
+	</p>
+)}

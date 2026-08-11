@@ -147,9 +147,9 @@ export default defineConfig({
 					errorOnRelativeLinks: false,
 				}),
 			],
-			editLink: {
-				baseUrl: 'https://github.com/paulmarinos/paulmarinos.com/edit/main/',
-			},
+			// No `editLink`: this is an authored portfolio, not community docs — the
+			// "Edit page" button invites fork/PR edit proposals we don't want. Re-add
+			// an `editLink: { baseUrl: '.../edit/main/' }` block to bring it back.
 			lastUpdated: true,
 			sidebar: pillars.map(({ label, dir }) => ({
 				label,

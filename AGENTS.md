@@ -59,11 +59,14 @@ Personal site for paulmarinos.com — Astro + Starlight, deployed to GitHub Page
   megapixels and silently fails to draw on software renderers and low-end GPUs — which is
   what made every attempt to widen the graph produce a blank canvas. At 2 it is still beyond
   retina density for this content.
-- **Pillar colours run out at nine.** The plugin only exposes `nodeColor1..9`, and there are
-  ten pillars. `dfir` therefore reuses `detection-eng`'s `nodeColor7` and is distinguished by
-  `shape: 'square'` — chosen because DFIR graduated out of §7, so a shared colour reads as
-  lineage rather than collision. An eleventh pillar needs the same treatment (pick a parent,
-  pick a shape), not a new colour.
+- **Pillar colours run out at nine.** The plugin exposes only `nodeColor1..9` for ten
+  pillars. The tenth uses the `nodeColorExternal` slot, which nothing else can claim because
+  external nodes only exist when `includeExternalLinks` is on and it is off. Its value is
+  redefined per theme in `src/styles/custom.css`, continuing the palette's red -> purple ramp
+  into pink — pushed well past `nodeColor9` deliberately, since adjacent ramp steps are
+  indistinguishable at node size. Every pillar is a circle; do not encode a pillar as a shape.
+  An eleventh pillar would need `nodeColorTag` or `nodeColorUnresolved` given the same
+  treatment. Enabling external links would take this slot back.
 - **Graph layout knobs.** `linkDistance` is set to 150 in `astro.config.mjs`; the plugin
   defaults it to 0, which leaves layout to repulsion alone and clumps nodes with
   overlapping labels. There is no fit-to-bounds — zoom is pinned at `scale` and centred on

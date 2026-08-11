@@ -5,10 +5,11 @@ import starlightThemeBlack from 'starlight-theme-black';
 import starlightSiteGraph from 'starlight-site-graph';
 
 // The ten pillars. Order here is the order in the sidebar; `color` is the graph
-// node colour. The plugin only exposes nodeColor1..9, so the tenth pillar reuses
-// its parent's colour and is distinguished by `shape` instead — DFIR graduated
-// out of Detection Engineering, so sharing its colour reads as lineage rather
-// than collision.
+// node colour, following the plugin's red -> purple ramp in sidebar order.
+// nodeColor1..9 are the only numbered slots, so the tenth pillar takes
+// `nodeColorExternal` — a slot nothing else can claim, because external nodes
+// only exist when `includeExternalLinks` is on, and it is off. Its value is
+// redefined in src/styles/custom.css to continue the ramp into magenta.
 const pillars = [
 	{ label: 'Threat Intelligence', dir: 'threat-intel', color: 'nodeColor1' },
 	{ label: 'Identity & Access Management', dir: 'iam', color: 'nodeColor2' },
@@ -18,8 +19,8 @@ const pillars = [
 	{ label: 'AI & Automation Engineering', dir: 'ai-automation', color: 'nodeColor6' },
 	{ label: 'Detection Engineering & SecOps', dir: 'detection-eng', color: 'nodeColor7' },
 	{ label: 'Cloud & Infrastructure Security', dir: 'cloud-infra', color: 'nodeColor8' },
-	{ label: 'Incident Response & Digital Forensics', dir: 'dfir', color: 'nodeColor7', shape: 'square' },
-	{ label: 'Data Security & Privacy Engineering', dir: 'data-privacy', color: 'nodeColor9' },
+	{ label: 'Incident Response & Digital Forensics', dir: 'dfir', color: 'nodeColor9' },
+	{ label: 'Data Security & Privacy Engineering', dir: 'data-privacy', color: 'nodeColorExternal' },
 ];
 
 // Deploy target. Defaults to the custom domain, which serves at the root path.
@@ -88,9 +89,9 @@ export default defineConfig({
 						// Globs are written both bare and `**/`-prefixed so they match
 						// whether or not a base path is prepended to the node key.
 						styleRules: new Map(
-							pillars.map(({ dir, color, shape }) => [
+							pillars.map(({ dir, color }) => [
 								[`${dir}/**`, `**/${dir}/**`],
-								{ shapeColor: color, ...(shape ? { shape } : {}) },
+								{ shapeColor: color },
 							]),
 						),
 						// Tag each page with its pillar so the graph can be filtered.

@@ -119,3 +119,29 @@
 .mobile-nav-section[data-collapsible][data-open='true'] .mobile-nav-links {
 	padding-bottom: 1rem;
 }
+
+/*
+ * Tenth pillar colour.
+ *
+ * The graph plugin exposes only nodeColor1..9 and there are ten pillars, so
+ * Data Security & Privacy Engineering uses the `nodeColorExternal` slot. Nothing
+ * else can claim it: external nodes only appear when `includeExternalLinks` is
+ * enabled, and it is off — so this is a free slot rather than a shared one, and
+ * every pillar stays a circle.
+ *
+ * The values continue the plugin's red -> purple ramp one step into pink. Pushed
+ * well past nodeColor9's purple on purpose: adjacent ramp steps read as the same
+ * colour at node size, and dfir holds nodeColor9.
+ * These declarations are unlayered, so they outrank the plugin's `@layer` ones;
+ * the light rule is more specific than the dark one, so the pair still resolves
+ * correctly per theme.
+ *
+ * If external links are ever enabled, this slot stops being free.
+ */
+:root {
+	--slsg-node-color-external: #e88ab6;
+}
+
+:root[data-theme='light'] {
+	--slsg-node-color-external: #c2418a;
+}

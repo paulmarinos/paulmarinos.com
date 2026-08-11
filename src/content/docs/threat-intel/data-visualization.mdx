@@ -1,0 +1,112 @@
+---
+title: Data Visualization
+description: Choosing charts by the question being asked, showing uncertainty honestly, and why the traffic-light dashboard is the most expensive chart in security.
+pillar: threat-intel
+contentType: deep-dive
+maturity: practitioner
+relatedTo:
+  - threat-intel/statistics
+  - threat-intel/effective-communication
+  - detection-eng
+  - grc
+updated: 2026-08-11
+sidebar:
+  order: 3
+---
+
+A chart is an argument with the reasoning hidden. That makes visualization the highest-
+leverage and most abused step in the pipeline: it is where analysis either becomes a
+decision or becomes decoration, and the failure is silent either way.
+
+## Choose by the question, not by the data
+
+Most bad security charts come from starting with the data and asking what can be plotted.
+Start from the question the reader is actually holding.
+
+| The question | The form | Not this |
+|---|---|---|
+| How has this changed over time? | Line chart | Stacked bars over time |
+| How do these categories compare? | Sorted horizontal bars | Pie chart |
+| What is the shape of this population? | Histogram, box plot | Mean in a stat tile |
+| What fraction remains open over time? | Survival curve | Average age |
+| Where is coverage thin? | Heatmap / ATT&CK matrix | Percentage in a tile |
+| How did this attack progress? | Timeline | Prose narrative |
+| What can reach what? | Node-link graph | Table of pairs |
+
+Two rules cover most cases. **Sort bars by value, not alphabetically** — the ordering *is*
+the finding. And **when comparing more than about seven categories, a table is often
+better** than any chart.
+
+## Showing uncertainty
+
+Security estimates are uncertain and most security charts don't say so. A point estimate
+drawn as a crisp line acquires an authority the underlying data can't support — the visual
+equivalent of [unqualified confidence](../report-writing/).
+
+- **Ranges and error bars** for anything estimated rather than counted.
+- **Fan charts** for projections, widening with the forecast horizon.
+- **Explicit "no data" states**, visually distinct from zero. A blank cell in a coverage
+  matrix should never look like a covered one.
+
+The distinction between *no coverage* and *no data about coverage* is the one most worth
+drawing, because they demand opposite responses.
+
+## Designing for the reader
+
+**SOC dashboards** answer "what needs attention right now". Few elements, sorted by
+priority, no historical trend nobody will act on mid-shift. If a panel has never changed a
+decision, delete it.
+
+**Executive views** answer "are we getting better, and where is the money going". Trend
+over snapshot, small number of durable measures, and — importantly — the same measures
+next quarter. A dashboard whose metrics change every quarter is measuring the reporting
+process.
+
+**Engineering views** answer "what do I fix and where is it". Detail, links out to the
+system of record, and an unambiguous owner.
+
+## Anti-patterns
+
+- **Traffic-light theatre.** Red/amber/green thresholds set to make the current state amber
+  are the most common chart in security and the least informative. The colours encode a
+  policy decision that nobody wrote down.
+- **Risk quadrants with unlabelled axes.** "Likelihood × impact" with no units, no scale,
+  and dots placed by consensus. It looks quantitative and is not.
+- **3D anything.** Perspective distorts the encoding you're relying on.
+- **Dual y-axes.** Two scales, one plot area, any correlation you like depending on where
+  you put the baselines.
+- **Truncated y-axes on counts.** Fine for indexed series, misleading for volumes.
+- **Rainbow palettes for ordered data.** Use a sequential ramp, so "more" looks like more.
+- **Precision theatre.** "Risk score 73.4" from inputs graded high/medium/low.
+
+The unifying failure: charts that cannot be wrong. If no possible dataset would change the
+picture, it is not showing you anything.
+
+## Tooling notes
+
+Grafana and Kibana are strongest for operational, live views and weakest when you need
+control over a specific analytical form. Python — matplotlib for control, plotly for
+interaction — is where the bespoke work lives, particularly survival curves and
+uncertainty bands that dashboard tools handle badly.
+
+For anything published, static images beat live embeds: they survive the dashboard being
+refactored, and they can be cited.
+
+## Accessibility is correctness, not politeness
+
+Roughly one in twelve men has some form of colour vision deficiency, and security
+visualization leans heavily on red-green. Encode the finding redundantly — position, shape,
+label, or direct annotation — so colour is reinforcement rather than the sole channel. A
+chart that stops working in greyscale will also stop working when it's printed for a board
+pack.
+
+## Where this connects
+
+Everything here rests on [the statistics](../statistics/) — a chart of a badly framed
+number is a faster way to be wrong. Coverage matrices are the standard artefact of
+[detection engineering](../../detection-eng/), where the distinction between untested and
+uncovered decides where the work goes. And in [GRC](../../grc/) the same discipline governs
+control-status reporting, which is where traffic lights do the most damage.
+
+The audience question — what to show whom — is really the
+[communication](../effective-communication/) problem in visual form.

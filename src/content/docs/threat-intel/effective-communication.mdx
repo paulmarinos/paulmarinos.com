@@ -1,0 +1,113 @@
+---
+title: Effective Communication
+description: Writing for engineers, directors and boards — translating findings into consequence, time-boxing a briefing, and handling uncertainty without hedging into uselessness.
+pillar: threat-intel
+contentType: deep-dive
+maturity: foundational
+relatedTo:
+  - threat-intel/report-writing
+  - pentest
+  - grc
+  - dfir
+updated: 2026-08-11
+sidebar:
+  order: 5
+---
+
+Security work is judged on decisions changed, and the last mile of that is almost always
+someone explaining something to someone with less context and less time. Treated as a soft
+skill, it is done badly. Treated as a technical skill with rules, it is learnable.
+
+## Three audiences, three documents
+
+The common mistake is writing one document and varying its length. Different audiences need
+different *content*, because they can act on different things.
+
+| | Engineer | Director | Board |
+|---|---|---|---|
+| **Decides** | how to fix it | what to fund and sequence | whether risk is acceptable |
+| **Needs** | reproduction, scope, exact affected versions | effort, dependencies, what else this blocks | consequence in business terms, trend, comparison |
+| **Time** | as long as it takes | ~10 minutes | ~2 minutes |
+| **Fails when** | told severity but not location | given findings without options | given technique names without impact |
+
+A board asking "are we secure" is asking about acceptable loss, not about controls. An
+answer describing controls is not a shorter version of the right answer — it's an answer to
+a different question.
+
+## Translating findings into consequence
+
+The reliable move is to keep asking "so what" until you reach something the audience owns.
+
+> **Finding:** the S3 bucket allows public read.
+> **So what?** Customer records are readable without authentication.
+> **So what?** Anyone with the URL can download the customer list.
+> **So what?** A notifiable breach under GDPR, and the customer list is in a competitor's
+> hands.
+
+The first line belongs in the ticket. The last belongs in the briefing. Neither is more
+true — they're the same fact at the altitude the reader can act on.
+
+Two cautions. Don't inflate: if the bucket holds public marketing assets, the chain stops
+at line one, and analysts who always reach catastrophe stop being believed. And name the
+assumption when a step depends on one — "assuming the export includes PII, which we have
+not confirmed" is stronger than quietly asserting it.
+
+## Briefing formats and time-boxing
+
+Assume you get a fraction of the time you were promised, and that the interesting question
+arrives in minute one.
+
+- **Two minutes:** finding, consequence, ask. Nothing else.
+- **Ten minutes:** the above, then how we know, then options with a recommendation.
+- **Thirty minutes:** the above, then what would change our mind, then discussion.
+
+Lead with the recommendation and defend it, rather than building to it. If you're
+interrupted at minute two — the normal case — a narrative build means the point never
+arrives.
+
+Bring the decision you want. "We need to talk about identity risk" is not a decision.
+"Approve phishing-resistant MFA for the finance group this quarter" is.
+
+## Uncertainty without uselessness
+
+The failure mode specific to analysts: hedging until the statement is unfalsifiable and
+therefore useless. "There may be a risk that some systems could potentially be affected"
+survives any outcome and helps nobody.
+
+The fix is to be precise about *what* is uncertain rather than vague about everything:
+
+> **Hedged into nothing:** "There may be some exposure in the payment path."
+>
+> **Precisely uncertain:** "The payment service is exposed. We have not confirmed whether
+> the exploit works against version 4.2 — that's the open question, and we'll know by
+> Thursday."
+
+The second admits more uncertainty and is far more useful, because it says what is known,
+what isn't, and when that changes. Pair it with the
+[confidence ladder](../report-writing/) so the language is consistent across products.
+
+Say "I don't know" plainly, and follow it with how you'd find out. Analysts lose standing
+by bluffing, not by not knowing.
+
+## Narrative structure for retrospectives
+
+Incident retrospectives are the highest-stakes writing most teams do, and the structure
+carries the blamelessness — it isn't a tone you apply afterwards.
+
+Write the timeline in the order events were *known*, not the order they occurred. That
+distinction is the whole discipline: it shows why a reasonable person made the call they
+made, given what was visible at the time. A timeline written with hindsight reads as a list
+of mistakes and teaches nobody anything.
+
+Then: what made this hard, what worked, what we're changing, who owns it, by when. Actions
+without owners and dates are decoration — and they are how the same incident recurs with a
+different date.
+
+## Where this connects
+
+[Report writing](../report-writing/) is this discipline in written form — BLUF, calibrated
+confidence, the "so what". A [pentest report](../../pentest/) lives or dies on the same
+translation, since a finding a developer can't reproduce doesn't get fixed. Audit
+narratives in [GRC](../../grc/) face a reader with their own evidentiary standard. And
+[incident retrospectives](../../dfir/) are where all of it is tested at once, under time
+pressure, in front of people who were there.

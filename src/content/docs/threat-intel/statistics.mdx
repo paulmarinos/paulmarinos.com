@@ -1,0 +1,123 @@
+---
+title: Statistics & Data Analytics
+description: Base rates, sampling bias, and the arithmetic that decides whether an alert queue is workable — plus the statistical abuses that make vendor reports unfalsifiable.
+pillar: threat-intel
+contentType: deep-dive
+maturity: practitioner
+relatedTo:
+  - threat-intel/data-visualization
+  - threat-intel/risk-prioritization
+  - detection-eng
+  - dfir
+updated: 2026-08-11
+sidebar:
+  order: 2
+---
+
+Security generates enormous quantities of data and remarkably few defensible conclusions.
+The gap is rarely tooling. It is that the numbers get quoted without the denominators that
+make them mean anything — and the single most consequential denominator is the base rate.
+
+## The base rate problem, worked
+
+This is the arithmetic that decides whether a detection programme is survivable, so it's
+worth doing explicitly rather than gesturing at.
+
+Take a rule that is genuinely good: **99% sensitivity** (catches almost every true attack)
+and **99% specificity** (fires on only 1% of benign events). Run it against 1,000,000
+events per day in an environment where **10** of those are actually malicious.
+
+- True positives: 99% of 10 ≈ **10**
+- False positives: 1% of 999,990 ≈ **10,000**
+
+Precision is 10 / 10,010 — roughly **0.1%**. A 99/99 detector produces a queue that is
+999 parts noise. Nobody triages that twice.
+
+The lesson is not "detection is hopeless". It is that **specificity is the binding
+constraint when the base rate is low**, and improving sensitivity is close to worthless
+until specificity is extreme. Halving the false positive rate here does more than any
+recall improvement can.
+
+That is also why alert volume is a terrible programme metric: it measures the denominator,
+not the finding.
+
+:::tip[The practical consequence]
+When someone proposes a new detection, the question that matters is not "will it catch the
+attack" but "how often will it fire on a Tuesday". Ask for the second number first — it's
+the one that decides whether the rule survives contact with the SOC.
+:::
+
+## Descriptive vs. inferential — and which one you actually have
+
+Most security reporting is descriptive: counts, ratios, trends over the population you
+observed. That is fine, provided nobody quietly upgrades it to an inferential claim.
+
+- **Descriptive:** "We saw 412 credential-stuffing attempts last month." Defensible.
+- **Inferential:** "Credential stuffing rose 30% industry-wide." Requires a sampling frame
+  you almost certainly don't have.
+
+The upgrade usually happens in the executive summary, where a statement about your
+telemetry becomes a statement about the world.
+
+## Sampling bias is the default state of telemetry
+
+Security data is never a random sample. It is a sample of what you instrumented, retained,
+and could parse — which correlates strongly with what you already expected to see.
+
+Common distortions worth naming in any analysis:
+
+- **Coverage bias.** You detect more in the environments with better logging, which reads
+  as those environments being *worse*. This is the [telemetry gap](../../detection-eng/)
+  expressed as a statistical artefact.
+- **Survivorship.** Incidents you resolved are documented; the ones nobody noticed are not
+  in the dataset by definition.
+- **Retention truncation.** A 30-day window cannot show a 90-day dwell time, and will
+  report dwell times as suspiciously short.
+- **Detection-driven prevalence.** New rule ships, "incidents" spike. The environment
+  didn't change; the instrument did.
+
+Only the last one is usually caught, and usually late.
+
+## Techniques that earn their place
+
+**Time series.** Useful for rule health and drift — a detection whose volume falls to zero
+has usually broken rather than succeeded. Seasonality is strong in security data (business
+hours, deploy cadence, month-end), so compare like-for-like periods rather than raw
+week-over-week.
+
+**Cohort and survival analysis.** The right frame for remediation. "Mean time to remediate"
+hides everything interesting; a survival curve by cohort shows what fraction of a month's
+findings remain open over time, and where the tail lives. That tail is normally the actual
+risk, and it is invisible in an average.
+
+**Distributions over averages.** Remediation times, dwell times, and alert volumes are all
+heavily skewed. A mean is a summary of a normal distribution, and almost nothing here is
+normal. Quote medians and percentiles.
+
+## Statistical abuse in vendor reporting
+
+Reading these critically is part of the job:
+
+- **Percentages without denominators.** "Attacks up 300%" from 2 to 8.
+- **Customer telemetry generalised to the world.** The sampling frame is the vendor's
+  install base, not the industry.
+- **Survey data reported as measurement.** Self-reported breach rates measure willingness
+  to disclose.
+- **Composite risk scores.** Aggregating unlike scales produces a number with no units that
+  cannot be argued with — the point is often that it cannot be argued with.
+- **Year-over-year comparisons across a methodology change.** Buried in a footnote, if
+  present at all.
+
+None of this makes vendor reports useless. It makes them evidence with a known bias, which
+is exactly the thing [source grading](../report-writing/) exists to express.
+
+## Where this connects
+
+The base-rate maths governs [detection quality](../../detection-eng/) directly — precision,
+tuning, and why alert volume is a bad metric are all the same argument. It underwrites
+[risk prioritization](../risk-prioritization/), where the whole strategy depends on
+exploitation being rare. And in [forensics](../../dfir/) it is the discipline that stops a
+timeline coincidence from becoming a causal claim.
+
+Numbers reach decision-makers as pictures, which is why the next problem is
+[visualization](../data-visualization/) rather than more analysis.

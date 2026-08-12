@@ -19,7 +19,7 @@ intended, and keeping it that way. It's also where the most security spending pr
 security, because posture tools are very good at producing findings and much worse at producing
 *prioritized* ones — a CSPM reporting ten thousand issues has told you nothing you can act on.
 
-This is the substrate side of the boundary with [AppSec](../../appsec/api-cloud-native/): §3.6
+This is the substrate side of the boundary with [AppSec](/appsec/api-cloud-native/): §3.6
 owns the IaC and container scanning *tools*; this owns the posture *program* they feed.
 
 ## CSPM and CNAPP — what they genuinely catch
@@ -39,7 +39,7 @@ What they only *appear* to catch is where the honesty is needed:
   is not critical, but it's colored critical, and the tool rarely knows the difference.
 - **Coverage that looks complete and isn't.** Tools cover the resource types and checks they
   implement; a gap in coverage looks identical to a clean result — the
-  [no-coverage vs. no-data problem](../../detection-eng/data-pipeline/) again.
+  [no-coverage vs. no-data problem](/detection-eng/data-pipeline/) again.
 - **Volume mistaken for value.** Ten thousand findings is not ten thousand problems; it's
   usually a few hundred that matter buried in noise the tool can't rank.
 
@@ -49,12 +49,12 @@ finite, prioritized work is the part that's actually hard.
 
 ## IaC security — shift-left for the substrate
 
-When infrastructure is [code](../architecture-landing-zones/), its misconfigurations are
+When infrastructure is [code](/cloud-infra/architecture-landing-zones/), its misconfigurations are
 catchable *before they exist*. The public bucket, the wildcard IAM policy, the missing
 encryption flag — each is a reviewable line in a Terraform or Bicep file, findable in the pull
 request that introduces it.
 
-The tooling (Checkov, tfsec, Terrascan) is [AppSec's](../../appsec/api-cloud-native/), and the
+The tooling (Checkov, tfsec, Terrascan) is [AppSec's](/appsec/api-cloud-native/), and the
 prize is the same misconfiguration [CSPM finds at runtime](#cspm-and-cnapp--what-they-genuinely-catch)
 being found in the PR instead — cheaper, and before it's ever exposed. The honest limit is that
 IaC scanning only sees what's *in* the IaC: click-ops changes, drift, and anything provisioned
@@ -63,18 +63,18 @@ rather than replacing it — the two cover each other's blind spots.
 
 ## Drift detection and closed-loop remediation
 
-A [landing zone](../architecture-landing-zones/) is a starting state, and environments drift from
+A [landing zone](/cloud-infra/architecture-landing-zones/) is a starting state, and environments drift from
 it — a setting changed by hand, an exception made permanent, a resource created outside the
 templates. Drift detection compares reality against intended state:
 
 - **Detect** the deviation — the resource that no longer matches its definition, the setting
   changed outside the pipeline.
 - **Remediate**, and here's the design choice: alert-only, or **closed-loop** — automatically
-  revert to intended state. Closed-loop is powerful and needs [SOAR-style guardrails](../../detection-eng/soar-automation/):
+  revert to intended state. Closed-loop is powerful and needs [SOAR-style guardrails](/detection-eng/soar-automation/):
   auto-reverting a change someone made deliberately for a real reason is its own outage. Scope
   auto-remediation to unambiguous, high-confidence cases, and alert on the rest.
 
-The general principle mirrors [detection rule health](../../detection-eng/detection-lifecycle/):
+The general principle mirrors [detection rule health](/detection-eng/detection-lifecycle/):
 a baseline you set once and never re-check describes the past, not the present.
 
 ## Benchmarks as baselines
@@ -88,30 +88,30 @@ mistakes to avoid; it doesn't tell you the ones specific to what you're actually
 ## Keeping the queue finite
 
 The defining challenge of the pillar, and the one that decides whether posture management helps
-or just generates guilt. Posture findings are a [prioritization problem](../../threat-intel/risk-prioritization/)
+or just generates guilt. Posture findings are a [prioritization problem](/threat-intel/risk-prioritization/)
 with exactly the structure of vulnerability triage, and the same solution:
 
 - **Reachability and exposure first.** A misconfiguration on an internet-facing,
   data-holding resource outranks the same finding on an isolated internal one — the
-  [architecture](../network-segmentation/) changes the severity.
+  [architecture](/cloud-infra/network-segmentation/) changes the severity.
 - **Exploitability, not just severity.** The tool's "critical" is a generic rating; your context
   decides whether it's actually critical here.
 - **Suppress with discipline.** Accepted risks and known exceptions need an owner and an expiry,
-  or the suppression list becomes its own [undocumented policy](../../detection-eng/detection-quality/)
+  or the suppression list becomes its own [undocumented policy](/detection-eng/detection-quality/)
   nobody can reconstruct.
-- **Measure fixed, not found.** The [same measure as scanning programs](../../appsec/code-scanning/):
+- **Measure fixed, not found.** The [same measure as scanning programs](/appsec/code-scanning/):
   a posture program is judged by findings resolved per unit of engineering time, not by the size
   of its dashboard.
 
-A posture program that dumps its raw output on engineering gets [routed around](../../appsec/code-scanning/)
+A posture program that dumps its raw output on engineering gets [routed around](/appsec/code-scanning/)
 exactly like an untuned scanner, and for the same reason — findings nobody can prioritize are
 findings nobody acts on.
 
 ## Where this connects
 
-Posture is the runtime counterpart to [AppSec's IaC scanning](../../appsec/api-cloud-native/) —
+Posture is the runtime counterpart to [AppSec's IaC scanning](/appsec/api-cloud-native/) —
 same misconfigurations, PR-time versus runtime. Drift is measured against the
-[landing zone baseline](../architecture-landing-zones/), remediation borrows
-[SOAR guardrails](../../detection-eng/soar-automation/), and keeping the queue finite is
-[risk prioritization](../../threat-intel/risk-prioritization/) — the universal problem, applied
+[landing zone baseline](/cloud-infra/architecture-landing-zones/), remediation borrows
+[SOAR guardrails](/detection-eng/soar-automation/), and keeping the queue finite is
+[risk prioritization](/threat-intel/risk-prioritization/) — the universal problem, applied
 to the substrate.

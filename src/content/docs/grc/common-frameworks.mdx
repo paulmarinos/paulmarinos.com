@@ -16,7 +16,7 @@ sidebar:
 
 Security frameworks proliferate, and the instinct is to treat them as interchangeable checklists
 of controls. They're not — they differ in *kind*, and understanding what each is *for* is what
-lets you avoid [implementing the same control seven times](../compliance-mapping/) for seven
+lets you avoid [implementing the same control seven times](/grc/compliance-mapping/) for seven
 audits. The useful distinction is not which controls each contains, but what role each plays.
 
 :::note[A landscape that moves]
@@ -49,7 +49,7 @@ byproduct.
 **NIST SP 800-53** — the deep control catalog underpinning US federal security, organized into
 families. You don't "comply with 800-53" so much as select a baseline from it. It's the
 vocabulary a great many other frameworks quietly map back to, which makes it the useful common
-denominator for [crosswalks](../compliance-mapping/).
+denominator for [crosswalks](/grc/compliance-mapping/).
 
 **ISO/IEC 27001 & 27002** — the international certifiable standard. 27001 defines the management
 *system* (the ISMS — how you govern security as an ongoing process); 27002 is the control
@@ -70,7 +70,7 @@ for shape; the specifics move.
 **CIS Controls and Benchmarks** — prescriptive and practical. The Controls are a prioritized
 action list; the Benchmarks are specific hardening configurations. Where the others tell you
 *what* outcome to achieve, CIS often tells you the actual setting — which is why they double as
-[posture baselines](../../cloud-infra/posture-iac/).
+[posture baselines](/cloud-infra/posture-iac/).
 
 **PCI DSS v4.x** — mandatory for handling payment card data, prescriptive and enforced by the
 card brands rather than a government. Narrow in scope (cardholder data) and deep within it.
@@ -84,13 +84,13 @@ single certifiable program.
 Strip the vocabulary differences and the major frameworks converge on the same control families:
 access control, change management, logging and monitoring, incident response, vulnerability
 management, encryption, and vendor risk. **They are largely the same controls in different
-language**, which is the entire foundation of the [common-control approach](../compliance-mapping/)
+language**, which is the entire foundation of the [common-control approach](/grc/compliance-mapping/)
 — implement the control once, evidence it against many frameworks.
 
 That convergence is also why the controls trace to the other pillars directly: access control is
-[IAM](../../iam/) governance, secure change management is [AppSec SDLC](../../appsec/sdlc/),
-logging and monitoring is [detection](../../detection-eng/program-metrics/), and encryption is
-[key management](../../cloud-infra/cryptography-key-management/). A framework requirement is
+[IAM](/iam/) governance, secure change management is [AppSec SDLC](/appsec/sdlc/),
+logging and monitoring is [detection](/detection-eng/program-metrics/), and encryption is
+[key management](/cloud-infra/cryptography-key-management/). A framework requirement is
 rarely a new thing to build; it's usually a demand for evidence that something you should already
 be doing is being done and can be shown.
 
@@ -99,14 +99,14 @@ be doing is being done and can be shown.
 The mistake is pursuing frameworks for their own sake. The driver should be external: customers
 demand SOC 2, the government market demands FedRAMP, payment processing demands PCI, the sector
 demands HITRUST. Choose CSF or CIS as your internal organizing spine, add certifications as the
-market requires them, and lean on [mapping](../compliance-mapping/) so each addition is
+market requires them, and lean on [mapping](/grc/compliance-mapping/) so each addition is
 incremental rather than a fresh program. A team chasing certifications nobody asked for is
 spending security budget on paperwork.
 
 ## Where this connects
 
 Frameworks are the source of the control requirements the rest of the site *implements* — this
-pillar is where [IAM](../../iam/), [AppSec](../../appsec/sdlc/), [detection](../../detection-eng/),
-and [cloud](../../cloud-infra/) get their obligations. The mechanism that stops each framework
-being separate work is [compliance mapping](../compliance-mapping/), and turning the whole thing
-from paperwork into pipeline is [GRC engineering](../grc-engineering/).
+pillar is where [IAM](/iam/), [AppSec](/appsec/sdlc/), [detection](/detection-eng/),
+and [cloud](/cloud-infra/) get their obligations. The mechanism that stops each framework
+being separate work is [compliance mapping](/grc/compliance-mapping/), and turning the whole thing
+from paperwork into pipeline is [GRC engineering](/grc/grc-engineering/).

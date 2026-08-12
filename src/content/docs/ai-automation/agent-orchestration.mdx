@@ -30,7 +30,7 @@ one agent.
 - **Single agent** handles most real tasks. A capable model with the right tools and a clear
   objective is simpler, cheaper, and easier to reason about. Start here, always.
 - **Multi-agent** earns its complexity when tasks genuinely parallelize, when strict separation
-  of concerns has value (including [security isolation](../securing-ai/) — a research agent that
+  of concerns has value (including [security isolation](/ai-automation/securing-ai/) — a research agent that
   physically cannot reach write tools), or when specialized context or tooling per role
   outweighs the coordination cost.
 
@@ -48,7 +48,7 @@ A handful recur, and naming them is most of designing an agent system:
 - **Supervisor** — a coordinator routes work to specialists and integrates results. The common
   multi-agent shape, and the one whose handoffs are where things break.
 - **Reflection** — the agent critiques its own output and revises. Genuinely improves quality on
-  many tasks, at the cost of more inference; related to [self-consistency](../verification/) in
+  many tasks, at the cost of more inference; related to [self-consistency](/ai-automation/verification/) in
   evaluation.
 - **Tool-calling loop** — the fundamental primitive underneath all of them: model calls a tool,
   reads the result, decides the next call. Everything else is structure on top of this.
@@ -70,14 +70,14 @@ a framework for the ecosystem and the integrations, not because you couldn't bui
 
 - **Short-term** — the current context window: the conversation and recent actions. Bounded, and
   the boundary is a real design constraint, not an implementation detail.
-- **Long-term** — persistent across sessions, usually [retrieval](../rag/) over stored
+- **Long-term** — persistent across sessions, usually [retrieval](/ai-automation/rag/) over stored
   interactions. This is RAG pointed at the agent's own history, with the same quality questions.
 - **Episodic** — memory of specific past *episodes* — what happened last time a similar task ran
   — which is what lets an agent improve rather than repeat mistakes.
 
 The design question is what to persist and what to retrieve when, because unbounded memory is
-both a cost problem and a [privacy](../../data-privacy/) one — an agent's memory is a data store,
-subject to the same [retention and deletion](../../data-privacy/) obligations as any other, and
+both a cost problem and a [privacy](/data-privacy/) one — an agent's memory is a data store,
+subject to the same [retention and deletion](/data-privacy/) obligations as any other, and
 "the agent remembers everything forever" is a compliance finding waiting to happen.
 
 ## The problems nobody demos
@@ -91,30 +91,30 @@ Where agent systems actually fail in production:
 - **Error handling.** Tools fail, return garbage, time out. A brittle agent propagates the error
   into a confident wrong conclusion; a robust one treats tool output as untrusted — which it is,
   doubly so when a tool returns attacker-influenced data and the agent is now exposed to
-  [indirect prompt injection](../securing-ai/).
+  [indirect prompt injection](/ai-automation/securing-ai/).
 - **Cost and latency.** Every step is an inference call; multi-step multi-agent runs multiply
   fast, and a task that costs cents in the demo costs real money at scale. This has to be
   designed for — caching, cheaper models for cheaper steps, capping depth — not discovered on
   the bill.
 - **Nondeterminism.** The same input can produce different action sequences, which makes agents
-  hard to test and hard to trust. [Golden datasets](../verification/) and bounded scope are how
+  hard to test and hard to trust. [Golden datasets](/ai-automation/verification/) and bounded scope are how
   you regain enough control to deploy.
 
 ## The security dimension is not separable
 
-An agent with tools is an [execution surface with an identity](../../iam/frameworks/), and its
-[authorization is the security boundary](../securing-ai/) — what it can *do*, not what it can be
+An agent with tools is an [execution surface with an identity](/iam/frameworks/), and its
+[authorization is the security boundary](/ai-automation/securing-ai/) — what it can *do*, not what it can be
 made to *say*. Orchestration decisions are therefore security decisions: which agent holds which
 tools, whether a compromised sub-agent can reach write access, how far a bad action propagates
-through a delegation tree. This is the same problem [SOAR automation](../../detection-eng/soar-automation/)
+through a delegation tree. This is the same problem [SOAR automation](/detection-eng/soar-automation/)
 solves with scope limits and approval gates, and the same
-[agent-identity frontier](../../iam/frameworks/) IAM describes from the other side — an agent
+[agent-identity frontier](/iam/frameworks/) IAM describes from the other side — an agent
 delegating to sub-agents at machine speed is precisely the revocation-and-containment problem
 that pillar flags as unsolved.
 
 ## Where this connects
 
-Orchestration is [RAG](../rag/) made adaptive and [verification](../verification/) made
-continuous. Its security is [securing AI systems](../securing-ai/) and the
-[agent-identity problem](../../iam/frameworks/). And it's the engine under the
-[security applications](../security-applications/) — the same loop, pointed at the SOC queue.
+Orchestration is [RAG](/ai-automation/rag/) made adaptive and [verification](/ai-automation/verification/) made
+continuous. Its security is [securing AI systems](/ai-automation/securing-ai/) and the
+[agent-identity problem](/iam/frameworks/). And it's the engine under the
+[security applications](/ai-automation/security-applications/) — the same loop, pointed at the SOC queue.

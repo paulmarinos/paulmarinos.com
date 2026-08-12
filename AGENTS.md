@@ -18,12 +18,16 @@ Personal site for paulmarinos.com — Astro + Starlight, deployed to GitHub Page
 - **Broken internal links fail the build** via `scripts/check-graph-links.mjs`, wired into
   the `build` script. The graph plugin already resolves every link and marks unmatched
   targets as sitemap nodes with `exists: false`, with `backlinks` naming the offending
-  pages — so this reads that back rather than re-implementing a link checker. It is what
-  actually covers relative links; see the next point for why the plugin cannot.
-- **Link depth is the easiest mistake to make.** Links are relative, so depth follows page
-  depth: from a pillar page (`/iam/`) use `../appsec/`; from an article (`/iam/foo/`) use
-  `../../appsec/`, and `../bar/` for a sibling article. Getting this wrong silently creates
-  phantom graph nodes instead of 404ing loudly — which is what `check-graph-links` catches.
+  pages — so this reads that back rather than re-implementing a link checker. No longer the
+  primary net now that prose links are absolute and the validator covers them, but kept
+  because it sees component-emitted links, which the validator structurally cannot.
+- **Internal links are absolute** (`/appsec/cicd-security/`) and therefore depth-independent —
+  write the same path from a pillar page, an article, or a sub-article. This is only safe
+  because the custom domain serves at base `/`; markdown links are not base-prefixed by Astro,
+  so reintroducing a path base would 404 every prose link on the site. `errorOnRelativeLinks`
+  is on, so a relative link now fails the build rather than going unchecked.
+  MDX component props (`<LinkCard href>`) need the leading slash too — the validator catches
+  those, but only because they end up in the rendered HTML.
 - **Chrome must be excluded from graph edges.** Edges come from links in generated HTML, so
   any navigation rendered into the page body becomes a false edge. `ignoreLinksInSelectors`
   in `astro.config.mjs` therefore extends the plugin's defaults with `.slsg-backlinks-panel`
@@ -32,13 +36,27 @@ Personal site for paulmarinos.com — Astro + Starlight, deployed to GitHub Page
   and `.nav-buttons` (pagination prev/next). All three were invisible while only pillar
   pages existed, because those already link to each other. Re-check this list when adding
   any component that renders links.
-- **Prose links are currently unvalidated by the plugin, and that is a known gap.** All internal links are
-  written relative (`../iam/`) because markdown links are not base-prefixed by Astro and
-  absolute ones would 404 under the temporary `/paulmarinos.com` base. Measured: with
-  `errorOnRelativeLinks: false` the validator skips relative links; with it `true` it
-  rejects them for being relative whether or not they resolve. Either way relative links go
-  unchecked. Absolute links are checked. Resolve this by switching prose links to absolute
-  and enabling the option once the custom domain makes base `/`.
+- **Subsections nest one directory deep; the sidebar does not.** A subsection stays a single
+  file (`appsec/sdlc.mdx`) until it earns children, then becomes a directory with the old page
+  as `index.mdx` and children beside it carrying `sidebar: { hidden: true }`. Starlight filters
+  hidden entries in `treeify()` *before* building the tree, so their directory never becomes a
+  group — but `dirToItem()` still wraps the surviving index in a group of one, which
+  `src/starlightRouteData.ts` collapses back to a plain link. Net effect: growing a subsection
+  into a directory is invisible in the navigation, and the sidebar stays pillar -> subsection
+  at any content volume. Third-level pages are reached from the hub page's own index, search,
+  the graph and backlinks.
+  This matters most on mobile, not desktop: the theme's MobileNav renders only
+  `type === 'link'` children, so an un-flattened group would not appear in the mobile menu at
+  all — and `Banner.astro` could not recover it, because it was never rendered into the HTML.
+  Sidebar order survives: a directory takes the lowest `sidebar.order` it contains, and hidden
+  children are already filtered out, so the index's own order wins. Giving a *visible* child a
+  lower order would move the whole subsection.
+  Known cost, accepted deliberately: Starlight derives prev/next pagination from the sidebar,
+  so a hidden page renders no `.nav-buttons` at all — verified on
+  `appsec/api-cloud-native/kubernetes-workload-security`. The hub's own pagination is
+  unaffected and steps over its children to the next subsection. If sibling pagination is
+  wanted later, synthesize it in `src/starlightRouteData.ts` from the hidden siblings rather
+  than hand-writing `prev`/`next` frontmatter, which rots on every insertion.
 - **Frontmatter is validated** in `src/content.config.ts`. Articles must declare `pillar`,
   `contentType`, `maturity`, `updated`, and at least one `relatedTo` slug pointing *outside*
   their own pillar — the build fails otherwise. This is deliberate: it enforces the
@@ -114,9 +132,10 @@ Personal site for paulmarinos.com — Astro + Starlight, deployed to GitHub Page
   have regressed anything. It starts mattering the moment articles land: at 4 articles per
   pillar, depth 1 shows 18 nodes with 94% on screen against depth 2's 50 with 74%. Readers can
   still raise it with the graph's depth control.
-  Not measured: the view from an *article* page, because `currentPage` is read once in the
-  component constructor and cannot be repointed at runtime. Depth 1 from an article may be
-  sparse (its pillar plus its `relatedTo` targets). Check that when the first article lands.
+  Measured from an article since: depth 1 at `appsec/api-cloud-native/kubernetes-workload-security`
+  gives a 12-node neighbourhood spanning four pillars — the same size as its parent hub, not the
+  sparse view that was feared. An article's prose links carry it, so the "Where this connects"
+  section is what keeps depth 1 useful; a thinly linked article would still be sparse.
 - **Graph placement.** The graph renders at the bottom of the content column at every width
   (`src/components/Footer.astro`), spanning the full content measure via
   `--slsg-graph-width: 100%`. It is deliberately not in the right sidebar — at ~250px the

@@ -27,9 +27,9 @@ The best intake sources are the ones grounded in something that actually happene
 
 | Source | Quality | Why |
 |---|---|---|
-| [Incident lessons](../../dfir/) | Highest | It happened to *you*, and you know exactly what was visible |
-| [Pentest and red team](../../pentest/) | High | Proven reachable in your environment, with a known timeline |
-| [Hunt results](../threat-hunting/) | High | Someone already confirmed the signal exists in your data |
+| [Incident lessons](/dfir/) | Highest | It happened to *you*, and you know exactly what was visible |
+| [Pentest and red team](/pentest/) | High | Proven reachable in your environment, with a known timeline |
+| [Hunt results](/detection-eng/threat-hunting/) | High | Someone already confirmed the signal exists in your data |
 | Threat intel reporting | Medium | Relevance depends entirely on applicability to your estate |
 | Compliance requirement | Low | Produces rules that satisfy an auditor and detect nothing |
 | Vendor content pack | Low | Written for a generic environment, tuned for none |
@@ -81,7 +81,7 @@ Three classes of failure, all of which need to be detected automatically:
   change. Alert on rate-of-change, not absolute count.
 - **Data source outage.** The upstream tier died. This should page, because it blinds every
   rule in that directory at once — which is why
-  [the repo is organised by data source](../detection-as-code/).
+  [the repo is organised by data source](/detection-eng/detection-as-code/).
 
 The meta-point: you need detections for your detections. Rule health is telemetry like any
 other.
@@ -89,7 +89,7 @@ other.
 ## Backlog prioritization
 
 The backlog will always exceed capacity, which makes this a
-[prioritization problem](../../threat-intel/risk-prioritization/) with the same structure as
+[prioritization problem](/threat-intel/risk-prioritization/) with the same structure as
 vulnerability triage — and the same trap of scoring everything into an unusable order.
 
 Weight by: is the technique observed against organizations like yours; is the data already
@@ -113,8 +113,8 @@ are recoverable, which is what makes deletion safe enough to actually do.
 
 ## Where this connects
 
-The pipeline in [detection as code](../detection-as-code/) is what makes this lifecycle
-enforceable rather than aspirational. [Testing](../detection-quality/) is how a rule earns
-deployment. [Incidents](../../dfir/) and [red team engagements](../../pentest/) are the
+The pipeline in [detection as code](/detection-eng/detection-as-code/) is what makes this lifecycle
+enforceable rather than aspirational. [Testing](/detection-eng/detection-quality/) is how a rule earns
+deployment. [Incidents](/dfir/) and [red team engagements](/pentest/) are the
 highest-quality intake you have — and the loop only closes if their output lands in this
 backlog rather than in a report nobody re-reads.

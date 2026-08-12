@@ -16,7 +16,7 @@ handing it to someone in a form they can act on.
 The working definition here is narrow on purpose. **Threat intelligence is the analysis
 and communication of adversary knowledge.** Operationalizing that knowledge into running
 detections is a different discipline — that lives in
-[Detection Engineering & SecOps](../detection-eng/).
+[Detection Engineering & SecOps](/detection-eng/).
 
 ## Why it matters
 
@@ -27,26 +27,26 @@ substituted their own priors and moved on.
 
 ## How this connects
 
-- **→ [Penetration Testing & Red Teaming](../pentest/):** adversary emulation validates the techniques intel says matter. Pentest findings become intel inputs.
-- **→ [Detection Engineering](../detection-eng/):** intel supplies the detection backlog; detection supplies the telemetry that becomes intel.
-- **→ [GRC](../grc/):** risk prioritization (§1.4) is the same math a risk register needs, done honestly.
-- **→ [AppSec](../appsec/):** exploit-in-the-wild signal is what should be driving the vulnerability queue, not CVSS alone.
-- **→ [AI & Automation](../ai-automation/):** summarization and enrichment pipelines are where this pillar scales — and where hallucinated intel does real damage.
-- **→ [IAM](../iam/):** identity is the most common initial-access path in the reporting, which makes it the most common thing intel should be arguing about.
-- **→ [Cloud & Infrastructure Security](../cloud-infra/):** posture tooling produces findings by the thousand. §1.4 prioritization is the difference between a queue and a wall.
-- **→ [Incident Response & Digital Forensics](../dfir/):** investigation output *is* intelligence. Malware analysis yields indicators and behaviours, and confidence language matters most when it is written under time pressure.
-- **→ [Data Security & Privacy Engineering](../data-privacy/):** exfiltration is the objective in most reporting, which makes data flow the thing worth prioritizing around.
+- **→ [Penetration Testing & Red Teaming](/pentest/):** adversary emulation validates the techniques intel says matter. Pentest findings become intel inputs.
+- **→ [Detection Engineering](/detection-eng/):** intel supplies the detection backlog; detection supplies the telemetry that becomes intel.
+- **→ [GRC](/grc/):** risk prioritization (§1.4) is the same math a risk register needs, done honestly.
+- **→ [AppSec](/appsec/):** exploit-in-the-wild signal is what should be driving the vulnerability queue, not CVSS alone.
+- **→ [AI & Automation](/ai-automation/):** summarization and enrichment pipelines are where this pillar scales — and where hallucinated intel does real damage.
+- **→ [IAM](/iam/):** identity is the most common initial-access path in the reporting, which makes it the most common thing intel should be arguing about.
+- **→ [Cloud & Infrastructure Security](/cloud-infra/):** posture tooling produces findings by the thousand. §1.4 prioritization is the difference between a queue and a wall.
+- **→ [Incident Response & Digital Forensics](/dfir/):** investigation output *is* intelligence. Malware analysis yields indicators and behaviours, and confidence language matters most when it is written under time pressure.
+- **→ [Data Security & Privacy Engineering](/data-privacy/):** exfiltration is the objective in most reporting, which makes data flow the thing worth prioritizing around.
 
 ## What's here
 
 | Subsection | Focus |
 |---|---|
-| [Report Writing](./report-writing/) | Tactical/operational/strategic formats, BLUF, ICD 203 confidence language, Admiralty source grading, templates |
-| [Statistics & Data Analytics](./statistics/) | Base rates, time-series for detection trends, cohort and survival analysis for remediation, sampling bias |
-| [Data Visualization](./data-visualization/) | Chart selection by question type, visualizing uncertainty, SOC vs. executive dashboards, anti-patterns |
-| [Risk Prioritization](./risk-prioritization/) | CVSS vs. EPSS vs. SSVC, KEV, asset criticality weighting, FAIR and loss exceedance |
-| [Effective Communication](./effective-communication/) | Writing for engineer/director/board, translating findings to business impact, briefing formats |
-| [Collection & Sourcing](./collection-sourcing/) | OSINT tradecraft, feed evaluation, internal telemetry as a source, STIX/TAXII and MISP |
+| [Report Writing](/threat-intel/report-writing/) | Tactical/operational/strategic formats, BLUF, ICD 203 confidence language, Admiralty source grading, templates |
+| [Statistics & Data Analytics](/threat-intel/statistics/) | Base rates, time-series for detection trends, cohort and survival analysis for remediation, sampling bias |
+| [Data Visualization](/threat-intel/data-visualization/) | Chart selection by question type, visualizing uncertainty, SOC vs. executive dashboards, anti-patterns |
+| [Risk Prioritization](/threat-intel/risk-prioritization/) | CVSS vs. EPSS vs. SSVC, KEV, asset criticality weighting, FAIR and loss exceedance |
+| [Effective Communication](/threat-intel/effective-communication/) | Writing for engineer/director/board, translating findings to business impact, briefing formats |
+| [Collection & Sourcing](/threat-intel/collection-sourcing/) | OSINT tradecraft, feed evaluation, internal telemetry as a source, STIX/TAXII and MISP |
 
 :::note[Status]
 This pillar is complete at subsection level. Individual subsections will deepen into

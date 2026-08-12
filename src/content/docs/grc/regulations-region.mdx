@@ -40,14 +40,14 @@ building to the strictest:
 - **NIS2** — cybersecurity obligations across a broad set of "essential and important" sectors:
   risk management, incident reporting, and — notably — management accountability. It widened both
   the sectors covered and the personal responsibility of leadership.
-- **DORA** — operational resilience for financial entities (also [sectoral](../regulations-industry/)).
+- **DORA** — operational resilience for financial entities (also [sectoral](/grc/regulations-industry/)).
 - **Cyber Resilience Act** — security requirements for products with digital elements, pushing
   obligations onto *manufacturers* across the product lifecycle. Notable for regulating the
-  [software supply chain and secure development](../../appsec/cicd-security/) as a product-safety
+  [software supply chain and secure development](/appsec/cicd-security/) as a product-safety
   matter.
 - **EU AI Act** — risk-tiered regulation of AI systems, from prohibited uses through high-risk
-  obligations to transparency requirements. It makes [AI systems themselves](../../ai-automation/securing-ai/)
-  a compliance surface, and [training-data governance](../../data-privacy/) a regulatory
+  obligations to transparency requirements. It makes [AI systems themselves](/ai-automation/securing-ai/)
+  a compliance surface, and [training-data governance](/data-privacy/) a regulatory
   requirement rather than a best practice.
 
 The pattern across all five: the EU regulates broadly, extraterritorially, and with real
@@ -60,7 +60,7 @@ The US has no comprehensive federal privacy law, which produces a genuine patchw
 - **State privacy laws** — California's **CCPA/CPRA** led, and many states followed (VCDPA and
   others), each similar in spirit and different in detail. The practical result is a moving target
   of overlapping state obligations with no single standard.
-- **Sectoral overlay** — the [industry regimes](../regulations-industry/) (HIPAA, GLBA) sit on top
+- **Sectoral overlay** — the [industry regimes](/grc/regulations-industry/) (HIPAA, GLBA) sit on top
   of state law, so a healthcare company in California faces both.
 - **State breach-notification laws** — fifty-plus regimes with differing clocks and definitions,
   which is why a single breach of a national user base triggers many notification obligations
@@ -77,7 +77,7 @@ often GDPR) and applying it uniformly rather than trying to vary behavior by use
 - **APAC** — a varied landscape: China's **PIPL** (strict, with significant data-localization and
   cross-border requirements), Japan's **APPI**, and **PDPA** variants across Singapore and others.
   The variation is real, and PIPL in particular imposes localization obligations that shape
-  [architecture](../../cloud-infra/architecture-landing-zones/), not just policy.
+  [architecture](/cloud-infra/architecture-landing-zones/), not just policy.
 
 ## Cross-border transfer — where geography becomes architecture
 
@@ -88,12 +88,12 @@ borders, and satisfying them is an *engineering* problem as much as a legal one:
   corporate rules are the legal instruments that permit transfers, and they shift as adequacy
   decisions are challenged and replaced.
 - **Data localization** — some regimes (PIPL notably) require certain data to *stay in country*,
-  which is a [data-residency architecture](../../data-privacy/lifecycle-retention/) requirement:
+  which is a [data-residency architecture](/data-privacy/lifecycle-retention/) requirement:
   regional storage, regional processing, and controls that keep data from flowing where it
   mustn't.
-- **The reach into design** — residency requirements mean the [landing zone](../../cloud-infra/architecture-landing-zones/),
-  the [database region](../../data-privacy/lifecycle-retention/), and the backup and failover
-  topology all become compliance-relevant. A [multi-region failover](../../cloud-infra/resilience-recovery/)
+- **The reach into design** — residency requirements mean the [landing zone](/cloud-infra/architecture-landing-zones/),
+  the [database region](/data-privacy/lifecycle-retention/), and the backup and failover
+  topology all become compliance-relevant. A [multi-region failover](/cloud-infra/resilience-recovery/)
   that replicates EU data to a US region can be a transfer violation.
 
 This is where regional regulation stops being paperwork and becomes something engineers build:
@@ -102,8 +102,8 @@ with legal force.
 
 ## Where this connects
 
-Regional and [industry](../regulations-industry/) regulation overlap and compound, feeding
-[risk management](../risk-management/) and [mapping](../compliance-mapping/). The data obligations
-are implemented as [privacy engineering, retention, and residency](../../data-privacy/), the AI
-Act lands on [securing AI](../../ai-automation/securing-ai/), and localization shapes
-[cloud architecture](../../cloud-infra/architecture-landing-zones/).
+Regional and [industry](/grc/regulations-industry/) regulation overlap and compound, feeding
+[risk management](/grc/risk-management/) and [mapping](/grc/compliance-mapping/). The data obligations
+are implemented as [privacy engineering, retention, and residency](/data-privacy/), the AI
+Act lands on [securing AI](/ai-automation/securing-ai/), and localization shapes
+[cloud architecture](/cloud-infra/architecture-landing-zones/).

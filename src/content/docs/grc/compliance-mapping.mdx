@@ -28,7 +28,7 @@ three programs and you collect access-control evidence three times, in three for
 auditors — for one underlying control.
 
 The waste compounds with every framework added, and it's entirely avoidable, because
-[the frameworks converge](../common-frameworks/) on the same control families. The access control
+[the frameworks converge](/grc/common-frameworks/) on the same control families. The access control
 you implemented is *one thing*; the audits are asking about it from three directions.
 
 ## The common-control approach
@@ -52,14 +52,14 @@ The mapping itself is a crosswalk — a table relating one control set's require
 Two things make crosswalks tractable rather than a spreadsheet nightmare:
 
 - **A hub framework.** Rather than map every framework to every other (N×N), map each to a common
-  hub and route through it. [NIST 800-53](../common-frameworks/) is the common denominator many
+  hub and route through it. [NIST 800-53](/grc/common-frameworks/) is the common denominator many
   frameworks already reference, which makes it a natural hub.
 - **The Secure Controls Framework (SCF)** — a "metaframework" built precisely as this hub, with
   pre-built crosswalks across many regimes. It exists so you don't hand-build the mappings that
   someone has already built and maintains.
 - **OSCAL** (Open Security Controls Assessment Language) — a NIST machine-readable standard for
   controls, mappings, and assessment. This is the piece that turns mapping from a document into
-  *data*, and it's the bridge to [GRC engineering](../grc-engineering/): mappings expressed as
+  *data*, and it's the bridge to [GRC engineering](/grc/grc-engineering/): mappings expressed as
   OSCAL can be processed, validated, and automated rather than maintained by hand.
 
 ## Evidence collection and audit readiness
@@ -72,13 +72,13 @@ asks about that control.
 Audit readiness then becomes continuous rather than a fire drill. The failure mode mapping
 eliminates is the pre-audit scramble: three weeks of humans manually assembling evidence before
 each assessment, repeated per framework per year. If evidence is [collected continuously and
-mapped](../grc-engineering/), the audit is a query against an existing store, not a project.
+mapped](/grc/grc-engineering/), the audit is a query against an existing store, not a project.
 
 The evidence itself comes from the other pillars, which is worth making explicit: access reviews
-from [IAM governance](../../iam/governance/), scan results from
-[AppSec](../../appsec/code-scanning/), monitoring coverage from
-[detection](../../detection-eng/program-metrics/), config state from
-[cloud posture](../../cloud-infra/posture-iac/). Mapping is what routes each of those, once, to
+from [IAM governance](/iam/governance/), scan results from
+[AppSec](/appsec/code-scanning/), monitoring coverage from
+[detection](/detection-eng/program-metrics/), config state from
+[cloud posture](/cloud-infra/posture-iac/). Mapping is what routes each of those, once, to
 every framework that needs it.
 
 ## Avoiding duplicate work in practice
@@ -97,8 +97,8 @@ framework is a fresh program, which is how GRC becomes the cost center it's accu
 
 ## Where this connects
 
-Mapping rests on [the frameworks converging](../common-frameworks/) on shared control families, and
-it's the necessary precondition for [GRC engineering](../grc-engineering/) — you can't automate
-evidence for controls you haven't mapped. The evidence flows from [IAM](../../iam/governance/),
-[AppSec](../../appsec/code-scanning/), [detection](../../detection-eng/program-metrics/), and
-[cloud posture](../../cloud-infra/posture-iac/), collected once and routed to all.
+Mapping rests on [the frameworks converging](/grc/common-frameworks/) on shared control families, and
+it's the necessary precondition for [GRC engineering](/grc/grc-engineering/) — you can't automate
+evidence for controls you haven't mapped. The evidence flows from [IAM](/iam/governance/),
+[AppSec](/appsec/code-scanning/), [detection](/detection-eng/program-metrics/), and
+[cloud posture](/cloud-infra/posture-iac/), collected once and routed to all.

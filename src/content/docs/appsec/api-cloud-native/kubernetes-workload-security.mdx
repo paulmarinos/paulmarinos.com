@@ -1,0 +1,111 @@
+---
+title: Kubernetes Workload Security
+description: Securing what you ship to a cluster — image provenance, admission control as a pipeline gate, the manifest as reviewable code, and workload identity for outbound auth.
+pillar: appsec
+contentType: deep-dive
+maturity: practitioner
+cloud: [multi]
+attack: [T1610, T1552]
+relatedTo:
+  - appsec/api-cloud-native
+  - cloud-infra/workload-container
+  - pentest/cloud-pentesting
+updated: 2026-08-12
+sidebar:
+  hidden: true
+---
+
+Kubernetes gets split across two pillars on this site, and the split is not arbitrary. The
+cluster — its RBAC, its network policy, its nodes, its runtime — is
+[substrate](/cloud-infra/workload-container/). This page is the other half: the workload you
+deploy onto it, which is an application artifact your team builds, reviews and ships through
+[the pipeline](/appsec/cicd-security/) like any other.
+
+The test is whose change introduces the risk. If it lands in your application repo, it's here.
+If it lands in the platform team's, it's cloud security.
+
+## The image is the artifact
+
+Everything downstream depends on knowing what you actually deployed, and that claim is only as
+good as the provenance behind it.
+
+- **Sign what you build, verify what you run.** Sigstore/cosign attaches a signature to the
+  image digest, not the tag — tags are mutable and `:latest` is an unpinned dependency with
+  cluster access. Deploy by digest.
+- **Attestations are the useful half.** A signature says "we built this." An SLSA provenance
+  attestation says *which source commit, which builder, which parameters* — the thing you need
+  during an incident to answer whether the running image came from reviewed code.
+- **The SBOM is only worth what queries it.** Generating one per build is easy; being able to
+  answer "which running workloads contain this package" the morning a CVE lands is the actual
+  requirement, and it's a storage-and-lookup problem, not a scanning one.
+- **Scan the base, and treat it as a dependency.** Most findings in an image come from the base
+  layer, so a rebuild cadence matters more than a scanner. This is
+  [SCA](/appsec/code-scanning/) pointed at the image, with the same reachability caveat.
+
+## Admission control is your last assertion, not their first
+
+Admission control (Gatekeeper, Kyverno) is usually described as a cluster control, and it is
+one — but the policies worth writing are mostly restatements of guarantees your SDLC already
+claims to provide. That reframing changes what you put in it.
+
+The high-value rules are the ones that fail closed on provenance: reject images without a valid
+signature, reject images not from your registry, reject deploy-by-tag. These are cheap to write
+and they close the gap between "our pipeline signs images" and "only signed images run" — which
+is exactly the gap [a cloud pentest](/pentest/cloud-pentesting/) looks for, because a workload
+you can schedule outside the pipeline is a workload with no review on it.
+
+The trap is using admission control as the *only* enforcement point. A policy that rejects
+`privileged: true` at admission is good; discovering that requirement at admission time means
+the developer learns it from a failed deploy. The same rule belongs in
+[IaC scanning](/appsec/api-cloud-native/) on the pull request, where it's a comment on a diff
+instead of a broken release. Admission control is the backstop that makes the earlier check
+non-optional, not a substitute for it.
+
+## The manifest is code you review
+
+A deployment manifest is application configuration that happens to be YAML, and it carries
+security decisions that never appear in the application source:
+
+- **`securityContext` is the whole defense-in-depth story.** `runAsNonRoot`,
+  `readOnlyRootFilesystem`, `allowPrivilegeEscalation: false`, and dropping all capabilities.
+  None of these prevent the bug; all of them shorten what an attacker does after finding it.
+- **Resource limits are a security control.** Unbounded memory on a shared node makes one
+  compromised workload a noisy-neighbour denial of service against everything scheduled beside
+  it.
+- **`automountServiceAccountToken: false`** unless the workload actually calls the API server.
+  Most don't, and the default mounts a credential into every container — the
+  [unsecured-credential](/appsec/insecure-coding/) pattern, granted by default rather than by
+  mistake.
+- **Secrets don't belong in manifests.** A Kubernetes Secret is base64, not encryption. Mount
+  from a real secret store via CSI driver or a sync controller, and keep the
+  [key material question](/cloud-infra/cryptography-key-management/) on the platform side where
+  it belongs.
+
+These are all reviewable in a diff, which makes them a [design review gate](/appsec/sdlc/)
+rather than a runtime finding.
+
+## Workload identity is where the blast radius is set
+
+The most consequential line in a manifest is usually the service account, because it decides
+what the workload can reach *outside* the cluster.
+
+Projected service account tokens let a pod federate to cloud IAM directly — IRSA on EKS,
+workload identity federation on GKE and AKS — so the workload gets short-lived cloud
+credentials with no static key anywhere. That's strictly better than the alternative it
+replaced, and it moves the entire question into
+[federation and role design](/iam/multi-cloud-federation/).
+
+It also means an application-level bug reaches cloud IAM in one hop. An
+[SSRF](/appsec/insecure-coding/) in a pod bound to an over-scoped role is an
+[AWS privilege escalation](/iam/aws-identity/) finding, not a web finding — which is why the
+role attached to a workload deserves the same scrutiny as the code running in it, and why the
+scoping decision has to happen at design time rather than when the deployment is unblocked.
+
+## Where this connects
+
+This page is deliberately the workload half of a pair: cluster hardening, network policy,
+node posture and runtime detection live in
+[workload and container security](/cloud-infra/workload-container/), and the two are best read
+together. The provenance material is [pipeline security](/appsec/cicd-security/) applied to a
+specific artifact, the identity material lands in [IAM](/iam/), and the whole surface is what
+[cloud pentesting](/pentest/cloud-pentesting/) enumerates first.

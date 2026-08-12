@@ -28,10 +28,10 @@ makes ungrounded claims detectable:
 - **Require citations to retrieved context**, and *verify* the cited passage actually supports
   the claim. Models cite fluently and sometimes wrongly; an unverified citation is decoration.
 - **Constrain answers to the provided context**, and make "the sources don't answer this" a
-  first-class, acceptable output — the [RAG failure](../rag/) of synthesizing from irrelevant
+  first-class, acceptable output — the [RAG failure](/ai-automation/rag/) of synthesizing from irrelevant
   chunks is a grounding failure.
 - **Surface the sources to the user**, so a human can check. This is the decisive advantage of
-  retrieval over [long context](../rag/): you can show your work, which is exactly what a
+  retrieval over [long context](/ai-automation/rag/): you can show your work, which is exactly what a
   security reviewer needs.
 
 Grounding is also why RAG suits security: the ability to say *which source* drove a conclusion
@@ -53,7 +53,7 @@ be fully patched. So the goal is detection and containment, not elimination:
 
 None is complete alone; layered, they move the residual error rate to where a domain can
 tolerate it. The framing that transfers directly from security:
-[precision, recall, and base rates](../../detection-eng/detection-quality/) apply to a
+[precision, recall, and base rates](/detection-eng/detection-quality/) apply to a
 hallucination detector exactly as to a detection rule — a checker that flags everything is as
 useless as one that flags nothing, and the base rate of errors sets what precision you need.
 
@@ -88,7 +88,7 @@ unanswered:
 - **Is retrieval better or worse after the reindex?**
 
 Without it, every change is a vibe and the system is unimprovable in any defensible way — you're
-guessing. This is [detection unit-testing](../../detection-eng/detection-as-code/) for AI:
+guessing. This is [detection unit-testing](/detection-eng/detection-as-code/) for AI:
 known inputs, expected outputs, run on every change, in CI. Building the golden set is tedious
 and it is the highest-leverage investment in the whole pipeline, because it converts "seems
 better" into "measurably better or not."
@@ -101,8 +101,8 @@ Guardrails constrain what the system can output, and the reliable ones are deter
   matching a schema is checkable by code, not vibes, and this is the single most useful
   reliability technique for anything programmatic.
 - **Content filters** on input and output, with the honest caveat that model-based filters are
-  themselves [injectable](../securing-ai/) and shouldn't be the only layer.
-- **Allow/deny constraints** on actions — which belong to [tool-use authorization](../securing-ai/),
+  themselves [injectable](/ai-automation/securing-ai/) and shouldn't be the only layer.
+- **Allow/deny constraints** on actions — which belong to [tool-use authorization](/ai-automation/securing-ai/),
   because for anything with side effects the guardrail is an access-control decision, not a
   content one.
 
@@ -113,7 +113,7 @@ suggestion.
 ## Human-in-the-loop
 
 The final and most important guardrail: for consequential actions, a human decides. The design
-question is *where* the checkpoint goes, and the [SOAR analysis](../../detection-eng/soar-automation/)
+question is *where* the checkpoint goes, and the [SOAR analysis](/detection-eng/soar-automation/)
 applies exactly — gate on the disruptive, irreversible actions, not on everything, because
 universal gating trains people to approve without reading. The checkpoint must show enough to
 make a real decision: the proposed action, the evidence, the reasoning, and the blast radius. A
@@ -121,8 +121,8 @@ rubber-stamp is worse than no gate, because it launders an unreviewed decision a
 
 ## Where this connects
 
-Verification is what makes [RAG](../rag/) trustworthy and what makes
-[security applications](../security-applications/) safe to deploy. The precision-and-base-rate
-reasoning is [detection quality](../../detection-eng/detection-quality/) applied to model output,
-and the human-checkpoint design is [SOAR's approval gates](../../detection-eng/soar-automation/).
-Deterministic guardrails on *actions* are [securing AI systems](../securing-ai/).
+Verification is what makes [RAG](/ai-automation/rag/) trustworthy and what makes
+[security applications](/ai-automation/security-applications/) safe to deploy. The precision-and-base-rate
+reasoning is [detection quality](/detection-eng/detection-quality/) applied to model output,
+and the human-checkpoint design is [SOAR's approval gates](/detection-eng/soar-automation/).
+Deterministic guardrails on *actions* are [securing AI systems](/ai-automation/securing-ai/).

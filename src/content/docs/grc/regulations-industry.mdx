@@ -49,7 +49,7 @@ Security Rule mandates safeguards; the Breach Notification Rule sets the clock; 
 governs use and disclosure. Its defining features for an engineer: the **Business Associate**
 structure pushes obligations down the vendor chain contractually (your cloud provider signs a
 BAA), and the penalties scale with negligence. Health data also carries an unusually long
-[confidentiality lifetime](../../cloud-infra/cryptography-key-management/) — it doesn't stop being
+[confidentiality lifetime](/cloud-infra/cryptography-key-management/) — it doesn't stop being
 sensitive.
 
 ## Financial
@@ -61,7 +61,7 @@ The most heavily regulated sector, with overlapping regimes:
   that produce financial statements (change management, access control, audit trails). SOX is
   why financial-systems access reviews are non-negotiable.
 - **DORA** (EU) — operational resilience for financial entities, including ICT risk and
-  third-party oversight. Appears here and in [regulations by region](../regulations-region/)
+  third-party oversight. Appears here and in [regulations by region](/grc/regulations-region/)
   because it's both.
 - **NYDFS 500** — New York's prescriptive cybersecurity regulation for financial services, notable
   for requiring named accountability (a CISO function) and specific controls.
@@ -78,16 +78,16 @@ not just confidentiality — who did what, to which system, provably.
   reactive, and it accelerates after incidents.
 
 Critical-infrastructure regimes increasingly mandate incident *reporting* to government, which
-makes [incident response](../../dfir/incident-response/) and its notification path a regulatory
+makes [incident response](/dfir/incident-response/) and its notification path a regulatory
 function, not just an operational one.
 
 ## Federal and defense
 
 - **FISMA** — security requirements for US federal information systems, implemented largely
-  through [NIST 800-53](../common-frameworks/) baselines. FedRAMP is the cloud path into it.
+  through [NIST 800-53](/grc/common-frameworks/) baselines. FedRAMP is the cloud path into it.
 - **ITAR / EAR** — export controls on defense and dual-use technology. These are unusual: they
   restrict *who can access* technical data by nationality and location, which turns access
-  control into an export-compliance function. An [IAM](../../iam/) misconfiguration exposing
+  control into an export-compliance function. An [IAM](/iam/) misconfiguration exposing
   controlled technical data to a foreign national can be an export violation, not just a security
   finding — a genuinely different failure mode.
 
@@ -99,7 +99,7 @@ function, not just an operational one.
   point: "reasonable" security is judged after the fact.
 - **State breach-notification laws** — every US state has one, with differing definitions and
   clocks, which is why a breach affecting a national customer base triggers a
-  [patchwork of obligations](../regulations-region/) at once.
+  [patchwork of obligations](/grc/regulations-region/) at once.
 
 ## What this means for an engineer
 
@@ -107,16 +107,16 @@ The practical consequences that actually reach the technical work:
 
 - **Regulation drives which controls are non-negotiable.** SOX makes financial-system access
   reviews mandatory; PCI makes segmentation mandatory; the sector decides the floor.
-- **Breach-notification clocks are engineering requirements.** They mean [classification](../../data-privacy/)
-  (what was accessed) and [forensics](../../dfir/investigation-method/) (what happened) have a
+- **Breach-notification clocks are engineering requirements.** They mean [classification](/data-privacy/)
+  (what was accessed) and [forensics](/dfir/investigation-method/) (what happened) have a
   deadline, and the deadline started before you finished investigating.
-- **Vendor obligations flow through contracts**, which makes [third-party risk](../risk-management/)
+- **Vendor obligations flow through contracts**, which makes [third-party risk](/grc/risk-management/)
   a compliance function, not just a security one.
 
 ## Where this connects
 
-Industry regulation overlaps regional regulation — [DORA and the EU regimes](../regulations-region/)
-are both — and both feed [risk management](../risk-management/) and
-[compliance mapping](../compliance-mapping/). Notification clocks land on
-[incident response](../../dfir/incident-response/) and [evidence handling](../../dfir/evidence-legal/),
-and the data-access obligations rest on [classification](../../data-privacy/).
+Industry regulation overlaps regional regulation — [DORA and the EU regimes](/grc/regulations-region/)
+are both — and both feed [risk management](/grc/risk-management/) and
+[compliance mapping](/grc/compliance-mapping/). Notification clocks land on
+[incident response](/dfir/incident-response/) and [evidence handling](/dfir/evidence-legal/),
+and the data-access obligations rest on [classification](/data-privacy/).

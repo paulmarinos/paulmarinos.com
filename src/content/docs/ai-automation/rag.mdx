@@ -52,7 +52,7 @@ above.
   embed near answers.
 - **Hybrid search** — combine dense (semantic) with sparse (keyword/BM25) retrieval. Semantic
   search misses exact terms — error codes, names, IDs — that keyword search nails, and
-  [vice versa](../vector-databases/). Fusing them covers both.
+  [vice versa](/ai-automation/vector-databases/). Fusing them covers both.
 - **Reranking** — retrieve a broad candidate set cheaply, then use a more expensive
   cross-encoder to reorder by actual relevance. The single highest-leverage upgrade for most
   systems, because it decouples "cast a wide net" from "pick the best."
@@ -74,7 +74,7 @@ once, adapting to the query:
   back, rather than answering from thin evidence.
 - **Route to different sources** — a code question and a policy question want different indexes.
 
-This is [agent orchestration](../agent-orchestration/) applied to retrieval, and it trades
+This is [agent orchestration](/ai-automation/agent-orchestration/) applied to retrieval, and it trades
 latency and cost for the ability to handle queries a fixed pipeline can't. Use it when query
 variety is genuinely high; a single well-tuned pipeline beats an agentic one on a narrow
 domain.
@@ -86,8 +86,8 @@ Vector retrieval finds semantically similar chunks; it's poor at questions requi
 affecting Z." GraphRAG builds a knowledge graph from the corpus and retrieves over structure
 as well as similarity, which is powerful for multi-hop and aggregation questions and expensive
 to build and maintain. The security-relevant instance is exactly a graph question — this is the
-same shape as [the cross-pillar graph on this site](../../) or an
-[attack-path graph](../../pentest/cloud-pentesting/), where the value is in the edges.
+same shape as [the cross-pillar graph on this site](/) or an
+[attack-path graph](/pentest/cloud-pentesting/), where the value is in the edges.
 
 ## The honest question: retrieval vs. long context
 
@@ -100,7 +100,7 @@ it's worth being honest about the trade rather than defending RAG reflexively:
 - **Retrieval wins** on cost (you don't pay to process the whole corpus per query), on scale
   (corpora far exceeding any context window), on freshness (update the index, not the model),
   and on *auditability* — retrieval tells you which sources informed the answer, which matters
-  enormously for [grounding and citation](../verification/).
+  enormously for [grounding and citation](/ai-automation/verification/).
 - **The pragmatic answer is often both** — retrieve to narrow the field, then use a large
   context window generously rather than stuffing in the minimum. The false economy is
   retrieving too little to save tokens and starving the model of the context it needed.
@@ -114,12 +114,12 @@ universal answer, which is the point: **you have to evaluate it**, and evaluatio
 programs most often skip the hard part. Measure retrieval separately from generation — did the
 right chunks come back — because an answer can be wrong for retrieval reasons or generation
 reasons, and conflating them makes the system unimprovable. That measurement discipline is
-[verification and evaluation](../verification/).
+[verification and evaluation](/ai-automation/verification/).
 
 ## Where this connects
 
-RAG rests on [embeddings and vector search](../vector-databases/), and its output is only
-trustworthy with [grounding and evaluation](../verification/). Retrieval as an adaptive step is
-[agent orchestration](../agent-orchestration/). And the whole pattern is
-[collection and sourcing](../../threat-intel/collection-sourcing/) for a machine reader — with
+RAG rests on [embeddings and vector search](/ai-automation/vector-databases/), and its output is only
+trustworthy with [grounding and evaluation](/ai-automation/verification/). Retrieval as an adaptive step is
+[agent orchestration](/ai-automation/agent-orchestration/). And the whole pattern is
+[collection and sourcing](/threat-intel/collection-sourcing/) for a machine reader — with
 the same failure mode, that a confident answer from bad sources is worse than no answer.

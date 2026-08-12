@@ -33,10 +33,10 @@ The lifecycle every identity follows, and each transition is a distinct failure 
   over-entitled account is exactly what an attacker wants.
 - **Leaver** — departure, all access revoked. Conceptually simple, operationally leaky: the
   forgotten SaaS app with local accounts, the personal access token, the shared credential, the
-  access in a system that [SCIM](../multi-cloud-federation/) doesn't reach.
+  access in a system that [SCIM](/iam/multi-cloud-federation/) doesn't reach.
 
 Automation is the only thing that makes this reliable at scale, driven from an authoritative
-source (usually HR) through [SCIM](../multi-cloud-federation/) to downstream systems. The
+source (usually HR) through [SCIM](/iam/multi-cloud-federation/) to downstream systems. The
 mover case is the one worth engineering hardest, because it's the one manual processes handle
 worst — nobody files a ticket to *remove* the access they no longer need.
 
@@ -51,7 +51,7 @@ What makes review meaningful rather than theatrical:
 
 - **Risk-based scope.** Review privileged and sensitive access often and carefully; low-risk
   access rarely. Reviewing everything equally guarantees everything is reviewed carelessly —
-  the same [prioritization](../../threat-intel/risk-prioritization/) logic as everywhere else.
+  the same [prioritization](/threat-intel/risk-prioritization/) logic as everywhere else.
 - **Comprehensible context.** "Sarah has `prod-db-admin`, last used 6 months ago" enables a
   decision; a raw role name does not.
 - **Highlight the anomalies.** Surface the outliers — access nobody else on the team has, access
@@ -62,20 +62,20 @@ What makes review meaningful rather than theatrical:
 
 ## Identity Threat Detection and Response (ITDR)
 
-Because [identity is the primary attack surface](../../detection-eng/data-pipeline/), it needs
+Because [identity is the primary attack surface](/detection-eng/data-pipeline/), it needs
 its own detection discipline — and it sits at the seam between this pillar and
-[detection engineering](../../detection-eng/). ITDR watches the identity fabric itself:
+[detection engineering](/detection-eng/). ITDR watches the identity fabric itself:
 
 - **Authentication anomalies** — impossible travel, new-infrastructure logins, MFA fatigue
   patterns, token replay.
 - **Privilege changes** — role grants, new admin assignments, trust-policy edits, especially
   outside a change process.
-- **Directory attacks** — the [Entra and AD techniques](../../pentest/cloud-pentesting/) —
+- **Directory attacks** — the [Entra and AD techniques](/pentest/cloud-pentesting/) —
   enumeration, consent-grant abuse, sync-account misuse.
 - **Dormant-account activity** — an unused account waking up is one of the higher-signal events
   in security, precisely because it should never happen.
 
-ITDR overlaps [threat hunting](../../detection-eng/threat-hunting/) heavily: identity is the
+ITDR overlaps [threat hunting](/detection-eng/threat-hunting/) heavily: identity is the
 richest hunting ground, for the same reason it's the richest detection surface — most
 intrusions transit it, and the behavioural signals (a service account behaving interactively,
 a human account behaving programmatically) are exactly what rules struggle with and analysts
@@ -84,17 +84,17 @@ catch.
 ## Governance is where identity meets compliance
 
 Joiner/mover/leaver, access review, and least privilege are control requirements in
-[every compliance framework](../../grc/) — SOC 2, ISO 27001, FedRAMP all mandate them. That's
+[every compliance framework](/grc/) — SOC 2, ISO 27001, FedRAMP all mandate them. That's
 an opportunity, not just an obligation: the identity governance you build for security produces
-the [evidence](../../grc/) an auditor needs, generated as a byproduct rather than assembled
+the [evidence](/grc/) an auditor needs, generated as a byproduct rather than assembled
 before each audit. Identity is where a lot of "compliance as code" actually pays off, because
 the access data is already structured and already being collected.
 
 ## Where this connects
 
-Governance operationalizes [AWS](../aws-identity/) and [Azure](../azure-identity/) identity —
+Governance operationalizes [AWS](/iam/aws-identity/) and [Azure](/iam/azure-identity/) identity —
 PIM, Access Reviews and least-privilege generation are governance tools. It rests on
-[SCIM provisioning](../multi-cloud-federation/), feeds [detection](../../detection-eng/threat-hunting/)
-through ITDR, and produces [GRC](../../grc/) evidence as a byproduct. And governing the lifecycle
+[SCIM provisioning](/iam/multi-cloud-federation/), feeds [detection](/detection-eng/threat-hunting/)
+through ITDR, and produces [GRC](/grc/) evidence as a byproduct. And governing the lifecycle
 of *autonomous agent* identities — at machine speed and scale — is the open problem in
-[Frameworks](../frameworks/).
+[Frameworks](/iam/frameworks/).

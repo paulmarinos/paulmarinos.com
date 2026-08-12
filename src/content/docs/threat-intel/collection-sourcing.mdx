@@ -35,7 +35,7 @@ questions, in roughly the order they disqualify things:
 3. **Actionability.** Can it drive a detection, an enrichment, or a decision? An IP with no
    context is a lookup, not intelligence.
 4. **Attribution of the observation.** Was this seen, or inferred? Reported once, or
-   corroborated? This is [source grading](../report-writing/), applied to a supplier.
+   corroborated? This is [source grading](/threat-intel/report-writing/), applied to a supplier.
 5. **False positive cost.** A feed that blocks a CDN range once will cost more than it ever
    returned.
 
@@ -52,7 +52,7 @@ Sources worth treating as collection rather than exhaust:
 
 - **Blocked and failed activity** — what was attempted and stopped is a statement about who
   is interested in you.
-- **Incident output** — [investigations](../../dfir/) produce indicators and behaviours with
+- **Incident output** — [investigations](/dfir/) produce indicators and behaviours with
   a provenance no vendor can match.
 - **Pentest and red team findings** — reachability facts about your own estate.
 - **Authentication telemetry** — identity is where most intrusions start, so it's where the
@@ -60,7 +60,7 @@ Sources worth treating as collection rather than exhaust:
 
 This has an obvious statistical trap: you can only observe what you instrumented, so
 internal telemetry systematically under-represents your blind spots. That is
-[sampling bias](../statistics/), and it is the reason internal collection complements
+[sampling bias](/threat-intel/statistics/), and it is the reason internal collection complements
 external reporting rather than replacing it.
 
 ## OSINT tradecraft and its OPSEC
@@ -101,7 +101,7 @@ IP three times.
 
 Enrichment (ASN, geolocation, passive DNS, prior sightings) is what turns an observable
 into something an analyst can judge, and it is the most obvious
-[automation](../../ai-automation/) target in the whole pillar: high volume, well-defined,
+[automation](/ai-automation/) target in the whole pillar: high volume, well-defined,
 and low judgement per item. Keep the judgement — is this relevant to us — with a human.
 
 ## Retirement
@@ -113,9 +113,9 @@ no expiry semantics as incomplete.
 
 ## Where this connects
 
-Collection feeds [detection engineering](../../detection-eng/) most directly — the
+Collection feeds [detection engineering](/detection-eng/) most directly — the
 detection backlog is downstream of what you can observe. Source grading and confidence
-language from [report writing](../report-writing/) are how collection quality gets carried
-into the product rather than lost at ingest. And [forensics](../../dfir/) is the highest-
+language from [report writing](/threat-intel/report-writing/) are how collection quality gets carried
+into the product rather than lost at ingest. And [forensics](/dfir/) is the highest-
 provenance collection source you have, because it is the one where you know exactly what
 was seen and how.

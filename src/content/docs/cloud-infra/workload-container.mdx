@@ -16,14 +16,14 @@ sidebar:
 ---
 
 Workload security is where the application meets the substrate, and the division of labour is
-the thing to get right first. The container *image* is an [AppSec artifact](../../appsec/api-cloud-native/)
+the thing to get right first. The container *image* is an [AppSec artifact](/appsec/api-cloud-native/)
 built in the pipeline; the *runtime* that schedules and isolates it is infrastructure. This
 page is the runtime side — how the platform contains a workload that turns out to be
 compromised.
 
 ## Images: the runtime's inheritance
 
-The image arrives from the [build pipeline](../../appsec/api-cloud-native/), but the runtime
+The image arrives from the [build pipeline](/appsec/api-cloud-native/), but the runtime
 decides whether to trust it. Two controls sit at that boundary:
 
 - **Minimal base images.** Most vulnerabilities in a scanned image come from the base OS, not
@@ -32,7 +32,7 @@ decides whether to trust it. Two controls sit at that boundary:
   smaller image is a smaller attack surface in the most literal sense.
 - **Admission control.** The cluster gate that refuses an image failing policy — unsigned,
   unscanned, from an untrusted registry, or running as root. OPA/Gatekeeper and Kyverno enforce
-  it at deploy time, which is where [image provenance](../../appsec/cicd-security/) stops being
+  it at deploy time, which is where [image provenance](/appsec/cicd-security/) stops being
   advisory and becomes a wall: the cluster won't run what it can't verify.
 
 ## Kubernetes hardening
@@ -42,18 +42,18 @@ containment. The hardening that matters, roughly in order of how often it's miss
 
 - **Pod Security Standards.** Kubernetes' built-in mechanism to stop pods running privileged,
   mounting the host filesystem, or using host networking. The baseline and restricted profiles
-  exist because those capabilities are exactly the [pod-escape](../../pentest/cloud-pentesting/)
+  exist because those capabilities are exactly the [pod-escape](/pentest/cloud-pentesting/)
   primitives — a privileged container is one step from the node.
 - **Network policy.** Pods can reach every other pod by default. Network policies are
-  [microsegmentation](../network-segmentation/) inside the cluster, and without them a single
+  [microsegmentation](/cloud-infra/network-segmentation/) inside the cluster, and without them a single
   compromised pod has free east-west movement across the whole cluster.
-- **RBAC and namespace design.** [Service account tokens](../../pentest/cloud-pentesting/) are
+- **RBAC and namespace design.** [Service account tokens](/pentest/cloud-pentesting/) are
   mounted into pods by default, and an over-privileged one is cluster access from a compromised
   container. Scope tightly, disable automounting where not needed, and design namespaces as
   isolation boundaries rather than just labels.
 - **Secrets handling.** Kubernetes Secrets are base64, not encrypted, without extra
   configuration. Enable encryption at rest and prefer an external
-  [secrets store](../../iam/multi-cloud-federation/) for anything sensitive.
+  [secrets store](/iam/multi-cloud-federation/) for anything sensitive.
 
 The through-line: **assume a container will be compromised, and harden so that compromising one
 doesn't yield the node or the cluster.** Every item above is about containing the blast radius of
@@ -63,15 +63,15 @@ a workload you've already lost.
 
 Beyond configuration, runtime security watches workloads *executing* — a container suddenly
 spawning a shell, making unexpected outbound connections, or writing to paths it never touches.
-This is [detection](../../detection-eng/) pointed at the workload layer, and its signal is
-strong for the same reason [process lineage](../../dfir/digital-forensics/) is strong in
+This is [detection](/detection-eng/) pointed at the workload layer, and its signal is
+strong for the same reason [process lineage](/dfir/digital-forensics/) is strong in
 forensics: containers have narrow, predictable behaviour, so deviation is meaningful.
 
 Isolation is the harder-edged version of the same concern: how strong is the boundary between a
 container and its host, and between tenants? Standard container isolation is a shared kernel,
 which is a softer boundary than a VM. For genuinely untrusted or multi-tenant workloads, stronger
 isolation (microVMs, sandboxed runtimes) is the honest answer — a shared kernel is a single
-[escape](../../pentest/cloud-pentesting/) away from co-tenancy becoming co-location.
+[escape](/pentest/cloud-pentesting/) away from co-tenancy becoming co-location.
 
 ## Serverless and managed services: the responsibility line
 
@@ -80,8 +80,8 @@ common serverless mistake is misjudging where the line sits.
 
 - **The provider handles** the host, the OS patching, and the runtime for serverless and managed
   services. Real security you get for free.
-- **You still own** the function's [IAM role and its blast radius](../../iam/aws-identity/) — an
-  over-permissioned Lambda is a [privesc target](../../pentest/cloud-pentesting/) exactly like
+- **You still own** the function's [IAM role and its blast radius](/iam/aws-identity/) — an
+  over-permissioned Lambda is a [privesc target](/pentest/cloud-pentesting/) exactly like
   any other identity — the code, the dependencies, the data handling, and the configuration.
 - **The trap:** "serverless is secure" flattens into "I don't have to think about security,"
   when what actually happened is the *infrastructure* security moved to the provider and the
@@ -95,15 +95,15 @@ version of the same finding this whole platform keeps producing.
 ## Host hardening
 
 Where you still run hosts — VMs, Kubernetes nodes, anything not fully managed — the fundamentals
-persist: minimize what's installed, apply [CIS benchmarks](../posture-iac/) as a baseline, patch
+persist: minimize what's installed, apply [CIS benchmarks](/cloud-infra/posture-iac/) as a baseline, patch
 on a real cadence, and disable what you don't use. Less mature than it sounds in practice,
-because [drift](../posture-iac/) erodes a hardened baseline the same way it erodes everything
+because [drift](/cloud-infra/posture-iac/) erodes a hardened baseline the same way it erodes everything
 else — a host hardened at build time and never re-checked is hardened in the past tense.
 
 ## Where this connects
 
-The image is [AppSec](../../appsec/api-cloud-native/); the runtime is here, and admission control
-is where they meet. Kubernetes network policy is [segmentation](../network-segmentation/) inside
-the cluster, pod escape and token abuse are what [cloud pentesting](../../pentest/cloud-pentesting/)
-targets, and runtime behaviour feeds [detection](../../detection-eng/). Every workload's identity
-blast radius is an [IAM](../../iam/aws-identity/) question the platform can't fix for you.
+The image is [AppSec](/appsec/api-cloud-native/); the runtime is here, and admission control
+is where they meet. Kubernetes network policy is [segmentation](/cloud-infra/network-segmentation/) inside
+the cluster, pod escape and token abuse are what [cloud pentesting](/pentest/cloud-pentesting/)
+targets, and runtime behaviour feeds [detection](/detection-eng/). Every workload's identity
+blast radius is an [IAM](/iam/aws-identity/) question the platform can't fix for you.

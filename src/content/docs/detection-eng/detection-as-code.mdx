@@ -35,7 +35,7 @@ backup, not a practice. The parts that matter:
   sample without firing on a known-benign one.
 - **Automated deploy.** If shipping is manual, the pipeline is a suggestion.
 
-This is [AppSec's SDLC argument](../../appsec/) applied to detection content — same
+This is [AppSec's SDLC argument](/appsec/) applied to detection content — same
 reasoning, same failure mode when skipped.
 
 ## Repo structure that survives growth
@@ -67,7 +67,7 @@ worth enforcing in CI:
 |---|---|
 | `owner` | Rules without owners are the ones nobody retires |
 | `data_source` | Blast radius when a pipeline breaks |
-| `attack` | Coverage mapping, and the shared vocabulary with [pentest](../../pentest/) |
+| `attack` | Coverage mapping, and the shared vocabulary with [pentest](/pentest/) |
 | `severity` | Must map to a defined response, not a vibe |
 | `false_positives` | Known benign causes, written by the author while they still remember |
 | `validation` | How this was proven to fire — link the test or the emulation run |
@@ -109,8 +109,8 @@ missing.
 
 ## Where this connects
 
-Everything here is a lifecycle problem underneath — [the detection lifecycle](../detection-lifecycle/)
+Everything here is a lifecycle problem underneath — [the detection lifecycle](/detection-eng/detection-lifecycle/)
 is what the pipeline automates. ATT&CK metadata is the handoff vocabulary with
-[pentest and red teaming](../../pentest/), where an emulation run is how a rule earns its
-`validation` field. And the pipeline itself is [AppSec](../../appsec/) practice pointed at
+[pentest and red teaming](/pentest/), where an emulation run is how a rule earns its
+`validation` field. And the pipeline itself is [AppSec](/appsec/) practice pointed at
 a different artefact.

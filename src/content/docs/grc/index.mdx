@@ -25,30 +25,30 @@ that turn a cost center into leverage.
 
 ## How this connects
 
-- **→ [Detection Engineering](../detection-eng/):** continuous control monitoring and detection engineering are the same pipeline with different consumers. Log coverage analysis is shared audit evidence.
-- **→ [IAM](../iam/):** access review, least privilege, and joiner/mover/leaver are control requirements in every framework. Identity is where the evidence lives.
-- **→ [AppSec](../appsec/):** secure SDLC, change management, and vulnerability management are controls. Scanning output is evidence when collected deliberately.
-- **→ [Penetration Testing & Red Teaming](../pentest/):** required by PCI DSS and FedRAMP outright, and a pentest finding is usually a control gap in disguise.
-- **→ [AI & Automation](../ai-automation/):** evidence collection is the single best automation target in security — and the EU AI Act makes AI systems themselves a compliance surface.
-- **→ [Threat Intel](../threat-intel/):** quantitative risk (FAIR, loss exceedance) is the honest version of the risk register.
-- **→ [Cloud & Infrastructure Security](../cloud-infra/):** where most technical control requirements actually land — encryption, segmentation, backup and key management. "Encrypted at rest" is an audit answer; that pillar is what it buys.
-- **→ [Incident Response & Digital Forensics](../dfir/):** breach notification clocks are regulatory, and evidence handling has to survive counsel.
-- **→ [Data Security & Privacy Engineering](../data-privacy/):** obligation vs. engineering. §4 says what must be true; §10 is how it becomes true in a system that is already running.
+- **→ [Detection Engineering](/detection-eng/):** continuous control monitoring and detection engineering are the same pipeline with different consumers. Log coverage analysis is shared audit evidence.
+- **→ [IAM](/iam/):** access review, least privilege, and joiner/mover/leaver are control requirements in every framework. Identity is where the evidence lives.
+- **→ [AppSec](/appsec/):** secure SDLC, change management, and vulnerability management are controls. Scanning output is evidence when collected deliberately.
+- **→ [Penetration Testing & Red Teaming](/pentest/):** required by PCI DSS and FedRAMP outright, and a pentest finding is usually a control gap in disguise.
+- **→ [AI & Automation](/ai-automation/):** evidence collection is the single best automation target in security — and the EU AI Act makes AI systems themselves a compliance surface.
+- **→ [Threat Intel](/threat-intel/):** quantitative risk (FAIR, loss exceedance) is the honest version of the risk register.
+- **→ [Cloud & Infrastructure Security](/cloud-infra/):** where most technical control requirements actually land — encryption, segmentation, backup and key management. "Encrypted at rest" is an audit answer; that pillar is what it buys.
+- **→ [Incident Response & Digital Forensics](/dfir/):** breach notification clocks are regulatory, and evidence handling has to survive counsel.
+- **→ [Data Security & Privacy Engineering](/data-privacy/):** obligation vs. engineering. §4 says what must be true; §10 is how it becomes true in a system that is already running.
 
 ## What's here
 
 | Subsection | Focus |
 |---|---|
-| [Common Frameworks](./common-frameworks/) | NIST CSF 2.0 and SP 800-53, ISO/IEC 27001 & 27002, SOC 2, FedRAMP, CIS Controls, PCI DSS v4.x, HITRUST, CMMC |
-| [Regulations by Industry](./regulations-industry/) | HIPAA/HITECH, GLBA/SOX/DORA/NYDFS 500, NERC CIP and TSA directives, FISMA and ITAR/EAR, FTC Act and state breach laws |
-| [Regulations by Region](./regulations-region/) | EU (GDPR, NIS2, DORA, CRA, AI Act), the US state privacy patchwork, UK, APAC, cross-border transfer mechanisms |
-| [Compliance Mapping](./compliance-mapping/) | Control crosswalks and common controls, OSCAL and SCF, evidence collection, avoiding duplicate work across audits |
-| [GRC Engineering](./grc-engineering/) | Compliance as code (OSCAL, OPA/Rego, Conftest), automated evidence pipelines, continuous control monitoring, drift detection |
-| [Risk Management](./risk-management/) | Risk register mechanics, qualitative vs. quantitative, third-party risk, exception and acceptance workflows |
+| [Common Frameworks](/grc/common-frameworks/) | NIST CSF 2.0 and SP 800-53, ISO/IEC 27001 & 27002, SOC 2, FedRAMP, CIS Controls, PCI DSS v4.x, HITRUST, CMMC |
+| [Regulations by Industry](/grc/regulations-industry/) | HIPAA/HITECH, GLBA/SOX/DORA/NYDFS 500, NERC CIP and TSA directives, FISMA and ITAR/EAR, FTC Act and state breach laws |
+| [Regulations by Region](/grc/regulations-region/) | EU (GDPR, NIS2, DORA, CRA, AI Act), the US state privacy patchwork, UK, APAC, cross-border transfer mechanisms |
+| [Compliance Mapping](/grc/compliance-mapping/) | Control crosswalks and common controls, OSCAL and SCF, evidence collection, avoiding duplicate work across audits |
+| [GRC Engineering](/grc/grc-engineering/) | Compliance as code (OSCAL, OPA/Rego, Conftest), automated evidence pipelines, continuous control monitoring, drift detection |
+| [Risk Management](/grc/risk-management/) | Risk register mechanics, qualitative vs. quantitative, third-party risk, exception and acceptance workflows |
 
 :::tip[The thread worth following]
 **Treating auditors as a downstream consumer of an API.** If evidence is generated by a
 pipeline rather than assembled by a human before each audit, most of the GRC cost
 disappears. That's the [GRC Engineering](#whats-here) subsection, and it leans on
-[AI & Automation](../ai-automation/).
+[AI & Automation](/ai-automation/).
 :::

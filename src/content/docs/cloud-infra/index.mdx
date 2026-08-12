@@ -23,41 +23,41 @@ with a key any compute role could use.
 Architecture decisions are the ones you can't patch. A misconfigured dependency is a
 ticket; a flat network across three environments is a two-year programme. The controls
 here are also the ones that make every other pillar cheaper — segmentation shrinks what a
-[pentest](../pentest/) can reach, sane account structure shrinks what an
-[IAM](../iam/) mistake can touch, and a real posture baseline shrinks what
-[detection](../detection-eng/) has to compensate for.
+[pentest](/pentest/) can reach, sane account structure shrinks what an
+[IAM](/iam/) mistake can touch, and a real posture baseline shrinks what
+[detection](/detection-eng/) has to compensate for.
 
 The honest counterweight: posture tooling is very good at producing findings and much
 worse at producing prioritised ones. A CSPM that reports ten thousand issues has told you
-nothing, which is why this pillar leans on [risk prioritization](../threat-intel/) rather
+nothing, which is why this pillar leans on [risk prioritization](/threat-intel/) rather
 than restating it.
 
 ## How this connects
 
-- **→ [IAM](../iam/):** the two-plane split. §2 owns identity policy — evaluation logic, roles, federation. This pillar owns org-level guardrail architecture: SCPs and Azure Policy as blast-radius design rather than as permission checks.
-- **→ [Application Security](../appsec/):** §3 is the workload, this is what it runs on. IaC and container *scanners* live there; the posture *programme* they feed lives here.
-- **→ [Penetration Testing & Red Teaming](../pentest/):** segmentation, egress control and workload isolation are exactly what an operator tests. Cloud pivots are architecture findings before they are exploits.
-- **→ [Detection Engineering](../detection-eng/):** architecture determines what is observable. Network design decides whether east-west traffic is even loggable, which makes §8.2 upstream of §7.3's coverage gaps.
-- **→ [GRC](../grc/):** most technical control requirements land here — encryption, segmentation, backup, key management. "Data is encrypted at rest" is an audit answer; §8.4 is what it does and doesn't buy.
-- **→ [Threat Intelligence](../threat-intel/):** posture findings are a prioritization problem before they are a remediation problem.
-- **→ [AI & Automation](../ai-automation/):** drift detection and closed-loop remediation are the natural automation target, and model-serving infrastructure is just another workload with an unusual blast radius.
-- **→ [Incident Response & Digital Forensics](../dfir/):** cloud IR is an architecture dependency. Snapshotting, credential revocation and blast-radius scoping all rest on how the substrate was built.
-- **→ [Data Security & Privacy Engineering](../data-privacy/):** §8.4 owns key material and primitives; §10 owns the data itself. Encryption is the mechanism, not the control.
+- **→ [IAM](/iam/):** the two-plane split. §2 owns identity policy — evaluation logic, roles, federation. This pillar owns org-level guardrail architecture: SCPs and Azure Policy as blast-radius design rather than as permission checks.
+- **→ [Application Security](/appsec/):** §3 is the workload, this is what it runs on. IaC and container *scanners* live there; the posture *programme* they feed lives here.
+- **→ [Penetration Testing & Red Teaming](/pentest/):** segmentation, egress control and workload isolation are exactly what an operator tests. Cloud pivots are architecture findings before they are exploits.
+- **→ [Detection Engineering](/detection-eng/):** architecture determines what is observable. Network design decides whether east-west traffic is even loggable, which makes §8.2 upstream of §7.3's coverage gaps.
+- **→ [GRC](/grc/):** most technical control requirements land here — encryption, segmentation, backup, key management. "Data is encrypted at rest" is an audit answer; §8.4 is what it does and doesn't buy.
+- **→ [Threat Intelligence](/threat-intel/):** posture findings are a prioritization problem before they are a remediation problem.
+- **→ [AI & Automation](/ai-automation/):** drift detection and closed-loop remediation are the natural automation target, and model-serving infrastructure is just another workload with an unusual blast radius.
+- **→ [Incident Response & Digital Forensics](/dfir/):** cloud IR is an architecture dependency. Snapshotting, credential revocation and blast-radius scoping all rest on how the substrate was built.
+- **→ [Data Security & Privacy Engineering](/data-privacy/):** §8.4 owns key material and primitives; §10 owns the data itself. Encryption is the mechanism, not the control.
 
 ## What's here
 
 | Subsection | Focus |
 |---|---|
-| [Cloud Architecture & Landing Zones](./architecture-landing-zones/) | Multi-account structure as blast-radius design, Organizations/Control Tower, management groups and folders, environment separation, org-level guardrails, landing zones as code |
-| [Network Security & Segmentation](./network-segmentation/) | VPC/VNet design and subnet tiering, private endpoints, egress control and DNS security, microsegmentation, mTLS and service mesh, ZTNA vs. VPN |
-| [Workload & Container Security](./workload-container/) | Minimal images and provenance, admission control, Kubernetes hardening, runtime security and isolation, serverless and managed-service posture, host hardening |
-| [Cryptography & Key Management](./cryptography-key-management/) | KMS/HSM design and key hierarchies, envelope encryption, what encryption actually defends against, secrets architecture, PKI lifecycle, post-quantum and crypto agility |
-| [Posture Management & IaC](./posture-iac/) | What CSPM/CNAPP genuinely catches, IaC security, drift detection and closed-loop remediation, benchmarks as baselines, keeping the findings queue finite |
-| [Resilience & Recovery](./resilience-recovery/) | Backup and restore as a security control, immutable and air-gapped backups, restore testing as the only real evidence, DDoS and edge protection, multi-region failover |
+| [Cloud Architecture & Landing Zones](/cloud-infra/architecture-landing-zones/) | Multi-account structure as blast-radius design, Organizations/Control Tower, management groups and folders, environment separation, org-level guardrails, landing zones as code |
+| [Network Security & Segmentation](/cloud-infra/network-segmentation/) | VPC/VNet design and subnet tiering, private endpoints, egress control and DNS security, microsegmentation, mTLS and service mesh, ZTNA vs. VPN |
+| [Workload & Container Security](/cloud-infra/workload-container/) | Minimal images and provenance, admission control, Kubernetes hardening, runtime security and isolation, serverless and managed-service posture, host hardening |
+| [Cryptography & Key Management](/cloud-infra/cryptography-key-management/) | KMS/HSM design and key hierarchies, envelope encryption, what encryption actually defends against, secrets architecture, PKI lifecycle, post-quantum and crypto agility |
+| [Posture Management & IaC](/cloud-infra/posture-iac/) | What CSPM/CNAPP genuinely catches, IaC security, drift detection and closed-loop remediation, benchmarks as baselines, keeping the findings queue finite |
+| [Resilience & Recovery](/cloud-infra/resilience-recovery/) | Backup and restore as a security control, immutable and air-gapped backups, restore testing as the only real evidence, DDoS and edge protection, multi-region failover |
 
 :::tip[The thread worth following]
 **The substrate trace.** One misconfigured network path, read four ways: an architecture
-flaw here, a pivot in [pentest](../pentest/), a blind spot in
-[detection](../detection-eng/), and a control gap in [GRC](../grc/). Same fact, four
+flaw here, a pivot in [pentest](/pentest/), a blind spot in
+[detection](/detection-eng/), and a control gap in [GRC](/grc/). Same fact, four
 vocabularies — the site's argument in miniature.
 :::

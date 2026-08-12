@@ -17,7 +17,7 @@ sidebar:
 
 Building AI systems that work and building them so their failures are survivable are the same
 job, and this is the second half. The material here ties directly to
-[agent identity in the IAM pillar](../../iam/frameworks/): that page describes the problem from
+[agent identity in the IAM pillar](/iam/frameworks/): that page describes the problem from
 the identity side, this one from the application side, and they meet at a single control point —
 what an AI system is *authorized to do*.
 
@@ -32,9 +32,9 @@ before relying on them.
 Prompt injection is the signature vulnerability of LLM applications, and the uncomfortable truth
 is that **it is not fully solved and may not be fully solvable** with current architectures. The
 root cause is structural: models process instructions and data in the same channel, so data that
-contains instructions can become instructions. This is [injection](../../appsec/insecure-coding/)
+contains instructions can become instructions. This is [injection](/appsec/insecure-coding/)
 in the classic sense — untrusted input interpreted as commands — but without the clean fix,
-because there is no [parameterization](../../appsec/secure-coding/) that reliably separates code
+because there is no [parameterization](/appsec/secure-coding/) that reliably separates code
 from data in natural language.
 
 Two forms, and the second is the dangerous one:
@@ -42,7 +42,7 @@ Two forms, and the second is the dangerous one:
 - **Direct** — the user tries to override the system prompt: "ignore your instructions and…"
   Visible, and the easier case.
 - **Indirect** — malicious instructions hidden in content the model *ingests*: a web page, a
-  document, a [retrieved record](../rag/), a tool's output. The payload arrives through data the
+  document, a [retrieved record](/ai-automation/rag/), a tool's output. The payload arrives through data the
   user never sees, which makes it far more dangerous and far harder to filter. An agent that
   reads a booby-trapped web page can be hijacked by that page.
 
@@ -50,13 +50,13 @@ Defenses reduce risk without eliminating it, and clarity about that gap is itsel
 posture:
 
 - **Filtering** catches known patterns and is bypassable — a model-based filter is
-  [itself injectable](../verification/), so it can't be the only layer.
+  [itself injectable](/ai-automation/verification/), so it can't be the only layer.
 - **Privilege separation** is the durable answer, and it moves the problem out of the prompt
   entirely: assume injection *will* succeed and constrain what a hijacked model can *do*. This is
   the pivot from "prevent bad input" to "limit blast radius," and it's why the real control is
   authorization, below.
 - **Human confirmation** on consequential actions defangs injection that reaches a dangerous
-  operation — the [SOAR gate](../../detection-eng/soar-automation/) again.
+  operation — the [SOAR gate](/detection-eng/soar-automation/) again.
 
 The mental shift that matters: **stop trying to guarantee the model won't be tricked, and design
 so that being tricked isn't catastrophic.** Injection prevention is best-effort; blast-radius
@@ -66,23 +66,23 @@ limitation is where the security actually lives.
 
 The most important security decision in an agentic system is not what the model might be made to
 *say* — it's what it is authorized to *do*. An LLM with tools is an
-[execution surface](../agent-orchestration/), and its permissions are the security boundary.
+[execution surface](/ai-automation/agent-orchestration/), and its permissions are the security boundary.
 
-This reframes the whole problem as [access control](../../iam/frameworks/):
+This reframes the whole problem as [access control](/iam/frameworks/):
 
 - **Least privilege for agents.** An agent should hold the minimum tools and permissions for its
   task, and no more. A research agent that only reads cannot be injected into deleting, because
   it has no delete tool — the capability simply isn't in reach.
 - **Scoped, short-lived credentials.** An agent's authority should be bounded and expiring, the
-  same [temporary-over-standing](../../iam/aws-identity/) logic as any workload identity.
-- **Separation of duties across agents.** In [multi-agent systems](../agent-orchestration/), the
+  same [temporary-over-standing](/iam/aws-identity/) logic as any workload identity.
+- **Separation of duties across agents.** In [multi-agent systems](/ai-automation/agent-orchestration/), the
   agent exposed to untrusted content should not be the one holding write access — a boundary that
   contains a compromise rather than letting it propagate.
 - **The confused-deputy framing.** An agent acting with its authority on attacker-influenced
-  input is [exactly the confused deputy](../../iam/aws-identity/), and the classic mitigation —
+  input is [exactly the confused deputy](/iam/aws-identity/), and the classic mitigation —
   don't grant the deputy more authority than the request should carry — applies directly.
 
-This is the point the [IAM frameworks](../../iam/frameworks/) page and this one converge on from
+This is the point the [IAM frameworks](/iam/frameworks/) page and this one converge on from
 opposite directions: agent security *is* an authorization problem, and "what is it allowed to do,
 scoped how tightly, revocable how fast" is the question, not "how do we phrase the system prompt."
 
@@ -94,12 +94,12 @@ numbering:
 
 - **Prompt injection** (direct and indirect) — covered above.
 - **Insecure output handling** — trusting model output as safe. If a model's output is rendered
-  as HTML, run as code, or executed as a query, it's [untrusted input to that sink](../../appsec/insecure-coding/)
+  as HTML, run as code, or executed as a query, it's [untrusted input to that sink](/appsec/insecure-coding/)
   and needs the same encoding and validation as any user data. The model is not a trusted
   source.
 - **Excessive agency** — too much tool access, the authorization problem above.
-- **Sensitive information disclosure** — [training-data or context leakage](../../data-privacy/),
-  including across a [tenant boundary](../vector-databases/).
+- **Sensitive information disclosure** — [training-data or context leakage](/data-privacy/),
+  including across a [tenant boundary](/ai-automation/vector-databases/).
 - **Supply chain** — below.
 
 Verify the current list rather than trusting this summary; the value is the checklist habit, not
@@ -107,27 +107,27 @@ the specific entries.
 
 ## Model supply chain
 
-The [supply-chain problem](../../appsec/insecure-coding/) has a new surface. You increasingly run
+The [supply-chain problem](/appsec/insecure-coding/) has a new surface. You increasingly run
 models, adapters, and datasets you didn't produce, and the trust questions are unfamiliar:
 
 - **Model provenance.** A model downloaded from a hub is code and weights from a third party.
   Where did it come from, and what's your basis for trusting it? Serialized model formats can
-  [execute code on load](../../appsec/insecure-coding/) — the same deserialization risk, new
+  [execute code on load](/appsec/insecure-coding/) — the same deserialization risk, new
   file type.
 - **Poisoned models and datasets.** Training or fine-tuning data can carry backdoors and biases
   that survive into behaviour, and they're hard to detect by inspection.
 - **Dependency risk.** The ML stack is a deep, fast-moving dependency tree with the
-  [same exposure](../../appsec/cicd-security/) as any other — plus its own less-mature tooling.
+  [same exposure](/appsec/cicd-security/) as any other — plus its own less-mature tooling.
 
-Treat models and their data as [supply-chain artifacts](../../appsec/cicd-security/) with
+Treat models and their data as [supply-chain artifacts](/appsec/cicd-security/) with
 provenance, integrity, and vetting requirements, not as trusted givens because they came from a
 well-known hub.
 
 ## Where this connects
 
-This is the defensive counterpart to [LLM pentesting](../../pentest/specialized-testing/) and the
-application-side view of [agent identity](../../iam/frameworks/) — the two pillars meeting at
+This is the defensive counterpart to [LLM pentesting](/pentest/specialized-testing/) and the
+application-side view of [agent identity](/iam/frameworks/) — the two pillars meeting at
 authorization. Insecure output handling and model supply chain are
-[AppSec](../../appsec/insecure-coding/) problems in new clothing. Blast-radius limitation is the
-[SOAR guardrail](../../detection-eng/soar-automation/) applied to agents. And data leakage is
-[data-privacy](../../data-privacy/) — a model and its context are data stores with audiences.
+[AppSec](/appsec/insecure-coding/) problems in new clothing. Blast-radius limitation is the
+[SOAR guardrail](/detection-eng/soar-automation/) applied to agents. And data leakage is
+[data-privacy](/data-privacy/) — a model and its context are data stores with audiences.

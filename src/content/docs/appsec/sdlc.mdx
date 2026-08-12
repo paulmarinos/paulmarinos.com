@@ -39,7 +39,7 @@ practice dies:
 - **Not worth it:** internal refactors with no boundary change, UI-only work, low-risk CRUD
   behind existing controls.
 
-The [prioritization instinct](../../threat-intel/risk-prioritization/) applies — spend the
+The [prioritization instinct](/threat-intel/risk-prioritization/) applies — spend the
 modeling effort where the blast radius is largest, and let the rest go. A lightweight,
 frequent practice on the things that matter beats a heavyweight one that happens twice a year
 because it's too expensive to do more often.
@@ -58,7 +58,7 @@ stage security lives.
 
 The abuse cases become the security acceptance criteria — testable, and specific enough that
 "done" means something. This is the same discipline as
-[abuse cases in red-team objectives](../../pentest/red-team-operations/), applied at design
+[abuse cases in red-team objectives](/pentest/red-team-operations/), applied at design
 time instead of against production.
 
 ## Design review gates
@@ -75,8 +75,8 @@ sign-off.
 
 ## Secure code review
 
-Distinct from [automated scanning](../code-scanning/): a human reading code for the flaws
-tools miss — [authorization gaps](../insecure-coding/), business-logic errors, misuse of
+Distinct from [automated scanning](/appsec/code-scanning/): a human reading code for the flaws
+tools miss — [authorization gaps](/appsec/insecure-coding/), business-logic errors, misuse of
 crypto, the fail-open path. Where to concentrate finite attention:
 
 - **Trust boundaries** — where untrusted data enters, where privilege changes.
@@ -98,10 +98,10 @@ and no single stage catches all:
 
 - **Design** catches architectural flaws — threat modeling. Nothing downstream catches a
   fundamentally broken trust model cheaply.
-- **Code** catches implementation flaws — review and [SAST](../code-scanning/).
-- **Build** catches dependency and pipeline risk — [SCA and CI security](../cicd-security/).
-- **Runtime** catches what everything before it missed — [DAST](../code-scanning/),
-  [detection](../../detection-eng/), and the [pentest](../../pentest/).
+- **Code** catches implementation flaws — review and [SAST](/appsec/code-scanning/).
+- **Build** catches dependency and pipeline risk — [SCA and CI security](/appsec/cicd-security/).
+- **Runtime** catches what everything before it missed — [DAST](/appsec/code-scanning/),
+  [detection](/detection-eng/), and the [pentest](/pentest/).
 
 Shifting left is about adding early stages, not deleting late ones. A design flaw is cheapest
 at design and a configuration flaw may only be visible at runtime — you need coverage across
@@ -110,7 +110,7 @@ most reliable.
 
 ## Where this connects
 
-The requirements this produces are [secure-coding](../secure-coding/) practices made explicit,
-and its abuse cases are [pentest scope](../../pentest/) written early. Secure SDLC is also a
-control requirement in [GRC](../../grc/) frameworks — where the risk is that it becomes a
+The requirements this produces are [secure-coding](/appsec/secure-coding/) practices made explicit,
+and its abuse cases are [pentest scope](/pentest/) written early. Secure SDLC is also a
+control requirement in [GRC](/grc/) frameworks — where the risk is that it becomes a
 documented process that satisfies an auditor and changes no code.

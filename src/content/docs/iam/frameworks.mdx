@@ -33,7 +33,7 @@ The mechanics that matter:
   and what and where." The decision is per-request, not per-session, and re-evaluated as
   context changes.
 - **Identity is the perimeter.** With no trusted network, the authorization decision moves
-  entirely into identity and device posture. This is why [Conditional Access](../azure-identity/)
+  entirely into identity and device posture. This is why [Conditional Access](/iam/azure-identity/)
   and its equivalents are where Zero Trust actually lives.
 - **Microsegmentation** limits lateral movement, so a compromise is contained rather than
   free to roam — the network half of the same principle.
@@ -59,17 +59,17 @@ Where it touches identity:
   session from a password without the password ever crossing the wire, defeating both
   interception and server-side password compromise.
 - **Privacy-preserving verification** — proving an attribute (age, membership, clearance)
-  without disclosing the underlying data, which is [data minimization](../../data-privacy/) at
+  without disclosing the underlying data, which is [data minimization](/data-privacy/) at
   the protocol level.
 
 This is more mature in cryptography and blockchain than in mainstream enterprise IAM, but the
 privacy pressure from regulation is pushing it toward relevance — the ability to verify without
-collecting is exactly what [privacy engineering](../../data-privacy/) wants.
+collecting is exactly what [privacy engineering](/data-privacy/) wants.
 
 ## Zero Knowledge Trust — identity for autonomous agents
 
 This is the newest and least-solved material on the site, and the reason the whole
-[agentic identity](../../ai-automation/) thread exists. As AI systems gain the ability to act —
+[agentic identity](/ai-automation/) thread exists. As AI systems gain the ability to act —
 call tools, make purchases, modify systems, invoke other agents — they become a new class of
 actor that existing identity models were never designed for.
 
@@ -93,17 +93,17 @@ permissions — it's delegating judgment.** Every hard question follows from tha
   answer.
 - **Audit trails for agent decisions.** Not just what was done, but what the agent was trying
   to achieve and what it was authorized to attempt. Reconstructing an agent's *intent* after the
-  fact is a [forensics](../../dfir/) problem that barely has tooling yet.
+  fact is a [forensics](/dfir/) problem that barely has tooling yet.
 
 The framing that ties it together, and the one worth carrying away: **an agent with tools is a
 confused-deputy problem with a natural-language interface and its own initiative.** The classic
-[confused deputy](../aws-identity/) is a program tricked into misusing its authority. An agent
-is that, except it *chooses* what to do with its authority, and [prompt injection](../../ai-automation/)
+[confused deputy](/iam/aws-identity/) is a program tricked into misusing its authority. An agent
+is that, except it *chooses* what to do with its authority, and [prompt injection](/ai-automation/)
 is the mechanism for hijacking that choice. So the security question is not "what can it be
 tricked into saying" but "what is it authorized to *do*, and how tightly is that scoped, and
 can we pull it back" — which is an IAM question wearing an AI hat.
 
-This is where IAM and [AI engineering](../../ai-automation/) become the same problem viewed
+This is where IAM and [AI engineering](/ai-automation/) become the same problem viewed
 from two sides, and it's genuinely unsolved — which is what makes it worth building expertise
 in now, ahead of the tooling.
 
@@ -119,10 +119,10 @@ in now, ahead of the tooling.
 
 ## Where this connects
 
-This subsection is the hinge between IAM and [AI & Automation](../../ai-automation/) — agent
-identity is the same problem as [tool-use authorization and blast radius](../../ai-automation/)
-seen from the identity side. Zero Trust enforcement is [Conditional Access](../azure-identity/)
-and the [architecture](../../cloud-infra/) that implements it. Zero Knowledge's verify-without-
-collecting is [privacy engineering](../../data-privacy/). And auditing what an agent actually
-did is a [detection](../../detection-eng/) and [forensics](../../dfir/) problem we don't yet
+This subsection is the hinge between IAM and [AI & Automation](/ai-automation/) — agent
+identity is the same problem as [tool-use authorization and blast radius](/ai-automation/)
+seen from the identity side. Zero Trust enforcement is [Conditional Access](/iam/azure-identity/)
+and the [architecture](/cloud-infra/) that implements it. Zero Knowledge's verify-without-
+collecting is [privacy engineering](/data-privacy/). And auditing what an agent actually
+did is a [detection](/detection-eng/) and [forensics](/dfir/) problem we don't yet
 have the tools for.

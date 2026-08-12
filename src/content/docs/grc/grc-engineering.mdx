@@ -32,7 +32,7 @@ verifiable evidence on demand, in a form the auditor can consume directly.
 Once you see it this way, the whole practice reorganizes around producing good evidence
 continuously rather than assembling it reactively. The pre-audit scramble — the three-week fire
 drill of screenshots and spreadsheets — is a symptom of not having built the API. This is the same
-move [detection engineering makes with continuous control monitoring](../../detection-eng/program-metrics/):
+move [detection engineering makes with continuous control monitoring](/detection-eng/program-metrics/):
 the evidence a SOC produces and the evidence an auditor wants are frequently the same telemetry
 with different consumers.
 
@@ -40,11 +40,11 @@ with different consumers.
 
 The foundation. Express controls, policies, and their mappings as code and data rather than prose:
 
-- **Policies as code.** [OPA/Rego](../../cloud-infra/posture-iac/) and Conftest let you express a
+- **Policies as code.** [OPA/Rego](/cloud-infra/posture-iac/) and Conftest let you express a
   policy — "all storage must be encrypted," "no public databases" — as executable rules evaluated
   against real infrastructure. The policy document and the enforcement become the same artifact,
   which closes the gap between what the policy says and what the systems do.
-- **Controls as data.** [OSCAL](../compliance-mapping/) makes controls, baselines, and mappings
+- **Controls as data.** [OSCAL](/grc/compliance-mapping/) makes controls, baselines, and mappings
   machine-readable, so they can be processed and validated rather than maintained by hand in a
   document that drifts from reality.
 
@@ -57,12 +57,12 @@ cannot drift from what's deployed, because it's what's checking.
 The core deliverable. Instead of humans gathering evidence before an audit, a pipeline collects it
 continuously from the systems that already produce it:
 
-- Access review completions from [IAM](../../iam/governance/).
-- Encryption and configuration state from [cloud posture](../../cloud-infra/posture-iac/).
-- Vulnerability scan results from [AppSec](../../appsec/code-scanning/).
-- Monitoring coverage from [detection](../../detection-eng/program-metrics/).
+- Access review completions from [IAM](/iam/governance/).
+- Encryption and configuration state from [cloud posture](/cloud-infra/posture-iac/).
+- Vulnerability scan results from [AppSec](/appsec/code-scanning/).
+- Monitoring coverage from [detection](/detection-eng/program-metrics/).
 
-Each is collected once, timestamped, stored, and [mapped](../compliance-mapping/) to every
+Each is collected once, timestamped, stored, and [mapped](/grc/compliance-mapping/) to every
 framework requirement it satisfies. Audit readiness becomes a query against that store rather than
 a project, and — the underrated benefit — the evidence is *current* rather than a snapshot
 assembled the week before the audit and stale by the time it's reviewed.
@@ -71,22 +71,22 @@ assembled the week before the audit and stale by the time it's reviewed.
 
 The step beyond evidence collection: don't just gather proof a control operated, *continuously
 verify* it's still operating. A control that worked at audit time and silently broke afterward is
-exactly the [detection-rule-health problem](../../detection-eng/detection-lifecycle/) in
+exactly the [detection-rule-health problem](/detection-eng/detection-lifecycle/) in
 compliance clothing — the control exists on paper and nowhere else, and nobody notices because
 nothing alerts on a control that quietly stopped.
 
 Continuous monitoring means alerting when a control *stops* — encryption disabled, a review
-overdue, a policy violated, logging turned off. This is where GRC and [security operations](../../detection-eng/)
+overdue, a policy violated, logging turned off. This is where GRC and [security operations](/detection-eng/)
 fully converge: a control failing and a security event are the same signal viewed by different
-consumers, and the same [drift detection](../../cloud-infra/posture-iac/) that keeps infrastructure
+consumers, and the same [drift detection](/cloud-infra/posture-iac/) that keeps infrastructure
 in its intended state keeps controls in theirs.
 
 ## Where AI fits
 
-Compliance evidence is [among the strongest applications of AI in security](../../ai-automation/security-applications/):
+Compliance evidence is [among the strongest applications of AI in security](/ai-automation/security-applications/):
 much of the work is gathering, correlating, and formatting data that already exists, plus drafting
 control narratives and mapping evidence to requirements — high-volume, well-defined, and
-judgment-adjacent. The non-negotiable guardrail is [grounding](../../ai-automation/verification/):
+judgment-adjacent. The non-negotiable guardrail is [grounding](/ai-automation/verification/):
 evidence must trace to its source, because an auditor will verify it and a fabricated citation is
 fraud rather than error. This is the reframing's natural endpoint — the API gains a drafting layer,
 but the facts still trace to real system state.
@@ -100,7 +100,7 @@ GRC engineering is powerful and not total:
 - **Auditors vary in readiness** to consume automated evidence, though this is shifting as OSCAL
   and continuous monitoring mature.
 - **Building the pipeline is real engineering effort**, justified at scale and across many
-  frameworks, harder to justify for a single small audit — the [same ROI logic](../compliance-mapping/)
+  frameworks, harder to justify for a single small audit — the [same ROI logic](/grc/compliance-mapping/)
   as any automation.
 
 The trajectory is clear even where the destination isn't reached: every piece of evidence moved
@@ -108,10 +108,10 @@ from manual to pipeline is cost removed permanently and reliability gained.
 
 ## Where this connects
 
-GRC engineering is [compliance mapping](../compliance-mapping/) made executable, drawing evidence
-from every operational pillar — [IAM](../../iam/governance/), [AppSec](../../appsec/code-scanning/),
-[detection](../../detection-eng/program-metrics/), [cloud posture](../../cloud-infra/posture-iac/).
-Continuous control monitoring is [detection](../../detection-eng/) with an auditor as the consumer,
-policy-as-code is [OPA/Rego](../../cloud-infra/posture-iac/), and the evidence-drafting layer is
-[AI security applications](../../ai-automation/security-applications/) with grounding as the price
+GRC engineering is [compliance mapping](/grc/compliance-mapping/) made executable, drawing evidence
+from every operational pillar — [IAM](/iam/governance/), [AppSec](/appsec/code-scanning/),
+[detection](/detection-eng/program-metrics/), [cloud posture](/cloud-infra/posture-iac/).
+Continuous control monitoring is [detection](/detection-eng/) with an auditor as the consumer,
+policy-as-code is [OPA/Rego](/cloud-infra/posture-iac/), and the evidence-drafting layer is
+[AI security applications](/ai-automation/security-applications/) with grounding as the price
 of entry.

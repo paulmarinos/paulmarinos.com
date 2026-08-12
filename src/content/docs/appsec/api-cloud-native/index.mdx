@@ -19,10 +19,16 @@ Application security and infrastructure security stopped being separable somewhe
 move to containers and declarative infrastructure. The application is a container image; its
 permissions are IaC; its front door is an API gateway. The bug that used to be a server
 misconfiguration is now a line in a Terraform file that ships through
-[the pipeline](../cicd-security/) with the code.
+[the pipeline](/appsec/cicd-security/) with the code.
 
-This is the seam between AppSec and [cloud security](../../cloud-infra/), and it's the
+This is the seam between AppSec and [cloud security](/cloud-infra/), and it's the
 placeholder the site structure marks for expansion.
+
+**In this subsection:**
+
+- [Kubernetes Workload Security](/appsec/api-cloud-native/kubernetes-workload-security/) —
+  image provenance, admission control, manifests and workload identity, from the
+  application's side of the cluster line.
 
 ## The OWASP API Top 10
 
@@ -32,7 +38,7 @@ authorization.
 
 - **Broken Object-Level Authorization (BOLA/IDOR)** — the dominant API vulnerability. The API
   returns an object by id without checking the caller owns it. Nearly invisible in code, since
-  the [broken version looks complete](../insecure-coding/), and the API surface makes it
+  the [broken version looks complete](/appsec/insecure-coding/), and the API surface makes it
   systematic to test — every parameterized endpoint, every other user's identifiers.
 - **Broken Function-Level Authorization** — admin endpoints reachable with non-admin tokens,
   usually just undocumented rather than protected.
@@ -42,8 +48,8 @@ authorization.
 
 The pattern across all three: **the UI enforced authorization and the API doesn't.** When the
 client was the only caller, hiding a button was a control; against direct API access it's
-nothing. This is the same finding [API pentesting](../../pentest/specialized-testing/) leads
-with, and the fix is [server-side authorization on every object and function](../../iam/), not
+nothing. This is the same finding [API pentesting](/pentest/specialized-testing/) leads
+with, and the fix is [server-side authorization on every object and function](/iam/), not
 client-side concealment.
 
 ## Container and image security
@@ -54,17 +60,18 @@ A container image is a filesystem plus metadata, and its security decomposes cle
   Minimal or distroless images carry less to be vulnerable — a smaller image is a smaller
   attack surface, literally.
 - **Image scanning** for known-vulnerable OS and language packages, in the pipeline before
-  push. This is [SCA](../code-scanning/) pointed at the image, and reachability matters just
+  push. This is [SCA](/appsec/code-scanning/) pointed at the image, and reachability matters just
   as much — a vulnerable package that never runs is noise.
 - **No secrets in images.** Build args and layers persist; a secret added and removed across
-  layers is still in the history, the [same failure as git](../insecure-coding/).
+  layers is still in the history, the [same failure as git](/appsec/insecure-coding/).
 - **Run as non-root**, read-only root filesystem, dropped capabilities. Defense in depth for
   when the app is compromised — this is the build-time half of the
-  [Kubernetes hardening](../../cloud-infra/) the platform enforces at runtime.
+  [Kubernetes hardening](/cloud-infra/workload-container/) the platform enforces at runtime.
 
 The division of labour: the *image* is an AppSec artifact built in the pipeline; the *runtime*
-that runs it is [cloud-infrastructure security](../../cloud-infra/). Admission control is where
-they meet — the cluster refusing an image that fails policy.
+that runs it is [cloud-infrastructure security](/cloud-infra/). Admission control is where
+they meet — the cluster refusing an image that fails policy. Worked through in full in
+[Kubernetes workload security](/appsec/api-cloud-native/kubernetes-workload-security/).
 
 ## Infrastructure as Code scanning
 
@@ -75,18 +82,18 @@ S3 bucket or an over-permissive security group is a reviewable diff, not a runti
   tfsec or Terrascan. Catch the public bucket, the wildcard IAM policy, the missing encryption
   flag at plan time.
 - **The prize is shift-left for cloud posture.** The same misconfiguration that
-  [CSPM finds at runtime](../../cloud-infra/) is findable in the PR that introduces it —
+  [CSPM finds at runtime](/cloud-infra/) is findable in the PR that introduces it —
   cheaper, and before it's ever exposed.
 - **The honest limit:** IaC scanning only covers what's *in* the IaC. Click-ops changes,
   drift, and anything provisioned outside the templates are invisible to it, which is why it
-  complements [runtime posture management](../../cloud-infra/) rather than replacing it. The
+  complements [runtime posture management](/cloud-infra/) rather than replacing it. The
   boundary is deliberate — IaC scanning is the AppSec-side tool; the posture *program* it feeds
   lives in cloud security.
 
 ## Where this connects
 
-This subsection is the AppSec/[cloud](../../cloud-infra/) seam by design — image and IaC
+This subsection is the AppSec/[cloud](/cloud-infra/) seam by design — image and IaC
 scanning are AppSec practices whose findings are cloud-infrastructure risks. The API material
-is the defensive half of [API and LLM pentesting](../../pentest/specialized-testing/), and it
-rests on the [authorization](../insecure-coding/) and [IAM](../../iam/) fundamentals the rest
+is the defensive half of [API and LLM pentesting](/pentest/specialized-testing/), and it
+rests on the [authorization](/appsec/insecure-coding/) and [IAM](/iam/) fundamentals the rest
 of the pillar builds.

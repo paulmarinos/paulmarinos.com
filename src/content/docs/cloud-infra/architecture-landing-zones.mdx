@@ -33,13 +33,13 @@ The lines that matter:
   dev mistake can't reach production data. The most basic and most frequently violated.
 - **Blast-radius isolation.** The high-value workload — the one holding customer data — in its
   own account with its own controls, so compromising something adjacent doesn't reach it.
-- **Blast-radius for identity.** This is where account structure and [IAM](../../iam/aws-identity/)
+- **Blast-radius for identity.** This is where account structure and [IAM](/iam/aws-identity/)
   meet: a smaller account is a smaller set of things a compromised role can touch. Structure
   shrinks what an identity mistake can reach.
 
 A single shared account optimizes for convenience and pays for it in an incident, when the
 scoping question — what could the intruder reach — has the answer "everything." The
-[investigation](../../dfir/investigation-method/) is bounded by the architecture, and a flat
+[investigation](/dfir/investigation-method/) is bounded by the architecture, and a flat
 account makes the boundary the whole estate.
 
 ## The org hierarchy
@@ -57,7 +57,7 @@ match how you want to apply guardrails, because the tree *is* the unit of policy
 
 ## Org-level guardrails — architecture, not identity
 
-This is the boundary with [IAM](../../iam/aws-identity/) worth being precise about, because both
+This is the boundary with [IAM](/iam/aws-identity/) worth being precise about, because both
 pillars touch policy. **Identity policy** (§2) decides what a principal can do. **Org-level
 guardrails** (here) set outer bounds no principal in that account can exceed, regardless of what
 their identity policy grants.
@@ -72,8 +72,8 @@ their identity policy grants.
 
 The distinction is real and load-bearing: guardrails are **blast-radius design**, the outer
 wall that holds when an account-level mistake grants too much. An SCP denying CloudTrail
-tampering means a compromised admin *still* can't blind the [detection pipeline](../../detection-eng/data-pipeline/),
-because the guardrail sits above their identity. This is [fail-closed](../../appsec/secure-coding/)
+tampering means a compromised admin *still* can't blind the [detection pipeline](/detection-eng/data-pipeline/),
+because the guardrail sits above their identity. This is [fail-closed](/appsec/secure-coding/)
 at organizational scale, and it's the layer that survives the mistakes the other layers make.
 
 ## Landing zones as code
@@ -86,24 +86,24 @@ afterward by someone remembering to.**
 Defining it as code (Terraform, Control Tower customizations, Azure Landing Zone templates)
 is what makes it consistent and reviewable — every account gets the same baseline, and the
 baseline is a diff, not tribal knowledge. This is the substrate side of the
-[IaC discipline](../../appsec/api-cloud-native/): the account foundation is infrastructure
+[IaC discipline](/appsec/api-cloud-native/): the account foundation is infrastructure
 code, subject to the same review and scanning as any other.
 
 ## Drift and re-baselining
 
 A landing zone is a starting state, and cloud environments drift from any starting state —
 someone changes a setting by hand, an exception becomes permanent, a new service arrives
-outside the template. Drift detection ([posture management](../posture-iac/)) is how you
+outside the template. Drift detection ([posture management](/cloud-infra/posture-iac/)) is how you
 notice, and re-baselining — periodically bringing accounts back to the intended foundation — is
 how you stop the slow decay from secure-by-default to whatever-accumulated. Without it, the
 landing zone describes how the environment looked on day one and nothing since.
 
 ## Where this connects
 
-Account structure bounds what [IAM](../../iam/aws-identity/) mistakes can reach and what
-[cloud pentesting](../../pentest/cloud-pentesting/) can pivot through. Guardrails protect the
-[detection pipeline](../../detection-eng/data-pipeline/) from being disabled. Landing zones are
-[IaC](../posture-iac/), and drift from them is a [posture](../posture-iac/) problem. It's the
-foundation the rest of this pillar builds on — [network](../network-segmentation/),
-[workload](../workload-container/), and [crypto](../cryptography-key-management/) all assume a
+Account structure bounds what [IAM](/iam/aws-identity/) mistakes can reach and what
+[cloud pentesting](/pentest/cloud-pentesting/) can pivot through. Guardrails protect the
+[detection pipeline](/detection-eng/data-pipeline/) from being disabled. Landing zones are
+[IaC](/cloud-infra/posture-iac/), and drift from them is a [posture](/cloud-infra/posture-iac/) problem. It's the
+foundation the rest of this pillar builds on — [network](/cloud-infra/network-segmentation/),
+[workload](/cloud-infra/workload-container/), and [crypto](/cloud-infra/cryptography-key-management/) all assume a
 sane structure underneath.

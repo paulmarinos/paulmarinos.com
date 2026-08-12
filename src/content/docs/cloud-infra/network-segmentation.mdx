@@ -22,7 +22,7 @@ almost nobody instruments.
 
 ## Segmentation is blast-radius control
 
-Where [account structure](../architecture-landing-zones/) contains blast radius at the
+Where [account structure](/cloud-infra/architecture-landing-zones/) contains blast radius at the
 organizational layer, network segmentation contains it at the traffic layer. The design
 questions:
 
@@ -35,14 +35,14 @@ questions:
   exposure — the storage account that's "private" but still has a public endpoint is a
   recurring finding.
 - **Not flat.** A flat network where every workload can reach every other is the network
-  equivalent of a [single shared account](../architecture-landing-zones/): convenient, and it
+  equivalent of a [single shared account](/cloud-infra/architecture-landing-zones/): convenient, and it
   makes lateral movement free once an intruder is inside.
 
 ## East-west and microsegmentation
 
 The traditional model hardened north-south (in and out) and left east-west (workload to
 workload, inside the perimeter) wide open. That's exactly the freedom a
-[pentester or red team](../../pentest/cloud-pentesting/) exploits after initial access — get one
+[pentester or red team](/pentest/cloud-pentesting/) exploits after initial access — get one
 foothold, move sideways unimpeded.
 
 **Microsegmentation** closes it: each workload reaches only what it legitimately needs, so a
@@ -58,7 +58,7 @@ control, and data theft are all **outbound**, which means egress control is the 
 actually catches an active intrusion.
 
 - **Default-deny egress.** Workloads reach only the specific destinations they need. This
-  breaks [C2 and exfiltration](../../pentest/red-team-operations/) directly — the implant can't
+  breaks [C2 and exfiltration](/pentest/red-team-operations/) directly — the implant can't
   call home if home isn't on the allowlist. It's the most under-deployed high-value network
   control in the cloud.
 - **DNS security.** DNS is an exfiltration channel and a C2 channel — data tunneled through
@@ -68,7 +68,7 @@ actually catches an active intrusion.
 
 The reframing worth carrying: **egress control is a detection and containment capability, not a
 firewall chore.** Whether east-west and outbound traffic is even *visible* is a network design
-decision that sits [upstream of the detection pipeline](../../detection-eng/data-pipeline/) — you
+decision that sits [upstream of the detection pipeline](/detection-eng/data-pipeline/) — you
 cannot detect on traffic the architecture never lets you see, which is why §8.2 is a
 prerequisite for §7.3's coverage rather than a peer of it.
 
@@ -80,7 +80,7 @@ transit:
 - **TLS termination.** Where TLS ends determines where traffic is plaintext and who can read
   it. Terminating at the edge means internal traffic is unencrypted unless you re-encrypt.
 - **mTLS** — mutual authentication, so both sides prove identity. The certificate *is* the
-  [workload identity](../../iam/multi-cloud-federation/), and it's how service-to-service auth
+  [workload identity](/iam/multi-cloud-federation/), and it's how service-to-service auth
   stops relying on a shared secret.
 - **Service mesh** (Istio, Linkerd) — pushes mTLS, and the certificate lifecycle it requires,
   into infrastructure so it doesn't become an operational burden on every service. The main
@@ -89,7 +89,7 @@ transit:
 ## ZTNA vs. VPN — where each helps
 
 Both provide remote access; the models differ, and the difference is the
-[Zero Trust](../../iam/frameworks/) one:
+[Zero Trust](/iam/frameworks/) one:
 
 - **VPN** puts you *on the network* — authenticate once, and you have network-level access to a
   segment. The failure mode is exactly that: a compromised VPN credential grants broad network
@@ -99,15 +99,15 @@ Both provide remote access; the models differ, and the difference is the
   for, and nothing else is even visible.
 
 ZTNA is the better model for most remote-access needs because it doesn't grant the network foot
-in the door, and it's [Zero Trust](../../iam/frameworks/) applied to connectivity — identity as
+in the door, and it's [Zero Trust](/iam/frameworks/) applied to connectivity — identity as
 the perimeter, enforced per request. VPN still fits site-to-site connectivity and legacy
 systems that can't sit behind a ZTNA proxy. The common mistake is treating them as
 interchangeable; they grant fundamentally different things.
 
 ## Where this connects
 
-Segmentation extends the blast-radius design of [account structure](../architecture-landing-zones/),
-and its egress dimension is what makes [detection](../../detection-eng/data-pipeline/) possible —
+Segmentation extends the blast-radius design of [account structure](/cloud-infra/architecture-landing-zones/),
+and its egress dimension is what makes [detection](/detection-eng/data-pipeline/) possible —
 you can't see what the network never routes to a sensor. It's what
-[cloud pentesting](../../pentest/cloud-pentesting/) navigates after a foothold, and ZTNA is
-[Zero Trust](../../iam/frameworks/) at the connectivity layer.
+[cloud pentesting](/pentest/cloud-pentesting/) navigates after a foothold, and ZTNA is
+[Zero Trust](/iam/frameworks/) at the connectivity layer.

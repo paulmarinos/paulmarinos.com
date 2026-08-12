@@ -1,16 +1,18 @@
 /**
  * Fails the build on broken internal links.
  *
- * `starlight-links-validator` cannot cover this site: every internal link is
- * written relative (because markdown links are not base-prefixed by Astro, and
- * absolute ones would 404 under the temporary preview base), and the plugin
- * either skips relative links or rejects them for being relative. Neither
- * resolves them.
+ * This used to be the *only* link check that worked, back when every internal
+ * link was written relative and `starlight-links-validator` either skipped
+ * relative links or rejected them for being relative. Prose links are absolute
+ * now and the validator covers them, so this is no longer the primary net.
  *
- * The graph plugin already does resolve them. Any link target it could not match
- * to a real page becomes a sitemap node with `exists: false`, and its
- * `backlinks` name the pages that pointed at it. That is a link report we are
- * already paying for, so this reads it back.
+ * It is kept because it still catches what the validator structurally cannot:
+ * the validator only inspects links written in markdown, so links emitted by a
+ * component are invisible to it. The graph plugin parses generated HTML, which
+ * means it sees those too. Any link target it could not match to a real page
+ * becomes a sitemap node with `exists: false`, with `backlinks` naming the
+ * pages that pointed at it — a link report we are already paying for, so this
+ * reads it back.
  *
  * Runs after `astro build` — see the `build` script in package.json.
  */
@@ -40,7 +42,8 @@ for (const [target, node] of broken) {
 	for (const source of sources) console.error(`      linked from  ${source}`);
 }
 console.error(
-	`\n  Links are relative, so depth matters: from a pillar page (/iam/) use "../appsec/",\n` +
-		`  from an article (/iam/foo/) use "../../appsec/" and "../bar/" for a sibling.\n`,
+	`\n  Internal links are absolute and depth-independent: write "/iam/appsec/" style paths\n` +
+		`  with a leading slash from anywhere. A target listed above is one no page matched,\n` +
+		`  so check the slug rather than the link's depth.\n`,
 );
 process.exit(1);

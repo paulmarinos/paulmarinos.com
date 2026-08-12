@@ -60,7 +60,7 @@ identity**, with whatever that identity can do.
 
 So an over-privileged managed identity on an internet-facing resource is a direct path: reach
 the resource, inherit the identity, use its permissions. This is the Azure analogue of AWS
-[metadata credential theft](../../pentest/cloud-pentesting/), and the fix is the same
+[metadata credential theft](/pentest/cloud-pentesting/), and the fix is the same
 principle — least privilege on the identity, so inheriting it is worth as little as possible.
 
 ## The misconfigurations that matter
@@ -95,15 +95,15 @@ supposed to be separately defended.
 - **Access Reviews** — periodic recertification of who has what, the mechanism that catches the
   over-privileged service principal and the stale assignment before an attacker does.
 - **Conditional Access** — the policy engine: require MFA, compliant devices, or trusted
-  locations per app and per risk level. This is Azure's [Zero Trust](../frameworks/) policy
+  locations per app and per risk level. This is Azure's [Zero Trust](/iam/frameworks/) policy
   enforcement point, and its design is where a lot of real-world identity security is won.
-- **Workload identity federation** — the [OIDC pattern](../../appsec/cicd-security/) for Azure,
+- **Workload identity federation** — the [OIDC pattern](/appsec/cicd-security/) for Azure,
   so external workloads authenticate without a stored secret.
 
 ## Where this connects
 
 The two-plane structure and managed-identity abuse are what
-[cloud pentesting](../../pentest/cloud-pentesting/) enumerates in Azure. Conditional Access is
-[Zero Trust](../frameworks/) enforcement, and the architectural guardrails — management-group
-policy, scoped assignments — are [cloud security](../../cloud-infra/). The contrast with
-[AWS identity](../aws-identity/) is instructive: same problems, different failure surfaces.
+[cloud pentesting](/pentest/cloud-pentesting/) enumerates in Azure. Conditional Access is
+[Zero Trust](/iam/frameworks/) enforcement, and the architectural guardrails — management-group
+policy, scoped assignments — are [cloud security](/cloud-infra/). The contrast with
+[AWS identity](/iam/aws-identity/) is instructive: same problems, different failure surfaces.

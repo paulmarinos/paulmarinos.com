@@ -21,7 +21,7 @@ matters, because a hunt programme that finds things your rules would have caught
 measuring its own redundancy.
 
 It also sits on a boundary worth being precise about. Hunting is discovery in an
-environment presumed healthy; [forensics](../../dfir/) is reconstruction of an incident
+environment presumed healthy; [forensics](/dfir/) is reconstruction of an incident
 already known to have happened. The techniques overlap heavily; the question does not.
 
 ## Two modes
@@ -47,7 +47,7 @@ A structured hunt should produce four artefacts regardless of outcome:
 1. **The hypothesis**, written before looking, specific enough to be wrong.
 2. **The data assessment** — what you queried, over what window, and *what you couldn't
    query*. This is often the most valuable output: hunts are the fastest way to discover
-   [coverage gaps](../data-pipeline/), because you go looking for data you don't routinely
+   [coverage gaps](/detection-eng/data-pipeline/), because you go looking for data you don't routinely
    use.
 3. **The findings**, including the negative result stated properly — "no evidence of X in
    the 90-day window, in the environments where Y is collected" is a real conclusion with
@@ -61,12 +61,12 @@ happened; nothing downstream changed.
 ## Where to hunt
 
 **Identity** is the highest-yield surface, for the same reason it's the highest-value
-[log tier](../data-pipeline/): most intrusions transit it. Impossible-travel patterns,
+[log tier](/detection-eng/data-pipeline/): most intrusions transit it. Impossible-travel patterns,
 authentication from new infrastructure, MFA fatigue patterns, token reuse, service accounts
 behaving interactively, and dormant accounts waking up.
 T1078 (Valid Accounts) is deliberately hard to detect with rules — legitimate credentials
 used legitimately-shaped — which makes it exactly the kind of thing hunting exists for. The
-[IAM pillar](../../iam/) is where the underlying mechanics live.
+[IAM pillar](/iam/) is where the underlying mechanics live.
 
 **Cloud control plane** is second: enumeration bursts, role assumption chains, changes to
 logging configuration, and new principals created outside the pipeline.
@@ -82,7 +82,7 @@ output is a recurring hunt rather than a detection.
 
 A finding is a good detection candidate when the behaviour is describable in logic, the
 telemetry supporting it is reliably available, and a defined response exists. When those
-hold, the finding enters [the lifecycle](../detection-lifecycle/) as a normal backlog item
+hold, the finding enters [the lifecycle](/detection-eng/detection-lifecycle/) as a normal backlog item
 with an unusually strong provenance: you already know the signal exists in your data,
 because you just found it there.
 
@@ -106,9 +106,9 @@ answer "are we affected by this" within a day is not, regardless of what it has 
 
 ## Where this connects
 
-Hunting consumes [collection](../../threat-intel/collection-sourcing/) and produces intel
-back. Its findings feed [the lifecycle](../detection-lifecycle/) and its coverage
-discoveries feed [the pipeline](../data-pipeline/). And it shares almost all of its
-technique with [forensics](../../dfir/) while asking a different question — which is why
+Hunting consumes [collection](/threat-intel/collection-sourcing/) and produces intel
+back. Its findings feed [the lifecycle](/detection-eng/detection-lifecycle/) and its coverage
+discoveries feed [the pipeline](/detection-eng/data-pipeline/). And it shares almost all of its
+technique with [forensics](/dfir/) while asking a different question — which is why
 the boundary between them blurs during a long-running compromise, and why that remains an
 open question in the site structure.

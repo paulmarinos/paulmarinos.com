@@ -14,7 +14,7 @@ sidebar:
   order: 2
 ---
 
-Once you know [what data you have](../classification-discovery/), the question is how to protect it
+Once you know [what data you have](/data-privacy/classification-discovery/), the question is how to protect it
 while still using it — because data locked away perfectly is data that delivers no value. The
 techniques here transform data so it's safer to hold and process, and the sharpest distinction in
 the whole pillar lives here: **pseudonymization and anonymization are not the same thing, and the
@@ -27,11 +27,11 @@ Three ways to substitute sensitive values with safer ones, for different purpose
 
 - **Tokenization** replaces a sensitive value with a token, with the mapping held in a separate,
   guarded vault. The classic use is payment cards: systems handle tokens, the real number lives in
-  one small heavily-controlled place, and [PCI scope](../../grc/common-frameworks/) shrinks to that
+  one small heavily-controlled place, and [PCI scope](/grc/common-frameworks/) shrinks to that
   vault. The security rests entirely on the vault and its access control being genuinely separate.
 - **Masking** obscures part or all of a value — showing `****1234`, or replacing names with
   realistic fakes in non-production. Its highest-value use is killing the
-  [shadow-data problem](../classification-discovery/) of real data in test environments: mask on
+  [shadow-data problem](/data-privacy/classification-discovery/) of real data in test environments: mask on
   the way to non-production and the copies stop being sensitive.
 - **Format-preserving encryption** encrypts while keeping the shape, so a 16-digit card stays 16
   digits and doesn't break systems that validate format. Convenient, with weaker security
@@ -45,7 +45,7 @@ access), never need it (masking), or need it to fit existing formats (FPE).
 This is the one to get right, because the legal consequences diverge completely.
 
 - **Pseudonymization** replaces identifiers with pseudonyms, keeping a separate mapping that can
-  re-link. Under [GDPR](../../grc/regulations-region/) it's a valuable security measure — and the
+  re-link. Under [GDPR](/grc/regulations-region/) it's a valuable security measure — and the
   data is **still personal data**, because it *can* be re-identified. You keep the full obligations.
 - **Anonymization** irreversibly removes the ability to identify individuals. Genuinely anonymized
   data falls **outside** privacy regulation, because there's no data subject left to protect.
@@ -91,7 +91,7 @@ Where it fits it's excellent; invoked as a synonym for "we added privacy," it's 
 
 ## Encryption in use — confidential computing
 
-The remaining gap in [the encryption story](../../cloud-infra/cryptography-key-management/): data
+The remaining gap in [the encryption story](/cloud-infra/cryptography-key-management/): data
 is protected at rest and in transit, but must be *decrypted to be processed* — plaintext in memory,
 exposed to anything that compromises the running system. Confidential computing (hardware enclaves,
 trusted execution environments) processes data while it stays encrypted in memory, closing that gap.
@@ -99,14 +99,14 @@ trusted execution environments) processes data while it stays encrypted in memor
 The honest limits: performance overhead, a real and evolving hardware-based trust model (you're
 trusting the enclave vendor and its attestation), and a maturing rather than turnkey ecosystem. It
 genuinely closes the encryption-in-use gap for specific high-value cases; it isn't yet a default,
-and pairs with [key management](../../cloud-infra/cryptography-key-management/) as the runtime
+and pairs with [key management](/cloud-infra/cryptography-key-management/) as the runtime
 complement to at-rest and in-transit.
 
 ## Where this connects
 
-Protection needs [classification](../classification-discovery/) to know what to transform, and it's
-the runtime partner to [key management](../../cloud-infra/cryptography-key-management/) — §8.4 owns
+Protection needs [classification](/data-privacy/classification-discovery/) to know what to transform, and it's
+the runtime partner to [key management](/cloud-infra/cryptography-key-management/) — §8.4 owns
 the keys, §10 owns what's done to the data. The pseudonymization/anonymization line is a
-[GDPR](../../grc/regulations-region/) determination, and the re-identification and DP material is
-what governs [PII in embeddings and ML](../data-governance-ai/), where "we anonymized the training
+[GDPR](/grc/regulations-region/) determination, and the re-identification and DP material is
+what governs [PII in embeddings and ML](/data-privacy/data-governance-ai/), where "we anonymized the training
 data" is the exact claim that needs testing.

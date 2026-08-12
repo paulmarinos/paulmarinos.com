@@ -58,7 +58,7 @@ which is a language-level control rather than a discipline you have to sustain.
 The behaviour when nobody made a decision should be the safe behaviour, because most code
 paths are the ones nobody thought about.
 
-- **Deny by default.** An [authorization](../../iam/) check that grants access unless a rule
+- **Deny by default.** An [authorization](/iam/) check that grants access unless a rule
   denies it fails open — a missing rule becomes access. Reverse it: deny unless a rule
   grants.
 - **Fail closed.** When a security check errors, the safe result is denial. A `try/except`
@@ -129,7 +129,7 @@ The paradigms are universal; the footguns are local.
 
 ## Where this connects
 
-These paradigms are the controls whose absence [pentesters exploit](../../pentest/web-app-pentesting/)
+These paradigms are the controls whose absence [pentesters exploit](/pentest/web-app-pentesting/)
 — every finding there is one of these missing. The specific bugs that result are cataloged in
-[common pitfalls](../insecure-coding/), and deny-by-default is where AppSec and
-[IAM](../../iam/) meet inside the application.
+[common pitfalls](/appsec/insecure-coding/), and deny-by-default is where AppSec and
+[IAM](/iam/) meet inside the application.

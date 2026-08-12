@@ -13,7 +13,7 @@ sidebar:
   order: 2
 ---
 
-Vector search is the retrieval engine underneath [RAG](../rag/) and semantic search, and it's
+Vector search is the retrieval engine underneath [RAG](/ai-automation/rag/) and semantic search, and it's
 usually treated as a black box that "finds similar things." Understanding what embeddings
 encode and how the indexes trade accuracy for speed is what separates a system that works at
 scale from one that's fast, cheap, and subtly wrong.
@@ -32,7 +32,7 @@ Two properties matter more than the mechanism, because they explain the failures
   is not neutral.
 - **Similarity is not relevance, and not truth.** The nearest vector to a query is the most
   *similar* passage, which may be one that shares vocabulary while contradicting the answer.
-  This is the root of [naive RAG's](../rag/) retrieval failures — the index did its job; its job
+  This is the root of [naive RAG's](/ai-automation/rag/) retrieval failures — the index did its job; its job
   just wasn't what you needed.
 
 The practical consequence: **the embedding model is a design decision, not a default.** A
@@ -72,7 +72,7 @@ Every vector search decision is a point in this triangle, and you can optimize a
 The trap is optimizing latency and cost while never *measuring* recall, because low recall is
 invisible — the system returns results, they look plausible, and nobody notices the better
 answer was never retrieved. Measure recall against a ground-truth set, exactly as
-[RAG evaluation](../rag/) demands, or you're flying blind on the one axis that determines
+[RAG evaluation](/ai-automation/rag/) demands, or you're flying blind on the one axis that determines
 whether answers are right.
 
 ## The landscape, and how to choose
@@ -91,7 +91,7 @@ dedicated store when scale, filtering, or latency genuinely demand it.
 
 ## Hybrid search
 
-Dense vector search and sparse keyword search ([BM25](../rag/)) fail in opposite directions:
+Dense vector search and sparse keyword search ([BM25](/ai-automation/rag/)) fail in opposite directions:
 dense misses exact terms — error codes, identifiers, proper nouns — that keyword search matches
 exactly, and keyword misses paraphrase that dense handles. **Hybrid search fuses both**, and
 the fusion method (reciprocal rank fusion is the common, robust choice) matters. For technical
@@ -108,8 +108,8 @@ The correctness question is **when the filter is applied**. Retrieve-then-filter
 fewer results than requested (you asked for 10, filtered to 3) or leak information through
 timing and counts. Filter-then-search needs the index to support it efficiently. Get this wrong
 in a multi-tenant system and you have **cross-tenant retrieval** — one customer's query
-returning another's documents, which is both a [data-privacy](../../data-privacy/) breach and
-exactly the [tenant-boundary failure](../../pentest/specialized-testing/) that RAG pentesting
+returning another's documents, which is both a [data-privacy](/data-privacy/) breach and
+exactly the [tenant-boundary failure](/pentest/specialized-testing/) that RAG pentesting
 probes.
 
 The rule: **a vector store holding multiple tenants' or classifications' data is an access-
@@ -118,8 +118,8 @@ the index holds data with different audiences.
 
 ## Where this connects
 
-Embeddings and vector search are the engine [RAG](../rag/) runs on. Multi-tenancy and metadata
-filtering are [data-privacy](../../data-privacy/) and access control — a vector store is a data
-store that [nobody classified](../../data-privacy/) unless you make them. And an embedding
-pipeline over sensitive content is a [data-handling](../../detection-eng/data-pipeline/) decision
+Embeddings and vector search are the engine [RAG](/ai-automation/rag/) runs on. Multi-tenancy and metadata
+filtering are [data-privacy](/data-privacy/) and access control — a vector store is a data
+store that [nobody classified](/data-privacy/) unless you make them. And an embedding
+pipeline over sensitive content is a [data-handling](/detection-eng/data-pipeline/) decision
 with the same collection-and-retention questions as any other.

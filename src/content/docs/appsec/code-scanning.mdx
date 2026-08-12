@@ -28,12 +28,12 @@ where tainted data reaches a sink without passing through a sanitizer.
 
 That mechanism defines the strengths and the hard limits:
 
-- **Finds** injection, [the SSRF/metadata pattern](../insecure-coding/), hardcoded secrets,
+- **Finds** injection, [the SSRF/metadata pattern](/appsec/insecure-coding/), hardcoded secrets,
   unsafe API use — anything expressible as a dangerous data flow.
 - **Cannot find** authorization flaws, because "should this user access this object" is
-  business logic, not a data flow. [Broken object-level authorization](../insecure-coding/) —
+  business logic, not a data flow. [Broken object-level authorization](/appsec/insecure-coding/) —
   the most common serious web bug — is invisible to SAST, which is exactly why manual review
-  and [pentesting](../../pentest/web-app-pentesting/) remain necessary.
+  and [pentesting](/pentest/web-app-pentesting/) remain necessary.
 - **False positives** come from paths that look reachable but aren't, or sanitizers the tool
   doesn't recognize.
 
@@ -57,13 +57,13 @@ can't see, and misses code-level issues on paths it never exercises.
   whether it covers the interesting surface or just the marketing pages.
 
 ZAP and Burp are the workhorses; Nuclei covers known-issue templates. DAST is closest to what
-a [pentester](../../pentest/) does, which is also its ceiling — it automates the mechanical
+a [pentester](/pentest/) does, which is also its ceiling — it automates the mechanical
 part and not the judgment.
 
 ## SCA — the dependencies
 
 Software Composition Analysis inventories dependencies and flags known-vulnerable versions.
-Since [your code is a minority of what ships](../insecure-coding/), this is often the
+Since [your code is a minority of what ships](/appsec/insecure-coding/), this is often the
 highest-return scanning you do — and the noisiest, for one reason.
 
 **Reachability is everything.** A vulnerable function in a dependency you never call is not
@@ -75,31 +75,31 @@ for.
 
 Transitive dependencies are where the risk hides: the library you chose pulled in thirty you
 didn't, and the vulnerable one is usually several levels deep and invisible without a
-[dependency graph](../cicd-security/).
+[dependency graph](/appsec/cicd-security/).
 
 ## IAST and RASP, briefly
 
 **IAST** instruments the running application to observe data flows during testing — a SAST/DAST
 hybrid with better accuracy on covered paths, at the cost of instrumentation and requiring
 exercised code. **RASP** instruments the app in production to block attacks at runtime — a
-mitigation, not a finder, and it overlaps with [runtime detection](../../detection-eng/). Both
+mitigation, not a finder, and it overlaps with [runtime detection](/detection-eng/). Both
 fit specific situations; neither is a starting point.
 
 ## The real problem: a program people don't route around
 
 Any of these tools produces findings. The hard part is a program engineering doesn't
-circumvent, and that is a [precision problem](../../detection-eng/detection-quality/) identical
+circumvent, and that is a [precision problem](/detection-eng/detection-quality/) identical
 to the one in detection engineering:
 
 - **A tool with 90% false positives will be ignored**, and the 10% that were real are ignored
   with them. Tune aggressively for precision before expanding coverage — the same lesson as
-  [alert tuning](../../detection-eng/detection-quality/).
+  [alert tuning](/detection-eng/detection-quality/).
 - **Break the build only on high-confidence, high-severity findings.** A pipeline that fails
   on style-level issues teaches everyone to bypass the gate, which loses the critical
   findings too.
 - **Meet developers where they work** — in the IDE and the pull request, not a separate
   dashboard nobody opens.
-- **[Prioritize](../../threat-intel/risk-prioritization/), don't enumerate.** Reachable,
+- **[Prioritize](/threat-intel/risk-prioritization/), don't enumerate.** Reachable,
   exploitable, and on an exposed path beats a raw severity sort — the same model as
   vulnerability triage.
 - **Own the false-positive burden centrally.** If every developer must independently judge each
@@ -112,7 +112,7 @@ then gets switched off.
 
 ## Where this connects
 
-Scanning finds the [coded pitfalls](../insecure-coding/) at scale, with the structural blind
-spot — authorization and logic — that keeps [pentesting](../../pentest/web-app-pentesting/)
-necessary. The program discipline is [detection quality](../../detection-eng/detection-quality/)
-by another name, and the triage is [risk prioritization](../../threat-intel/risk-prioritization/).
+Scanning finds the [coded pitfalls](/appsec/insecure-coding/) at scale, with the structural blind
+spot — authorization and logic — that keeps [pentesting](/pentest/web-app-pentesting/)
+necessary. The program discipline is [detection quality](/detection-eng/detection-quality/)
+by another name, and the triage is [risk prioritization](/threat-intel/risk-prioritization/).

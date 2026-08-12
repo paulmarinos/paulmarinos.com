@@ -41,7 +41,7 @@ The two properties that make backup survive a competent attacker:
   the attacker's ability to destroy your recovery path even with full access.
 - **Air-gapped (or logically isolated).** Separated from the production environment so a
   compromise of production doesn't reach the backups. In cloud this is logical rather than
-  physical — a separate [account](../architecture-landing-zones/) with separate credentials and
+  physical — a separate [account](/cloud-infra/architecture-landing-zones/) with separate credentials and
   a one-way path — but the principle holds: the backup an intruder can reach from a compromised
   environment is a backup they can destroy.
 
@@ -66,9 +66,9 @@ the day it matters.
   eight-hour restore against a one-hour tolerance is a finding, discovered in the test rather
   than the crisis.
 
-This ties directly to [incident response](../../dfir/incident-response/): recovery is the last
+This ties directly to [incident response](/dfir/incident-response/): recovery is the last
 phase of an incident, and its speed and completeness were decided long before, by whether anyone
-tested the restore. Untested backups are the [preparation shortcut](../../dfir/incident-response/)
+tested the restore. Untested backups are the [preparation shortcut](/dfir/incident-response/)
 that becomes expensive at exactly the wrong moment.
 
 ## DDoS and edge protection
@@ -86,7 +86,7 @@ Failover is usually framed as an availability decision, and it carries security 
 that are easy to miss:
 
 - **A failover region is a full second copy of your attack surface** — same data, same
-  identities, same misconfigurations if the [landing zone](../architecture-landing-zones/)
+  identities, same misconfigurations if the [landing zone](/cloud-infra/architecture-landing-zones/)
   templated them consistently. It doubles what has to be secured, not just what has to be run.
 - **Failover paths are trust relationships**, and the replication mechanism connecting regions
   is itself a target — a path between environments that an intruder can potentially ride.
@@ -100,8 +100,8 @@ solves the easy half of the problem and leaves the expensive half open.
 
 ## Where this connects
 
-Recovery is the final phase of [incident response](../../dfir/incident-response/), and its
+Recovery is the final phase of [incident response](/dfir/incident-response/), and its
 success was decided by preparation here. Backup integrity, retention, and availability are
-[GRC](../../grc/) control requirements, and backup-targeting is a
-[detection](../../detection-eng/) opportunity — an attacker enumerating or deleting backups is a
+[GRC](/grc/) control requirements, and backup-targeting is a
+[detection](/detection-eng/) opportunity — an attacker enumerating or deleting backups is a
 high-signal event, if anyone is watching the backup plane.

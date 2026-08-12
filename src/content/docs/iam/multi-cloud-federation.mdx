@@ -37,7 +37,7 @@ They get lumped together as "SSO stuff." They do different jobs:
   authentication.
 - **SCIM** — provisioning, not login at all. It syncs identity *lifecycle* — create, update,
   deactivate users — from a source of truth to downstream applications. It's the plumbing that
-  makes [joiner/mover/leaver](../frameworks/) work across systems, and its absence is why
+  makes [joiner/mover/leaver](/iam/frameworks/) work across systems, and its absence is why
   deprovisioning is the step organizations most often miss.
 
 The one-line map: **SAML and OIDC prove who you are, OAuth grants access to things, SCIM keeps
@@ -53,14 +53,14 @@ rather than stored ones:
 - **Human access** — a central IdP (Entra, Okta, Google) federates into each cloud's console
   and CLI via SAML/OIDC. One place to enforce MFA, one place to deprovision, and no per-cloud
   passwords.
-- **Workload access** — [OIDC federation](../../appsec/cicd-security/): a workload presents a
+- **Workload access** — [OIDC federation](/appsec/cicd-security/): a workload presents a
   signed token proving its identity, and the target cloud exchanges it for temporary
   credentials. This is what replaces the long-lived access key, and it's the single
   highest-value federation pattern because it removes the credential that would otherwise leak.
 - **Cross-cloud** — the same token-exchange idea between providers, so a workload in one cloud
   reaches another without a stored secret.
 
-The through-line is the same as [AWS temporary credentials](../aws-identity/): a credential
+The through-line is the same as [AWS temporary credentials](/iam/aws-identity/): a credential
 that expires on its own beats one that's valid until someone notices it leaked. Federation is
 that principle applied across trust boundaries.
 
@@ -69,7 +69,7 @@ that principle applied across trust boundaries.
 Even with federation, some secrets remain — database passwords, third-party API keys, signing
 material. The discipline is that secrets live in a purpose-built store (HashiCorp Vault, AWS
 Secrets Manager, Azure Key Vault, GCP Secret Manager), never in code, config files, or
-[environment variables committed to git](../../appsec/insecure-coding/).
+[environment variables committed to git](/appsec/insecure-coding/).
 
 What a real secrets store buys beyond "not in the repo":
 
@@ -77,8 +77,8 @@ What a real secrets store buys beyond "not in the repo":
   shared password to steal. The Vault pattern, and the strongest version of the idea.
 - **Rotation** without a code change or redeploy.
 - **Audit** — every access logged, which turns secret retrieval into a
-  [detection signal](../../detection-eng/).
-- **Access via [identity](../aws-identity/)**, not a bootstrap secret — the workload
+  [detection signal](/detection-eng/).
+- **Access via [identity](/iam/aws-identity/)**, not a bootstrap secret — the workload
   authenticates as itself to fetch what it needs.
 
 The honest note: a secrets manager still has a **bootstrap problem** — the workload needs *some*
@@ -91,7 +91,7 @@ Service-to-service authentication is where "just use an API key" quietly becomes
 link, because that key is a long-lived shared secret sitting in configuration.
 
 - **mTLS** — both sides present certificates, so authentication is mutual and identity-bound.
-  The certificate *is* the identity, and a [service mesh](../../cloud-infra/) can manage
+  The certificate *is* the identity, and a [service mesh](/cloud-infra/) can manage
   issuance and rotation so it doesn't become an operational burden.
 - **OAuth client credentials** — the token-based equivalent for service-to-service, with the
   same short-lived-over-standing advantage.
@@ -103,8 +103,8 @@ with a short-lived, identity-bound, rot-able credential.
 
 ## Where this connects
 
-Workload federation is [OIDC in the pipeline](../../appsec/cicd-security/), and the
-short-lived-credential logic is [AWS](../aws-identity/) and [Azure](../azure-identity/) applied
-across boundaries. Secret access is a [detection](../../detection-eng/) signal and a
-[cloud-architecture](../../cloud-infra/) concern. And federation for *non-human, autonomous*
-actors is where this runs out of road — that's [Frameworks](../frameworks/).
+Workload federation is [OIDC in the pipeline](/appsec/cicd-security/), and the
+short-lived-credential logic is [AWS](/iam/aws-identity/) and [Azure](/iam/azure-identity/) applied
+across boundaries. Secret access is a [detection](/detection-eng/) signal and a
+[cloud-architecture](/cloud-infra/) concern. And federation for *non-human, autonomous*
+actors is where this runs out of road — that's [Frameworks](/iam/frameworks/).

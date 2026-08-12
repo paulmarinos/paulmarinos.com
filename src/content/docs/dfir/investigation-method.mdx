@@ -37,7 +37,7 @@ Practical discipline:
 - **Timestamps are attacker-modifiable.** Corroborate anything load-bearing across
   independent sources.
 - **Note the gaps.** A period with no entries is a finding — either nothing happened, or you
-  can't see it, and [those are different](../digital-forensics/).
+  can't see it, and [those are different](/dfir/digital-forensics/).
 
 Pivoting is the core motion: from a suspicious process to its parent, to the file it wrote,
 to the account that ran it, to that account's other activity. Each pivot is a hypothesis
@@ -83,7 +83,7 @@ was an assumption presented as a conclusion.
 What proving looks like in practice:
 
 - **Enumerate what the compromised identity could reach**, not what you saw it reach.
-  Cloud blast radius follows [permissions](../../iam/), not network topology.
+  Cloud blast radius follows [permissions](/iam/), not network topology.
 - **Search for the behaviour everywhere**, not just where you found it. If the technique
   worked once it likely worked elsewhere.
 - **Account for the whole timeline.** Quiet periods need explanation. Dwell time is usually
@@ -110,7 +110,7 @@ test settles this", which is answerable.
 observation. "The attacker ran X" is an inference. Keeping them visually distinct means a
 second reader — or you, tomorrow — can re-derive the conclusion rather than inherit it.
 
-Use [calibrated confidence language](../../threat-intel/report-writing/) from the start.
+Use [calibrated confidence language](/threat-intel/report-writing/) from the start.
 Retrofitting confidence onto findings written as bare assertions never works, because the
 assertions have already been quoted.
 
@@ -127,7 +127,7 @@ and it is what makes the *next* investigation cheaper.
 ## The boundary with hunting
 
 Worth stating precisely, because the techniques are nearly identical.
-[Threat hunting](../../detection-eng/threat-hunting/) is discovery in an environment presumed
+[Threat hunting](/detection-eng/threat-hunting/) is discovery in an environment presumed
 healthy; investigation is reconstruction of an incident known to have occurred. The question
 differs, and so does the standard of proof: a hunt can end with "nothing found, here are the
 gaps", while an investigation must produce a defensible boundary.
@@ -139,8 +139,8 @@ around evidence handling, documentation and scope proof.
 
 ## Where this connects
 
-Method consumes [forensic artefacts](../digital-forensics/) and produces the account that
-[response](../incident-response/) acts on. Its rigour is
-[report writing](../../threat-intel/report-writing/) under time pressure. And its output is
+Method consumes [forensic artefacts](/dfir/digital-forensics/) and produces the account that
+[response](/dfir/incident-response/) acts on. Its rigour is
+[report writing](/threat-intel/report-writing/) under time pressure. And its output is
 the highest-provenance input the
-[detection backlog](../../detection-eng/detection-lifecycle/) ever receives.
+[detection backlog](/detection-eng/detection-lifecycle/) ever receives.

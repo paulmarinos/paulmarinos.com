@@ -18,7 +18,7 @@ sidebar:
 Data has a lifecycle, and most organizations manage only the beginning of it. Data is created,
 used, and then kept — forever, by default, because deleting it takes deliberate effort and keeping
 it takes none. That default is a liability: every record retained past its usefulness is
-[breach surface](../../dfir/), [regulatory exposure](../../grc/regulations-region/), and cost, for
+[breach surface](/dfir/), [regulatory exposure](/grc/regulations-region/), and cost, for
 no benefit. The discipline here is making data *stop existing* when it should, which is far harder
 than it sounds.
 
@@ -30,7 +30,7 @@ competing forces that have to be balanced explicitly:
 - **Regulation may require keeping** data for a minimum (tax, financial, employment records).
 - **Regulation may require deleting** it — privacy law's storage-limitation principle, that
   personal data not be kept longer than necessary.
-- **Litigation may require preserving** it ([legal hold](../../dfir/evidence-legal/)).
+- **Litigation may require preserving** it ([legal hold](/dfir/evidence-legal/)).
 - **Security and cost argue for deleting** what you don't need.
 
 **Defensible deletion** is disposing of data through a consistent, documented, enforced process, so
@@ -45,34 +45,34 @@ Here's what makes deletion genuinely hard, and why "we deleted it" is so often f
 are architected to *retain* — durability is a feature everywhere — so a single logical record
 scatters into copies that deletion has to chase:
 
-- **[Backups](../../cloud-infra/resilience-recovery/)** — the record is in every backup taken while
-  it existed, and [immutable backups](../../cloud-infra/resilience-recovery/) — the ones that
+- **[Backups](/cloud-infra/resilience-recovery/)** — the record is in every backup taken while
+  it existed, and [immutable backups](/cloud-infra/resilience-recovery/) — the ones that
   survive ransomware — are *specifically designed to be undeletable*. The property that makes them
   a security control makes them a deletion problem, and the honest resolution is usually that
   backups age out on their retention cycle rather than being surgically edited.
 - **Logs** that captured the data in a request or event.
 - **Caches and replicas** holding copies for performance.
-- **Derived data** — analytics, aggregates, and [ML models](../data-governance-ai/) computed from
+- **Derived data** — analytics, aggregates, and [ML models](/data-privacy/data-governance-ai/) computed from
   it, where the data's influence persists even after the source row is gone.
-- **Search indexes and [vector stores](../../ai-automation/vector-databases/)** built from it.
+- **Search indexes and [vector stores](/ai-automation/vector-databases/)** built from it.
 
-Deleting the row in the primary database is the easy 10%. The [data map and lineage](../classification-discovery/)
+Deleting the row in the primary database is the easy 10%. The [data map and lineage](/data-privacy/classification-discovery/)
 is what makes the other 90% possible — you cannot delete what you haven't traced, and a deletion
 that clears the primary store while leaving the warehouse, the backup, and the embeddings is not a
 deletion in any sense a regulator accepts.
 
 ## Right-to-erasure as an engineering problem
 
-[GDPR's](../../grc/regulations-region/) right to erasure (and its US-state equivalents) turns the
+[GDPR's](/grc/regulations-region/) right to erasure (and its US-state equivalents) turns the
 above from good practice into a legal obligation with a deadline. A user requests deletion, and you
 must actually delete their data — everywhere — within a defined window.
 
 The engineering reality this forces:
 
-- **You must locate all of a person's data**, across every system and [shadow copy](../classification-discovery/).
-  Impossible without [data mapping](../classification-discovery/), which is why erasure is where
+- **You must locate all of a person's data**, across every system and [shadow copy](/data-privacy/classification-discovery/).
+  Impossible without [data mapping](/data-privacy/classification-discovery/), which is why erasure is where
   organizations discover their map is incomplete.
-- **You must delete or [anonymize](../protection-transformation/) it** — genuine anonymization is a
+- **You must delete or [anonymize](/data-privacy/protection-transformation/) it** — genuine anonymization is a
   lawful alternative to deletion, and often the pragmatic answer for data that can't be cleanly
   removed (aggregates, some backups).
 - **You must handle the conflict** with data you're *required to retain* — the same person's tax
@@ -86,28 +86,28 @@ knows where its data is. Everything upstream in this pillar is what makes it ans
 ## Data residency and sovereignty
 
 Where data physically lives is increasingly a legal constraint, not just an architecture choice.
-[Regional regulation](../../grc/regulations-region/) — PIPL notably — can require data to stay in a
+[Regional regulation](/grc/regulations-region/) — PIPL notably — can require data to stay in a
 country or region, which pushes directly into infrastructure:
 
 - **Regional storage and processing** — data pinned to a region, processing kept local, which
-  constrains the [landing zone](../../cloud-infra/architecture-landing-zones/) and service
+  constrains the [landing zone](/cloud-infra/architecture-landing-zones/) and service
   selection.
-- **[Cross-border transfer mechanisms](../../grc/regulations-region/)** — the legal instruments
+- **[Cross-border transfer mechanisms](/grc/regulations-region/)** — the legal instruments
   (SCCs, adequacy) that permit movement when it does cross borders.
-- **The [backup and failover trap](../../cloud-infra/resilience-recovery/)** — a multi-region DR
+- **The [backup and failover trap](/cloud-infra/resilience-recovery/)** — a multi-region DR
   design that replicates EU data to a US region for resilience can be a transfer violation. The
   resilience requirement and the residency requirement pull against each other, and the conflict is
   resolved in architecture.
 
-Residency is where this pillar and [cloud architecture](../../cloud-infra/architecture-landing-zones/)
+Residency is where this pillar and [cloud architecture](/cloud-infra/architecture-landing-zones/)
 fully merge: the legal question "where is this data allowed to be" is answered by the technical
 question "where did we build the system to put it."
 
 ## Where this connects
 
-Deletion and erasure depend entirely on [classification and lineage](../classification-discovery/) —
-you delete what you can find. The backup tension is [resilience and recovery](../../cloud-infra/resilience-recovery/),
-and the [legal-hold conflict](../../dfir/evidence-legal/) is where retention and preservation
-collide. Residency is [regional regulation](../../grc/regulations-region/) made
-[architectural](../../cloud-infra/architecture-landing-zones/), and deletion-in-the-weights is the
-open problem in [data governance for AI](../data-governance-ai/).
+Deletion and erasure depend entirely on [classification and lineage](/data-privacy/classification-discovery/) —
+you delete what you can find. The backup tension is [resilience and recovery](/cloud-infra/resilience-recovery/),
+and the [legal-hold conflict](/dfir/evidence-legal/) is where retention and preservation
+collide. Residency is [regional regulation](/grc/regulations-region/) made
+[architectural](/cloud-infra/architecture-landing-zones/), and deletion-in-the-weights is the
+open problem in [data governance for AI](/data-privacy/data-governance-ai/).

@@ -45,7 +45,7 @@ that have since exited.
 Volatility is the standard toolkit. The workflow is consistent regardless of case: identify
 the profile, list processes and look for lineage that shouldn't exist, examine network
 artefacts, hunt injected regions, and extract suspicious sections for
-[malware analysis](../malware-analysis/).
+[malware analysis](/dfir/malware-analysis/).
 
 The recurring finding is a process whose *parent* is wrong — a browser spawning a shell, a
 document reader spawning a script interpreter. Lineage is usually more diagnostic than any
@@ -70,7 +70,7 @@ forensics often don't hold.
 
 - **There may be no host.** Serverless and managed services expose no disk. The evidence is
   control plane logs and whatever the service records — and if
-  [that wasn't configured in advance](../../cloud-infra/), it does not exist retroactively.
+  [that wasn't configured in advance](/cloud-infra/), it does not exist retroactively.
 - **Snapshot before anything terminates.** Autoscaling destroys instances on its own
   schedule, so evidence disappears without anyone deciding to destroy it.
 - **Identity is the primary artefact.** Sign-in logs, token issuance, role assumption chains
@@ -79,7 +79,7 @@ forensics often don't hold.
   retention vary enormously, and are often a licensing tier rather than a technical limit.
 
 The uncomfortable consequence: cloud forensic capability is decided months earlier by
-[pipeline and architecture choices](../../detection-eng/data-pipeline/). By incident time,
+[pipeline and architecture choices](/detection-eng/data-pipeline/). By incident time,
 your evidence set is already fixed.
 
 ## Anti-forensics, and what absence means
@@ -95,13 +95,13 @@ coverage either side is itself evidence, and log clearing usually leaves its own
 
 State the ambiguity explicitly in findings. "No evidence of exfiltration" and "evidence of
 no exfiltration" are entirely different claims, and only one of them is usually available.
-That distinction is [confidence language](../../threat-intel/report-writing/) doing real
+That distinction is [confidence language](/threat-intel/report-writing/) doing real
 work under pressure.
 
 ## Where this connects
 
-Acquisition sequence is constrained by [response operations](../incident-response/) —
+Acquisition sequence is constrained by [response operations](/dfir/incident-response/) —
 containment and preservation compete, and the order matters. What can be recovered at all is
-set by [pipeline and architecture](../../detection-eng/data-pipeline/) long beforehand.
-Extracted samples go to [malware analysis](../malware-analysis/), and the artefacts assemble
-into [a timeline](../investigation-method/).
+set by [pipeline and architecture](/detection-eng/data-pipeline/) long beforehand.
+Extracted samples go to [malware analysis](/dfir/malware-analysis/), and the artefacts assemble
+into [a timeline](/dfir/investigation-method/).

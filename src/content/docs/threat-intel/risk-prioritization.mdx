@@ -67,7 +67,7 @@ they usually change the answer:
    escalation, not a modifier.
 2. **Exploitation likelihood** — EPSS, used as a threshold rather than a number to average.
 3. **Exposure** — is the asset reachable by the actor you're worried about? This is where
-   [architecture](../../cloud-infra/) does more for the queue than any score: segmentation
+   [architecture](/cloud-infra/) does more for the queue than any score: segmentation
    changes reachability, and reachability changes priority.
 4. **Business consequence** — what breaks, and who notices. The only input that can't be
    bought from a vendor.
@@ -99,9 +99,9 @@ queues.
 ## Why this sits in Threat Intelligence
 
 Prioritization is where intelligence either changes a decision or doesn't. Every other
-pillar inherits this problem — [AppSec](../../appsec/) backlogs, posture findings from
-[cloud](../../cloud-infra/), the detection backlog in
-[detection engineering](../../detection-eng/) — and each tends to reinvent a local scheme.
+pillar inherits this problem — [AppSec](/appsec/) backlogs, posture findings from
+[cloud](/cloud-infra/), the detection backlog in
+[detection engineering](/detection-eng/) — and each tends to reinvent a local scheme.
 The methods are the same; only the queue changes. Getting the argument right once, and
-[writing it down so it survives a hostile reading](../report-writing/), is
+[writing it down so it survives a hostile reading](/threat-intel/report-writing/), is
 what makes it reusable.

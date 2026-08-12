@@ -34,7 +34,7 @@ A register earns its place when it's an actual decision tool:
   and move on), or avoid (stop doing the risky thing). Every risk resolves to one of these, or
   it's just a worry that got written down.
 - **It connects to reality.** The register's top risks should match where incidents actually
-  happen and where [detection](../../detection-eng/) and [pentest](../../pentest/) findings
+  happen and where [detection](/detection-eng/) and [pentest](/pentest/) findings
   cluster. A register that disagrees with the evidence is measuring anxiety, not risk.
 
 The register is a means to prioritized action, and a register that produces no decisions has
@@ -46,7 +46,7 @@ Two schools, and the honest answer is that each fits a different question.
 
 **Qualitative** — high/medium/low, likelihood × impact heat maps. Fast, accessible, and the
 default. Its weakness is false precision: "high × medium = medium" reads as arithmetic but is
-consensus dressed as calculation, and the [risk-quadrant anti-pattern](../../threat-intel/data-visualization/)
+consensus dressed as calculation, and the [risk-quadrant anti-pattern](/threat-intel/data-visualization/)
 lives here — unlabeled axes, dots placed by feel.
 
 **Quantitative** — express risk in money and probability. **FAIR** (Factor Analysis of Information
@@ -62,7 +62,7 @@ When each wins:
 - **Qualitative** for triage and communication where quantitative rigor would cost more than it
   returns.
 
-The [risk-prioritization](../../threat-intel/risk-prioritization/) analysis applies directly:
+The [risk-prioritization](/threat-intel/risk-prioritization/) analysis applies directly:
 quantification earns its cost at the portfolio level and usually doesn't for ranking individual
 findings, where the input uncertainty swamps the difference between finding #300 and #700. Use the
 FAIR-style curve for the funding decision; use ordinal methods for the queue.
@@ -71,20 +71,20 @@ FAIR-style curve for the funding decision; use ordinal methods for the queue.
 
 The hardest risk problem, because it's risk you're accountable for and don't control. Your data in
 a vendor's systems, your uptime dependent on their reliability, your compliance
-[contingent on theirs](../regulations-industry/) — and your visibility into their actual security
+[contingent on theirs](/grc/regulations-industry/) — and your visibility into their actual security
 usually limited to a questionnaire.
 
 The honest assessment of the standard tools:
 
 - **Security questionnaires** are self-reported and mostly measure the vendor's willingness to fill
   them out. Necessary, weak evidence.
-- **Certifications** (a vendor's [SOC 2 or ISO](../common-frameworks/)) are stronger because a third
+- **Certifications** (a vendor's [SOC 2 or ISO](/grc/common-frameworks/)) are stronger because a third
   party assessed them — which is one of certification's real purposes: to be *shown* to customers,
   turning your vendor-risk problem into a question about their auditor.
 - **Continuous monitoring** services rate vendors from the outside; a useful signal, an incomplete
   picture.
 - **Contractual controls** — breach notification, audit rights, security requirements — are how
-  obligations [flow down the chain](../regulations-industry/), and they're only as good as your
+  obligations [flow down the chain](/grc/regulations-industry/), and they're only as good as your
   ability to enforce them.
 
 The structural reality: you're accepting the vendor's risk as your own, and the concentration
@@ -103,21 +103,21 @@ A sound exception workflow:
 - **Assigns an owner** — someone accountable, not "the team."
 - **Sets an expiry.** The critical discipline. An exception without an expiry is a permanent
   security hole with a paper trail, and permanent "temporary" exceptions are how environments
-  decay. This is the [same failure as un-expiring allowlists](../../detection-eng/detection-quality/)
-  and [un-expiring suppressions](../../cloud-infra/posture-iac/) — the pattern recurs everywhere,
+  decay. This is the [same failure as un-expiring allowlists](/detection-eng/detection-quality/)
+  and [un-expiring suppressions](/cloud-infra/posture-iac/) — the pattern recurs everywhere,
   and the fix is always an owner and a date.
 - **Requires appropriate approval**, scaled to the risk, so accepting a big risk needs the
   authority to own its consequences.
 
 Accepting risk is legitimate — not every risk can or should be fixed. Accepting it *without
 documentation, ownership, and expiry* is how organizations end up carrying risks nobody remembers
-agreeing to, which is precisely what surfaces, expensively, [during an incident](../../dfir/incident-response/).
+agreeing to, which is precisely what surfaces, expensively, [during an incident](/dfir/incident-response/).
 
 ## Where this connects
 
-Risk management is [risk prioritization](../../threat-intel/risk-prioritization/) at the program
+Risk management is [risk prioritization](/threat-intel/risk-prioritization/) at the program
 level — the same math, applied to the portfolio rather than the finding queue. It's driven by
-[regulatory obligation](../regulations-industry/), informed by [incident](../../dfir/) and
-[detection](../../detection-eng/) reality, and its exception discipline is the same
-owner-and-expiry pattern that keeps [allowlists](../../detection-eng/detection-quality/) and
-[posture suppressions](../../cloud-infra/posture-iac/) from rotting.
+[regulatory obligation](/grc/regulations-industry/), informed by [incident](/dfir/) and
+[detection](/detection-eng/) reality, and its exception discipline is the same
+owner-and-expiry pattern that keeps [allowlists](/detection-eng/detection-quality/) and
+[posture suppressions](/cloud-infra/posture-iac/) from rotting.

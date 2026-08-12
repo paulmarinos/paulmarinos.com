@@ -18,14 +18,14 @@ sidebar:
 The OWASP Top 10 is a useful map and a poor teacher, because a category name doesn't build
 the pattern-recognition that catches the bug in a diff. This is the same ground from the
 implementation side — the specific shapes these flaws take in real code, and why each one
-recurs. The [secure-coding paradigms](../secure-coding/) are the fixes; this is what they're
+recurs. The [secure-coding paradigms](/appsec/secure-coding/) are the fixes; this is what they're
 fixing.
 
 ## Injection, beyond the textbook SQL case
 
 Injection is one bug — untrusted data interpreted as instructions — wearing many interpreters:
 
-- **SQL** — the canonical case, fixed by [parameterization](../secure-coding/).
+- **SQL** — the canonical case, fixed by [parameterization](/appsec/secure-coding/).
 - **Command** — `os.system(f"convert {filename}")` where `filename` is user-controlled. Pass
   argument arrays, never a shell string.
 - **Template** — user input rendered as a template (SSTI), which often reaches code execution
@@ -39,7 +39,7 @@ building**. The interpreter varies; the tell is the concatenation.
 **Second-order** injection is the variant that defeats naive review: input is stored safely,
 then later read and used unsafely. The dangerous line contains no user input at all — it uses
 a database value that originated as user input. This is why "sanitize on input" fails, and
-why [taint analysis](../code-scanning/) tracks data across the whole flow.
+why [taint analysis](/appsec/code-scanning/) tracks data across the whole flow.
 
 ## Deserialization and object injection
 
@@ -65,10 +65,10 @@ medium-severity bug on-premise and a **critical** one in cloud, because of a spe
 requests.get(user_supplied_url)   # user points it at 169.254.169.254
 ```
 
-That address is the [cloud metadata endpoint](../../pentest/cloud-pentesting/), and on a misconfigured
+That address is the [cloud metadata endpoint](/pentest/cloud-pentesting/), and on a misconfigured
 instance it returns the role's credentials. SSRF becomes credential theft becomes whatever
 that role can reach. It is the highest-impact chain in cloud-hosted applications, and it's
-why [IMDSv2 and egress control](../../cloud-infra/) are the architectural half of the fix —
+why [IMDSv2 and egress control](/cloud-infra/) are the architectural half of the fix —
 the code half is an allowlist of destinations, never a blocklist.
 
 ## Broken object-level authorization
@@ -84,9 +84,9 @@ def invoice(id):
 
 The code fetches an invoice by id and returns it. What's missing is the check that *this
 user* owns *this invoice*. Nothing looks wrong — the bug is an absence, which is why
-[scanners miss it](../code-scanning/) and manual [authorization testing](../../pentest/web-app-pentesting/)
+[scanners miss it](/appsec/code-scanning/) and manual [authorization testing](/pentest/web-app-pentesting/)
 finds it. The fix is to scope every object access by the authenticated principal, and to
-enforce it in the [data layer](../../iam/) rather than the controller where it's easy to
+enforce it in the [data layer](/iam/) rather than the controller where it's easy to
 forget on the next endpoint.
 
 ## Race conditions and TOCTOU
@@ -114,10 +114,10 @@ history, and on public repos it's scraped within minutes.
 
 - Never commit secrets. Use environment injection or a secret manager.
 - Assume any committed secret is burned. Rotate it — deletion is not remediation.
-- Enforce with [pre-commit scanning and push protection](../cicd-security/), because
+- Enforce with [pre-commit scanning and push protection](/appsec/cicd-security/), because
   discipline alone fails eventually.
 
-The [detection view](../../detection-eng/) is that a leaked-then-used key is often the
+The [detection view](/detection-eng/) is that a leaked-then-used key is often the
 initial-access event in the timeline, which is why this small mistake carries outsized weight.
 
 ## Dependency confusion and supply chain
@@ -130,11 +130,11 @@ Baseline defenses: pin versions and use lockfiles; configure the resolver so int
 can't be shadowed from public registries; and vet dependencies before adoption, since a
 package with one maintainer and a recent ownership change is a risk regardless of its
 download count. The deeper treatment — provenance, signing, SLSA — is
-[CI/CD and platform security](../cicd-security/).
+[CI/CD and platform security](/appsec/cicd-security/).
 
 ## Where this connects
 
-These are the exploited findings in [pentesting](../../pentest/web-app-pentesting/), read from
-the defender's side. The [paradigms](../secure-coding/) prevent them by construction, and
-[scanning](../code-scanning/) is how you find the instances already written. SSRF and secrets
-reach into [cloud](../../cloud-infra/); authorization reaches into [IAM](../../iam/).
+These are the exploited findings in [pentesting](/pentest/web-app-pentesting/), read from
+the defender's side. The [paradigms](/appsec/secure-coding/) prevent them by construction, and
+[scanning](/appsec/code-scanning/) is how you find the instances already written. SSRF and secrets
+reach into [cloud](/cloud-infra/); authorization reaches into [IAM](/iam/).

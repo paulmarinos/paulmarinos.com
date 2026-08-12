@@ -26,7 +26,7 @@ they look.
 most incidents found quickly, a few after months. The mean sits in a region where nothing
 actually happens, and one long incident moves it more than a quarter of good work. Report
 medians and percentiles, as with any skewed
-[security distribution](../../threat-intel/statistics/).
+[security distribution](/threat-intel/statistics/).
 
 **They only include incidents you detected.** The undetected intrusion contributes nothing
 to MTTD. A programme that misses everything subtle has an excellent MTTD, computed over the
@@ -53,7 +53,7 @@ never been tested, still colours a Navigator cell green.
 
 **Capability** is a claim about outcome: when this technique is executed here, we detect it,
 in time, and an analyst can act. It is expensive to establish, because it requires
-[emulation](../detection-quality/), and it is the only one that predicts incident outcomes.
+[emulation](/detection-eng/detection-quality/), and it is the only one that predicts incident outcomes.
 
 Report them separately, and never let coverage stand in for capability. The honest artefact
 has three states — untested, tested, validated by emulation — and the interesting number is
@@ -79,7 +79,7 @@ honest: a metric that only improves is a metric being managed rather than measur
 
 ## Reporting to different audiences
 
-The [audience problem](../../threat-intel/data-visualization/) applies with force here.
+The [audience problem](/threat-intel/data-visualization/) applies with force here.
 
 Engineering wants per-rule health and backlog. Leadership wants trend and consequence: are
 we more capable than last quarter, where did the investment go, what remains uncovered and
@@ -89,7 +89,7 @@ Keep the measures stable across quarters. A dashboard whose metrics change every
 cycle is measuring the reporting cycle. If a measure must be replaced, show both for a
 period rather than silently switching.
 
-This is also where detection metrics meet [GRC](../../grc/): continuous control monitoring
+This is also where detection metrics meet [GRC](/grc/): continuous control monitoring
 and detection health are the same telemetry with different consumers, and producing the
 evidence once is cheaper than assembling it twice.
 
@@ -105,9 +105,9 @@ on the analyst rotation. Engineers who work the queue they create build differen
 
 ## Where this connects
 
-The measurement discipline is [statistics](../../threat-intel/statistics/), and the
-presentation discipline is [visualization](../../threat-intel/data-visualization/) — where
+The measurement discipline is [statistics](/threat-intel/statistics/), and the
+presentation discipline is [visualization](/threat-intel/data-visualization/) — where
 traffic-light dashboards do their damage. Capability claims rest on
-[testing and emulation](../detection-quality/). And the evidence overlaps with
-[GRC](../../grc/) continuous control monitoring closely enough that it should be generated
+[testing and emulation](/detection-eng/detection-quality/). And the evidence overlaps with
+[GRC](/grc/) continuous control monitoring closely enough that it should be generated
 once.

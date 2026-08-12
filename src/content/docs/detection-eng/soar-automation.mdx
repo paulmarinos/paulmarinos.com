@@ -46,7 +46,7 @@ Two safeguards make it survivable: sample the auto-closed alerts and review them
 automation itself is monitored; and never auto-close on the absence of evidence, only on
 its presence. "No enrichment returned anything" is not benign — it is unknown.
 
-If a rule needs auto-closing to be workable, that is [a tuning problem](../detection-quality/)
+If a rule needs auto-closing to be workable, that is [a tuning problem](/detection-eng/detection-quality/)
 wearing a costume. Fix the rule.
 
 ## Guardrails for automated response
@@ -58,7 +58,7 @@ Containment automation is defensible with real constraints:
   intrusion.
 - **Asset criticality checks.** Auto-isolate a developer laptop; never auto-isolate a domain
   controller or production database. This requires the asset context that
-  [the pipeline](../data-pipeline/) should be adding at ingest.
+  [the pipeline](/detection-eng/data-pipeline/) should be adding at ingest.
 - **Time-of-day awareness.** Automation that fires at 3am with nobody watching should be
   more conservative, not less.
 - **Reversibility by design.** Every containment action needs a documented, tested undo. An
@@ -66,7 +66,7 @@ Containment automation is defensible with real constraints:
 - **Circuit breakers.** If a playbook triggers unusually often, stop it and page a human.
   The most likely cause is a broken detection, not an outbreak.
 - **Full audit trail.** Every automated action logged with the triggering alert and the
-  decision path — for [incident reconstruction](../../dfir/) and for the postmortem when
+  decision path — for [incident reconstruction](/dfir/) and for the postmortem when
   automation gets it wrong.
 
 **Identity actions deserve special mention.** Revoking sessions and disabling an account are
@@ -92,7 +92,7 @@ LLM-based triage is genuinely promising for the judgement-heavy, high-volume wor
 deterministic automation handles badly — summarising an alert with its context, drafting a
 first-pass assessment, proposing next investigative steps.
 
-The constraints from [AI & Automation](../../ai-automation/) apply directly, and two matter
+The constraints from [AI & Automation](/ai-automation/) apply directly, and two matter
 most here. Grounding: an assessment that cites the specific evidence is checkable; one that
 reads plausibly is not. And authorization: an agent with tools is a principal with
 permissions, so its blast radius is a scoping decision, not a prompt-engineering one.
@@ -103,8 +103,8 @@ more expensive than no triage, because it carries the authority of having been c
 
 ## Where this connects
 
-Automation quality is bounded by [detection quality](../detection-quality/) — automating on
+Automation quality is bounded by [detection quality](/detection-eng/detection-quality/) — automating on
 top of imprecise rules multiplies the error rather than absorbing it. Containment overlaps
-directly with [incident response](../../dfir/), where the same actions are taken manually
-under judgement. And the agent-assisted layer is [AI engineering](../../ai-automation/)
+directly with [incident response](/dfir/), where the same actions are taken manually
+under judgement. And the agent-assisted layer is [AI engineering](/ai-automation/)
 pointed at the SOC queue.

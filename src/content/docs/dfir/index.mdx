@@ -30,29 +30,29 @@ restores service and moves on guarantees a rerun.
 
 ## How this connects
 
-- **→ [Detection Engineering](../detection-eng/):** the closest sibling — §7 builds and tests the rules, this pillar responds and investigates. Every incident produces detection gaps, which is the highest-quality input the detection backlog gets.
-- **→ [Threat Intelligence](../threat-intel/):** investigation output *is* intelligence, and confidence language matters most under time pressure. Malware analysis feeds indicators and behaviours back upstream.
-- **→ [IAM](../iam/):** identity-centric containment is usually the fastest lever available — revoke, rotate, and cut the session before chasing hosts.
-- **→ [Cloud & Infrastructure Security](../cloud-infra/):** cloud IR is a different discipline. Snapshotting, credential revocation and blast-radius scoping all depend on how the substrate was architected.
-- **→ [Data Security & Privacy Engineering](../data-privacy/):** what was accessed determines notification obligations, and forensics routinely recovers data an organization believed was deleted.
-- **→ [GRC](../grc/):** breach notification clocks are regulatory, and evidence handling has to survive counsel.
-- **→ [Penetration Testing & Red Teaming](../pentest/):** a red team engagement is a rehearsal for this pillar, and the honest measure of both is what the responders actually caught.
-- **→ [Application Security](../appsec/):** root cause frequently lands in code, and the postmortem is where that becomes a requirement instead of a ticket.
-- **→ [AI & Automation](../ai-automation/):** triage and enrichment are the obvious automation targets, with human approval gates on anything destructive.
+- **→ [Detection Engineering](/detection-eng/):** the closest sibling — §7 builds and tests the rules, this pillar responds and investigates. Every incident produces detection gaps, which is the highest-quality input the detection backlog gets.
+- **→ [Threat Intelligence](/threat-intel/):** investigation output *is* intelligence, and confidence language matters most under time pressure. Malware analysis feeds indicators and behaviours back upstream.
+- **→ [IAM](/iam/):** identity-centric containment is usually the fastest lever available — revoke, rotate, and cut the session before chasing hosts.
+- **→ [Cloud & Infrastructure Security](/cloud-infra/):** cloud IR is a different discipline. Snapshotting, credential revocation and blast-radius scoping all depend on how the substrate was architected.
+- **→ [Data Security & Privacy Engineering](/data-privacy/):** what was accessed determines notification obligations, and forensics routinely recovers data an organization believed was deleted.
+- **→ [GRC](/grc/):** breach notification clocks are regulatory, and evidence handling has to survive counsel.
+- **→ [Penetration Testing & Red Teaming](/pentest/):** a red team engagement is a rehearsal for this pillar, and the honest measure of both is what the responders actually caught.
+- **→ [Application Security](/appsec/):** root cause frequently lands in code, and the postmortem is where that becomes a requirement instead of a ticket.
+- **→ [AI & Automation](/ai-automation/):** triage and enrichment are the obvious automation targets, with human approval gates on anything destructive.
 
 ## What's here
 
 | Subsection | Focus |
 |---|---|
-| [Incident Response Operations](./incident-response/) | NIST SP 800-61 lifecycle and playbooks, triage and severity declaration, incident command, identity-centric containment, cloud IR, incident communications, blameless postmortems |
-| [Digital Forensics](./digital-forensics/) | Order of volatility and sound acquisition, disk forensics and execution artefacts, memory forensics, cloud and SaaS forensics without a disk, endpoint and browser artefacts, anti-forensics |
-| [Timeline & Investigation Method](./investigation-method/) | Super-timelines and cross-artefact pivoting, root cause vs. proximate cause, proving scope rather than assuming it, confidence language under pressure, reproducible documentation |
-| [Malware Analysis & Reverse Engineering](./malware-analysis/) | Static triage and similarity, dynamic analysis and detonation safety, unpacking and RE workflow, extracting IOCs and behavioural signatures, capability assessment |
-| [Evidence Handling & Legal](./evidence-legal/) | Chain of custody and defensible process, legal hold and privilege, regulatory notification clocks, working with counsel, law enforcement and external IR |
+| [Incident Response Operations](/dfir/incident-response/) | NIST SP 800-61 lifecycle and playbooks, triage and severity declaration, incident command, identity-centric containment, cloud IR, incident communications, blameless postmortems |
+| [Digital Forensics](/dfir/digital-forensics/) | Order of volatility and sound acquisition, disk forensics and execution artefacts, memory forensics, cloud and SaaS forensics without a disk, endpoint and browser artefacts, anti-forensics |
+| [Timeline & Investigation Method](/dfir/investigation-method/) | Super-timelines and cross-artefact pivoting, root cause vs. proximate cause, proving scope rather than assuming it, confidence language under pressure, reproducible documentation |
+| [Malware Analysis & Reverse Engineering](/dfir/malware-analysis/) | Static triage and similarity, dynamic analysis and detonation safety, unpacking and RE workflow, extracting IOCs and behavioural signatures, capability assessment |
+| [Evidence Handling & Legal](/dfir/evidence-legal/) | Chain of custody and defensible process, legal hold and privilege, regulatory notification clocks, working with counsel, law enforcement and external IR |
 
 :::tip[The thread worth following]
-**Alert to answer.** [Detection](../detection-eng/) fires, §9.1 contains, §9.3 reconstructs,
+**Alert to answer.** [Detection](/detection-eng/) fires, §9.1 contains, §9.3 reconstructs,
 §9.4 establishes what the malware could actually do — and the lesson goes back into the
 detection backlog as a tested rule. The full circuit, in the opposite direction to the
-[purple team loop](../pentest/).
+[purple team loop](/pentest/).
 :::

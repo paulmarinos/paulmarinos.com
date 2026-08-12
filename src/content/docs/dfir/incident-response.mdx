@@ -33,7 +33,7 @@ contain again.
 
 The phase that decides the outcome is **preparation**, and it is measured concretely: do
 you have current asset ownership, is your logging retained long enough,
-[can you get the data](../../detection-eng/data-pipeline/), does anyone have authority to
+[can you get the data](/detection-eng/data-pipeline/), does anyone have authority to
 disconnect a production system at 3am without a meeting.
 
 ## Severity declaration
@@ -72,7 +72,7 @@ the executive's questions is not reading logs.
 **Identity actions are almost always the fastest and highest-value lever.** Revoking
 sessions, rotating credentials and disabling accounts cut access in seconds, across every
 system that trusts that identity — while host isolation addresses one machine at a time.
-For an intruder using [valid credentials](../../iam/), which is the common case, host
+For an intruder using [valid credentials](/iam/), which is the common case, host
 containment can be nearly irrelevant.
 
 Sequencing that matters:
@@ -82,13 +82,13 @@ Sequencing that matters:
 - **Rotate what the credential could reach**, not just the credential. Access keys, service
   principals, and anything in a secret store the identity could read.
 - **Preserve before you destroy.** Snapshot and capture memory *before* isolating or
-  rebuilding — see [order of volatility](../digital-forensics/). Rebuilding a host is how
+  rebuilding — see [order of volatility](/dfir/digital-forensics/). Rebuilding a host is how
   the evidence of how they got in gets deleted.
 - **Watch for tripwires.** Aggressive containment tells a capable intruder they are seen.
   Sometimes that's fine; sometimes it triggers destruction. That's a judgement call and
   should be made deliberately, not by accident.
 
-Automated containment is [SOAR territory](../../detection-eng/soar-automation/), and the
+Automated containment is [SOAR territory](/detection-eng/soar-automation/), and the
 guardrails there apply with force: scope limits, asset criticality checks, and a tested
 undo.
 
@@ -97,7 +97,7 @@ undo.
 The instincts from on-premise response mislead in cloud environments:
 
 - **You may never get the disk.** Managed services expose no host. Investigation runs on
-  control plane logs, and if [those weren't configured](../../cloud-infra/) organization-wide,
+  control plane logs, and if [those weren't configured](/cloud-infra/) organization-wide,
   the evidence does not exist.
 - **Snapshot before terminate**, and remember autoscaling terminates instances on its own
   schedule. Evidence evaporates without anyone deciding to destroy it.
@@ -117,7 +117,7 @@ to have been a guess. Assume anything written may be read by counsel, a regulato
 opposing counsel later, and write accordingly — precisely, without speculation about blame.
 
 Regulatory clocks may already be running: notification deadlines are measured in hours in
-some regimes, and [that assessment](../evidence-legal/) should begin early rather than after
+some regimes, and [that assessment](/dfir/evidence-legal/) should begin early rather than after
 technical work completes.
 
 ## Postmortems
@@ -130,13 +130,13 @@ person made the call they made.
 Then: what made this hard, what worked, what changes, who owns each change, by when.
 Actions without owners and dates are how the same incident recurs with a different date.
 
-The highest-value output goes back to [detection engineering](../../detection-eng/detection-lifecycle/)
+The highest-value output goes back to [detection engineering](/detection-eng/detection-lifecycle/)
 as backlog items — an incident is the highest-provenance detection idea available, because
 you know exactly what was visible and what wasn't.
 
 ## Where this connects
 
-Containment is an [identity](../../iam/) operation before it is a host operation. Scoping
-depends on [architecture](../../cloud-infra/). Evidence preservation constrains everything
-here — see [digital forensics](../digital-forensics/) — and the reconstruction that answers
-"what happened" is [investigation method](../investigation-method/).
+Containment is an [identity](/iam/) operation before it is a host operation. Scoping
+depends on [architecture](/cloud-infra/). Evidence preservation constrains everything
+here — see [digital forensics](/dfir/digital-forensics/) — and the reconstruction that answers
+"what happened" is [investigation method](/dfir/investigation-method/).

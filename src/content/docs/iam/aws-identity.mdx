@@ -29,7 +29,7 @@ When a principal makes a request, AWS evaluates every applicable policy and reso
 a fixed order. The order is the whole game, because it determines what can override what:
 
 1. **Explicit `Deny`** — anywhere, in any policy type, wins immediately. Nothing overrides it.
-2. **Service Control Policies (SCPs)** — the [organization guardrail](../../cloud-infra/). An
+2. **Service Control Policies (SCPs)** — the [organization guardrail](/cloud-infra/). An
    action not permitted by SCP is denied regardless of what the account grants.
 3. **Permission boundaries** — a ceiling on what an identity policy can grant.
 4. **Identity and resource policies** — the actual grants. Access requires an `Allow` here and
@@ -37,7 +37,7 @@ a fixed order. The order is the whole game, because it determines what can overr
 
 The mental model: **deny by default, explicit deny always wins, and every layer can only take
 away.** An `Allow` is necessary but never sufficient — it can be overridden by any `Deny`, any
-SCP, or a boundary above it. This is [fail-closed design](../../appsec/secure-coding/)
+SCP, or a boundary above it. This is [fail-closed design](/appsec/secure-coding/)
 implemented as an authorization engine, and reasoning about access without knowing the order
 produces confident wrong conclusions.
 
@@ -52,7 +52,7 @@ The security argument is decisive: **prefer roles and temporary credentials ever
 leaked access key is valid until someone notices and revokes it; leaked STS credentials expire
 on their own. Long-lived access keys — especially unrotated ones — are among the most common
 serious findings, and the fix is architectural: use roles, and for the build system use
-[OIDC federation](../../appsec/cicd-security/) so no key exists to leak.
+[OIDC federation](/appsec/cicd-security/) so no key exists to leak.
 
 ## Cross-account trust and the confused deputy
 
@@ -85,7 +85,7 @@ is. The primitives that recur:
 - **Unrotated access keys** as the initial foothold — the leaked credential that shouldn't
   still be valid.
 
-These are the paths [cloud pentesting](../../pentest/cloud-pentesting/) enumerates and chains;
+These are the paths [cloud pentesting](/pentest/cloud-pentesting/) enumerates and chains;
 this is the same map read defensively. The one to internalize is `iam:PassRole` — if you learn
 to spot one privesc primitive, make it that one.
 
@@ -94,7 +94,7 @@ to spot one privesc primitive, make it that one.
 - **Permission boundaries** cap what an identity policy can grant, so delegating IAM
   administration doesn't mean delegating unlimited privilege.
 - **SCPs** enforce guardrails org-wide — deny whole regions, deny disabling CloudTrail, deny
-  root actions. This is [architecture, not identity](../../cloud-infra/), and it's the layer
+  root actions. This is [architecture, not identity](/cloud-infra/), and it's the layer
   that survives a mistake at the account level.
 - **Access Analyzer** finds resources shared outside the account and, more usefully, generates
   least-privilege policies from observed CloudTrail activity — least privilege derived from
@@ -108,8 +108,8 @@ a wildcard action, an unpinned trust policy — none are subtle, and all are eve
 
 ## Where this connects
 
-These misconfigurations are what [cloud pentesting](../../pentest/cloud-pentesting/) exploits
-and what [cloud architecture](../../cloud-infra/) constrains with boundaries and SCPs. The
-temporary-credential argument is [OIDC in the build pipeline](../../appsec/cicd-security/), and
-the fail-closed evaluation order is [secure-coding](../../appsec/secure-coding/) at platform
-scale. Where identity for *non-human* actors goes next is [Frameworks](../frameworks/).
+These misconfigurations are what [cloud pentesting](/pentest/cloud-pentesting/) exploits
+and what [cloud architecture](/cloud-infra/) constrains with boundaries and SCPs. The
+temporary-credential argument is [OIDC in the build pipeline](/appsec/cicd-security/), and
+the fail-closed evaluation order is [secure-coding](/appsec/secure-coding/) at platform
+scale. Where identity for *non-human* actors goes next is [Frameworks](/iam/frameworks/).

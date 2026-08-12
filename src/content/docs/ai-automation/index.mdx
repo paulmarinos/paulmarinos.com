@@ -26,29 +26,29 @@ orchestration.
 
 ## How this connects
 
-- **→ [IAM](../iam/):** agent identity is the same problem as §2.4 Zero Knowledge Trust. An agent with tools is a principal with permissions, and it needs a credential lifecycle, scoping, and revocation.
-- **→ [Detection Engineering](../detection-eng/):** agent-assisted triage and SOAR enrichment are the production use case — with human approval gates on anything destructive.
-- **→ [GRC](../grc/):** automated evidence pipelines are the highest-ROI application in security, and the EU AI Act makes the models themselves a compliance surface.
-- **→ [Threat Intel](../threat-intel/):** summarization pipelines scale collection, and hallucinated intel is the failure mode that discredits the whole program.
-- **→ [AppSec](../appsec/):** scanning augmentation and code review assistance, plus prompt injection as a genuinely new vulnerability class.
-- **→ [Penetration Testing & Red Teaming](../pentest/):** LLM applications are a target class with their own methodology.
-- **→ [Cloud & Infrastructure Security](../cloud-infra/):** drift detection and closed-loop remediation are a natural automation target, and model-serving infrastructure is a workload with an unusual blast radius.
-- **→ [Incident Response & Digital Forensics](../dfir/):** triage and enrichment are the obvious automation targets, with human approval gates on anything destructive.
-- **→ [Data Security & Privacy Engineering](../data-privacy/):** training-data provenance, PII in prompts and embeddings, and deletion once data is baked into weights. A vector store is a data store nobody classified.
+- **→ [IAM](/iam/):** agent identity is the same problem as §2.4 Zero Knowledge Trust. An agent with tools is a principal with permissions, and it needs a credential lifecycle, scoping, and revocation.
+- **→ [Detection Engineering](/detection-eng/):** agent-assisted triage and SOAR enrichment are the production use case — with human approval gates on anything destructive.
+- **→ [GRC](/grc/):** automated evidence pipelines are the highest-ROI application in security, and the EU AI Act makes the models themselves a compliance surface.
+- **→ [Threat Intel](/threat-intel/):** summarization pipelines scale collection, and hallucinated intel is the failure mode that discredits the whole program.
+- **→ [AppSec](/appsec/):** scanning augmentation and code review assistance, plus prompt injection as a genuinely new vulnerability class.
+- **→ [Penetration Testing & Red Teaming](/pentest/):** LLM applications are a target class with their own methodology.
+- **→ [Cloud & Infrastructure Security](/cloud-infra/):** drift detection and closed-loop remediation are a natural automation target, and model-serving infrastructure is a workload with an unusual blast radius.
+- **→ [Incident Response & Digital Forensics](/dfir/):** triage and enrichment are the obvious automation targets, with human approval gates on anything destructive.
+- **→ [Data Security & Privacy Engineering](/data-privacy/):** training-data provenance, PII in prompts and embeddings, and deletion once data is baked into weights. A vector store is a data store nobody classified.
 
 ## What's here
 
 | Subsection | Focus |
 |---|---|
-| [Retrieval-Augmented Generation](./rag/) | Naive RAG failure modes, query rewriting/HyDE/hybrid/reranking, agentic and GraphRAG, contextual retrieval, long-context vs. retrieval, chunking and evaluation |
-| [Vector Databases & Embeddings](./vector-databases/) | What embeddings encode, similarity metrics and index types (HNSW, IVF, PQ), the DB landscape, hybrid search and fusion, metadata filtering, cost/latency/recall |
-| [Verification & Evaluation](./verification/) | Grounding and citation enforcement, hallucination detection, LLM-as-judge pitfalls, golden datasets, guardrails and schema validation, human-in-the-loop |
-| [Agent Orchestration](./agent-orchestration/) | Single vs. multi-agent, planner/executor and supervisor and reflection patterns, LangGraph/CrewAI/AutoGen/MCP, memory, loop termination, cost control |
-| [Security Applications](./security-applications/) | Triage and alert enrichment, report drafting, code review augmentation, compliance evidence, intel summarization |
-| [Securing AI Systems](./securing-ai/) | Direct and indirect prompt injection, OWASP Top 10 for LLM Applications, tool-use authorization and blast radius, model supply chain |
+| [Retrieval-Augmented Generation](/ai-automation/rag/) | Naive RAG failure modes, query rewriting/HyDE/hybrid/reranking, agentic and GraphRAG, contextual retrieval, long-context vs. retrieval, chunking and evaluation |
+| [Vector Databases & Embeddings](/ai-automation/vector-databases/) | What embeddings encode, similarity metrics and index types (HNSW, IVF, PQ), the DB landscape, hybrid search and fusion, metadata filtering, cost/latency/recall |
+| [Verification & Evaluation](/ai-automation/verification/) | Grounding and citation enforcement, hallucination detection, LLM-as-judge pitfalls, golden datasets, guardrails and schema validation, human-in-the-loop |
+| [Agent Orchestration](/ai-automation/agent-orchestration/) | Single vs. multi-agent, planner/executor and supervisor and reflection patterns, LangGraph/CrewAI/AutoGen/MCP, memory, loop termination, cost control |
+| [Security Applications](/ai-automation/security-applications/) | Triage and alert enrichment, report drafting, code review augmentation, compliance evidence, intel summarization |
+| [Securing AI Systems](/ai-automation/securing-ai/) | Direct and indirect prompt injection, OWASP Top 10 for LLM Applications, tool-use authorization and blast radius, model supply chain |
 
 :::tip[The thread worth following]
-**Agentic identity.** Take Zero Knowledge Trust from [IAM §2.4](../iam/), agent orchestration
+**Agentic identity.** Take Zero Knowledge Trust from [IAM §2.4](/iam/), agent orchestration
 from here, and tool-use authorization from Securing AI Systems, and you get one coherent
 problem: what does it mean to grant an autonomous actor scoped, revocable, auditable
 authority? That's the newest material on this site.

@@ -43,7 +43,7 @@ permissions:
 # the workflow assumes a role via the token; nothing long-lived is stored
 ```
 
-This is an [IAM design decision](../../iam/) made in the build system, and the trust policy
+This is an [IAM design decision](/iam/) made in the build system, and the trust policy
 is where the security lives: scope it to the specific repository, and to a branch or
 environment, so a token from a fork or a feature branch can't assume the production role.
 An unscoped trust policy hands the role to anyone who can trigger a workflow.
@@ -65,7 +65,7 @@ The controls:
 - **Minimize and scope the token.** Default-read `GITHUB_TOKEN`, elevated only where needed.
 
 **Dependency tampering** and **artifact integrity** are the other half — covered by the
-[dependency and supply-chain pitfalls](../insecure-coding/) and by provenance below.
+[dependency and supply-chain pitfalls](/appsec/insecure-coding/) and by provenance below.
 
 ## Platform controls
 
@@ -75,7 +75,7 @@ The features exist; the failure is leaving them off.
 - **Branch protection** — required reviews, required checks, no force-push to protected
   branches. This is where "reviewed before merge" stops being a convention.
 - **CODEOWNERS** — the right reviewers auto-required for sensitive paths.
-- **Secret scanning with push protection** — blocks the [committed secret](../insecure-coding/)
+- **Secret scanning with push protection** — blocks the [committed secret](/appsec/insecure-coding/)
   at push, not after.
 - **Dependabot** — dependency updates and alerts.
 
@@ -99,7 +99,7 @@ pipeline it claims, without tampering in between.
   rather than demanding everything at once.
 - **SBOM** — a manifest of what's in a build. Necessary for answering "are we affected by the
   new CVE in library X" in minutes instead of days, which is a
-  [detection and response](../../detection-eng/) capability as much as a compliance artifact.
+  [detection and response](/detection-eng/) capability as much as a compliance artifact.
 
 Provenance is only as good as its verification: signing artifacts and never checking the
 signatures at deploy is ceremony. The value is in the gate that refuses an unsigned or
@@ -107,8 +107,8 @@ unverifiable artifact.
 
 ## Where this connects
 
-OIDC is [IAM](../../iam/) in the build system, and its trust policy is a
-[cloud-architecture](../../cloud-infra/) decision. The pipeline is where
-[dependency risk](../insecure-coding/) is contained or realized. And SBOMs plus build logs are
-[detection](../../detection-eng/) inputs — the pipeline is a monitored production system, or
+OIDC is [IAM](/iam/) in the build system, and its trust policy is a
+[cloud-architecture](/cloud-infra/) decision. The pipeline is where
+[dependency risk](/appsec/insecure-coding/) is contained or realized. And SBOMs plus build logs are
+[detection](/detection-eng/) inputs — the pipeline is a monitored production system, or
 it's an unmonitored one with production access.

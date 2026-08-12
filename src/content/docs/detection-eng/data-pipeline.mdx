@@ -33,7 +33,7 @@ Not all telemetry is equal, and the ranking is fairly stable across environments
 | **Identity** | Highest | Most intrusions transit identity. Sign-ins, token issuance, MFA events, privilege changes |
 | **Endpoint** | High | Process execution and parent-child lineage is the richest behavioural signal available |
 | **Cloud control plane** | High | CloudTrail, Azure Activity — where privilege escalation and persistence actually happen |
-| **Application** | Medium, underused | Highest business context, least instrumented. [AppSec](../../appsec/) can fix this |
+| **Application** | Medium, underused | Highest business context, least instrumented. [AppSec](/appsec/) can fix this |
 | **Network** | Medium, falling | Encryption has eroded content inspection; flow and DNS still carry weight |
 
 Identity first is the practical takeaway. If budget forces a choice, identity and cloud
@@ -48,7 +48,7 @@ Cloud logging has traps that are structural rather than incidental:
   bucket" has surprised many teams mid-incident.
 - **Regional and per-account scope.** Trails configured per region or per account leave the
   rest silent. Organization-wide configuration is a
-  [landing zone decision](../../cloud-infra/), not a SOC one.
+  [landing zone decision](/cloud-infra/), not a SOC one.
 - **Retention vs. queryability.** Logs archived to cheap storage are retained, not
   available. During an incident the difference matters enormously.
 - **Latency.** Some sources are near-real-time, some batch on tens of minutes. Rules with
@@ -98,12 +98,12 @@ of questions.
 
 The rule that prevents most damage: **any pipeline change that drops a field must be
 reviewed against the detections that reference it.** With the repo
-[organised by data source](../detection-as-code/), that's a grep.
+[organised by data source](/detection-eng/detection-as-code/), that's a grep.
 
 :::caution[Sampling and base rates]
 Sampling interacts badly with rare events. If an attack signal appears in one event per
 million and you sample at 10%, you have not reduced cost by 90% — you have reduced
-detection probability to 10%. See [the base rate maths](../../threat-intel/statistics/).
+detection probability to 10%. See [the base rate maths](/threat-intel/statistics/).
 :::
 
 ## Coverage gap analysis
@@ -119,14 +119,14 @@ Two distinctions that must stay visible:
 - **Collected** vs. **queryable** vs. **retained long enough**. A source can pass one and
   fail the others.
 
-This artefact serves more than detection. It is the same evidence [GRC](../../grc/) needs
-for logging and monitoring controls, and the thing [forensics](../../dfir/) discovers the
+This artefact serves more than detection. It is the same evidence [GRC](/grc/) needs
+for logging and monitoring controls, and the thing [forensics](/dfir/) discovers the
 hard way when an investigation hits a wall. Producing it once, deliberately, is cheaper
 than three teams discovering it separately.
 
 ## Where this connects
 
-Pipeline decisions bound [detection quality](../detection-quality/) — you cannot tune what
+Pipeline decisions bound [detection quality](/detection-eng/detection-quality/) — you cannot tune what
 you never collected. What's observable at all is set by
-[architecture](../../cloud-infra/), since network design decides whether east-west traffic
-is loggable in the first place. And coverage evidence is shared with [GRC](../../grc/).
+[architecture](/cloud-infra/), since network design decides whether east-west traffic
+is loggable in the first place. And coverage evidence is shared with [GRC](/grc/).

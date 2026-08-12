@@ -146,10 +146,14 @@
 - **IAST/RASP:** where they fit
 - Building a scanning program people don't route around
 
-### 3.6 API & Cloud-Native AppSec *(placeholder — to expand)*
+### 3.6 API & Cloud-Native AppSec
 - OWASP API Top 10
 - Container and image security
 - IaC scanning (Terraform, CloudFormation, Bicep)
+- **3.6.1 Kubernetes Workload Security** — image provenance and signing, admission control as a
+  pipeline gate, the manifest as reviewable code, workload identity for outbound auth. The
+  *workload* half of the Kubernetes split; cluster hardening is §8.3. First subsection to grow
+  a third level — see Structural Notes.
 
 ---
 
@@ -539,6 +543,15 @@ The site's differentiator is the connective tissue. Candidate cross-section piec
 
 ## Structural Notes
 
+- **Depth: three levels of content, two levels of navigation.** Pillar -> subsection ->
+  article. A subsection stays a single page until it has enough to say, then becomes a
+  directory: the existing page moves to `index.mdx` and becomes a hub that indexes its
+  children, which sit beside it and are hidden from the sidebar. The sidebar therefore never
+  grows past pillar -> subsection no matter how much lands underneath, and third-level
+  articles are found through the hub, search, the graph and backlinks instead. Worked example:
+  `appsec/api-cloud-native/kubernetes-workload-security`. Mechanics in `AGENTS.md`.
+  A fourth level is not planned — if a third-level article needs children, that is evidence
+  the subsection above it should have been split.
 - **Per-section landing page:** what this is, why it matters, how it connects to the other six, then subsection index.
 - **Content types to support:** deep-dive articles, cheatsheets/command references, templates (report, policy, threat model), walkthroughs/labs, and a glossary.
 - **Suggested tagging axes:** section, cloud provider (AWS/Azure/GCP/multi), framework (NIST/ISO/SOC2/FedRAMP), maturity level (foundational/practitioner/advanced), content type.

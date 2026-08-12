@@ -54,6 +54,38 @@
 }
 
 /*
+ * Page description wrap.
+ *
+ * theme-black caps `.page-description` at `max-width: 80%`, so the deck wrapped
+ * to 512px while the body ran the full 640px measure — three stubby lines
+ * (398/401/356px) sitting above prose that wrapped 240px wider.
+ *
+ * Removing that cap is necessary but not sufficient, because the theme also sets
+ * `text-wrap: balance`, which equalises line lengths and so keeps the block
+ * narrow no matter how wide the box is — on a 167-character deck it produced
+ * 423/389/430px inside a 640px column, barely different from the capped version.
+ * Balance is the right choice for a heading; for a deck that should read as a
+ * lede at the body's measure it is the thing causing the symptom.
+ *
+ * `pretty` instead, which fills the measure and only optimises the last line.
+ * Audited across all 71 descriptions at 1440px: average widest line 576px vs
+ * balance's 523px against a 640px column. The cost is six pages whose deck ends
+ * on a single short word (worst 64px) — ordinary paragraph raggedness, and a
+ * better trade than every deck sitting visibly narrower than the prose below it.
+ * Plain `wrap` was measured worse than both: it strands 24-37px orphans.
+ *
+ * Three classes deep on purpose. Unlayered normally beats the theme, but this
+ * declaration is not in `@layer black` — it is an Astro-scoped component style in
+ * PageTitle.astro, so it carries the component's own class and lands at (0,2,0).
+ * A bare `.page-description` ties on specificity at best and loses on source
+ * order; this outranks it outright without reaching for `!important`.
+ */
+.sl-container .page-title .page-description {
+	max-width: none;
+	text-wrap: pretty;
+}
+
+/*
  * Heading scale, rebased on the 20px body above.
  *
  * The theme's scale was built against 15px body text: h2 at 1.25rem (20px), h3

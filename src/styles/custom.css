@@ -23,6 +23,65 @@
 }
 
 /*
+ * Mobile horizontal-overflow guard.
+ *
+ * Symptom: on a phone the page loaded already scrolled sideways, forcing a
+ * manual zoom-out on every article.
+ *
+ * Cause (measured in a headless browser at 390px): the theme wraps the content
+ * column in a `flex-direction: column-reverse` container (`.lg\:sl-flex`) whose
+ * width is definite (the viewport) but which never propagates that width *down*.
+ * So the column sits in a shrink-to-fit context and every block sizes to
+ * `min(max-content, max-width)` — i.e. it fills its 640px `max-width` as if the
+ * viewport were unbounded. Prose-only pages rendered a ~458px column, code-heavy
+ * pages ~640px, and the whole page (header, prose, nav) stretched to match.
+ *
+ * Fix: `max-width: 100%` on the panes resolves against that definite-width
+ * ancestor (390px) and re-establishes a real available width, which cascades so
+ * prose wraps to the viewport and wide content scrolls within itself.
+ * `min-width: 0` additionally lets the panes shrink on the flex main axis.
+ */
+.main-pane,
+.content-panel,
+.main-frame,
+.sl-container {
+	min-width: 0;
+	max-width: 100%;
+}
+
+/* Break long unbroken tokens (URLs, inline code, hashes) rather than letting a
+   single one set the column's min-content width and defeat the clamp above. */
+.sl-markdown-content {
+	overflow-wrap: break-word;
+}
+
+/* Code blocks (plain and Expressive Code) scroll within the clamped column
+   instead of widening it. `min-width: 0` is the operative part — it stops the
+   code's intrinsic line width from propagating up as a min-content floor. */
+.sl-markdown-content :is(pre, .expressive-code) {
+	max-width: 100%;
+	min-width: 0;
+}
+.sl-markdown-content pre {
+	overflow-x: auto;
+}
+
+/* Pagination is a two-button flex row that the theme sets `nowrap`; when the
+   adjacent article titles are long their combined width overflows a phone.
+   Let it wrap to a second line instead. */
+.pagination-links {
+	flex-wrap: wrap;
+}
+
+/* Same shape on the splash hero: the two call-to-action buttons sit in a
+   `nowrap` flex row, so on a very narrow phone (~320px) their combined width
+   forces the hero content — and the header with it — wider than the viewport.
+   Let them stack. */
+.hero .actions {
+	flex-wrap: wrap;
+}
+
+/*
  * Graph + backlinks placement.
  *
  * The graph lives at the bottom of the content column at every width, spanning

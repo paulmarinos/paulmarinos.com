@@ -23,6 +23,83 @@
 }
 
 /*
+ * Body type size — the reading measure, not a cosmetic preference.
+ *
+ * theme-black sets `.sl-markdown-content * { font-size: 15px }` above 40rem
+ * (base.css:404), so the site renders body text *smaller* on a desktop than on a
+ * phone, which inherits 16px. Measured in the 640px content column, that put a
+ * full line at 94 characters — well past the 45-75 band for continuous prose,
+ * and the reason the column read as under-filled rather than the gutters reading
+ * as too wide. 20px brings it to ~70, which is where reading-first sites sit.
+ *
+ * Scoped to the same 40rem breakpoint the theme uses, so mobile is untouched on
+ * purpose: at 390px it is already 16px and 46 characters per line, at the bottom
+ * of the band. Raising it there would shorten lines below 45, not improve them.
+ *
+ * Written as an element list rather than `*` because the theme's universal rule
+ * sets a size on every descendant directly, so inheritance cannot reach inline
+ * children — `strong` and `em` would stay 15px inside a 20px paragraph. Headings
+ * keep their own sizes (higher specificity), and `pre`/code blocks are
+ * deliberately left at the theme's size: monospace at 20px only forces more
+ * horizontal scrolling. Inline code is `0.875em`, so it tracks prose by itself.
+ */
+@media (min-width: 40rem) {
+	.sl-markdown-content :is(p, li, dt, dd, blockquote, td, th, figcaption),
+	.sl-markdown-content
+		:is(p, li, dt, dd, blockquote, td, th)
+		:is(a, strong, b, em, i, del, ins, mark, abbr, span, sub, sup) {
+		font-size: 20px;
+		line-height: 1.6;
+	}
+}
+
+/*
+ * Heading scale, rebased on the 20px body above.
+ *
+ * The theme's scale was built against 15px body text: h2 at 1.25rem (20px), h3
+ * at 1.125rem (18px), h4 at 1rem. Raising body type to 20px collapses that
+ * outright — h2 lands exactly on body size and h3/h4 fall *below* it, so section
+ * headings would read as less prominent than the prose they head. The heading
+ * rules are rem-based and therefore did not move with the body change, which is
+ * why this has to be restated rather than left to scale on its own.
+ *
+ * Ratios are roughly 1.25 between steps. h4 sits at body size and is carried by
+ * its weight instead, which is the conventional treatment for the last level.
+ * The page title is included because at 30px it was barely ahead of a 28px h2;
+ * it is rendered by the theme's PageTitle override, outside `.sl-markdown-content`,
+ * so `h1#_top` is the hook — the id is a theme constant (PAGE_TITLE_ID), not an
+ * Astro scoped class.
+ *
+ * `.sl-heading-wrapper` line-heights are restated alongside each level because
+ * the theme sets them independently to align the anchor-link icon; leaving them
+ * behind offsets the icon against its heading.
+ */
+@media (min-width: 40rem) {
+	h1#_top {
+		font-size: 2.25rem;
+		line-height: 2.75rem;
+	}
+
+	.sl-markdown-content h2,
+	.sl-markdown-content .sl-heading-wrapper.level-h2 {
+		font-size: 1.75rem;
+		line-height: 2.25rem;
+	}
+
+	.sl-markdown-content h3,
+	.sl-markdown-content .sl-heading-wrapper.level-h3 {
+		font-size: 1.375rem;
+		line-height: 1.875rem;
+	}
+
+	.sl-markdown-content h4,
+	.sl-markdown-content .sl-heading-wrapper.level-h4 {
+		font-size: 1.25rem;
+		line-height: 1.75rem;
+	}
+}
+
+/*
  * Mobile horizontal-overflow guard.
  *
  * Symptom: on a phone the page loaded already scrolled sideways, forcing a

@@ -40,6 +40,25 @@
  * ancestor (390px) and re-establishes a real available width, which cascades so
  * prose wraps to the viewport and wide content scrolls within itself.
  * `min-width: 0` additionally lets the panes shrink on the flex main axis.
+ *
+ * Regression this originally caused, fixed below: theme-black caps the content
+ * column on `.main-pane` itself — `[data-has-sidebar][data-has-toc] .main-pane`
+ * gets `max-width: 40rem` plus `margin-inline: auto`, so the column is meant to
+ * sit centred in whatever space the two sidebars leave (base.css:320-345). A flat
+ * unlayered `max-width: 100%` here outranked that cap at *every* width, so the
+ * pane filled the whole gap, `margin-inline: auto` became a no-op, and prose ran
+ * edge-to-edge with its left edge exactly on the sidebar border — zero gap,
+ * measured at 1600px.
+ *
+ * So the clamp is expressed as `min()` and scoped the same way the theme scopes
+ * its cap. `min()` takes whichever bound is tighter: the viewport wins on a phone
+ * (which is the overflow fix) and the 40rem measure wins on a desktop (which is
+ * the theme's design). No breakpoint needed, and the theme keeps ownership of the
+ * value — `--sl-content-width` is theme-black's own `calc(var(--spacing) * 160)`.
+ *
+ * Pages without both sidebars (the splash landing page) are deliberately left at
+ * a plain 100%: they have no content-measure cap to preserve, and capping them
+ * would shrink the hero.
  */
 .main-pane,
 .content-panel,
@@ -47,6 +66,57 @@
 .sl-container {
 	min-width: 0;
 	max-width: 100%;
+}
+
+[data-has-sidebar][data-has-toc] .main-pane {
+	max-width: min(100%, var(--sl-content-width));
+}
+
+/*
+ * Right-sidebar overhang — table of contents and backlinks were being clipped.
+ *
+ * theme-black sizes `.right-sidebar-container` to 18rem *and* gives it 2rem of
+ * inline padding (border-box, so a 14rem content box), then hardcodes the
+ * `.right-sidebar` inside it to that same full 18rem. The child therefore
+ * overhangs its own parent's content box by 2rem on each side and its text is cut
+ * off at the viewport edge. Measured at 1440px: every TOC link ran 20px past the
+ * aside on every page, including one-word entries like "Overview" — which is what
+ * rules out long headings as the cause.
+ *
+ * Clamping the child does not work: it is `position: fixed`, so a percentage
+ * width resolves against the viewport rather than the parent (`max-width: 100%`
+ * measured as no clamp at all). Stock Starlight's own `width: 100%` has the same
+ * problem here, so restoring it is not the fix either.
+ *
+ * Instead the inset moves from the parent to the child. Same total inset, same
+ * appearance, but the fixed child now spans its parent exactly and no arithmetic
+ * has to be kept in sync between two rules.
+ */
+.right-sidebar-container {
+	padding-inline: 0;
+}
+
+.right-sidebar {
+	padding-inline: calc(var(--spacing) * 8);
+}
+
+/*
+ * Left-sidebar entries that wrap to two lines were overlapping the next entry.
+ *
+ * theme-black gives `.entry-link` a fixed `height: 30px` alongside 8px block
+ * padding and a 22.4px line-height — so even a single line needs 38px and is
+ * already overflowing its box; it only looks right because the flex centring
+ * hides it. A label that wraps needs 60px and visibly collides with its
+ * neighbour. Measured at 1440px: 11 sidebar entries clipped, e.g. "Malware
+ * Analysis & Reverse Engineering" (box 30px, content 37px).
+ *
+ * Several pillar and subsection names are genuinely long, so wrapping is the
+ * normal case here rather than an edge case. `min-height` preserves the intended
+ * 30px rhythm for entries that fit on one line.
+ */
+.sidebar-content .entry-link {
+	height: auto;
+	min-height: calc(var(--spacing) * 7.5);
 }
 
 /* Break long unbroken tokens (URLs, inline code, hashes) rather than letting a

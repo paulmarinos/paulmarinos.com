@@ -165,20 +165,57 @@
  * the theme's design). No breakpoint needed, and the theme keeps ownership of the
  * value — `--sl-content-width` is theme-black's own `calc(var(--spacing) * 160)`.
  *
- * Pages without both sidebars (the splash landing page) are deliberately left at
- * a plain 100%: they have no content-measure cap to preserve, and capping them
- * would shrink the hero.
+ * `.main-pane` is capped only where the theme caps it, because the splash landing
+ * page has no sidebars and must not be squeezed to 40rem. Its measure is handled
+ * one level down instead, on `.sl-container`.
+ *
+ * `.sl-container` needs the same `min()` treatment for its own reason: Starlight
+ * raises `--sl-content-width` to 67.5rem on hero pages (Page.astro) and clamps
+ * `.sl-container` to it, which is what gives the landing page its margins. A flat
+ * `max-width: 100%` here outranked that too, so the splash page ran edge to edge
+ * at the full 1425px with no margins at all — invisible while body type was 15px,
+ * glaring at 20px. On article pages this is a no-op: `.main-pane` above has
+ * already capped the column to the same value.
  */
 .main-pane,
 .content-panel,
-.main-frame,
-.sl-container {
+.main-frame {
 	min-width: 0;
 	max-width: 100%;
 }
 
+.sl-container {
+	min-width: 0;
+	max-width: min(100%, var(--sl-content-width));
+}
+
 [data-has-sidebar][data-has-toc] .main-pane {
 	max-width: min(100%, var(--sl-content-width));
+}
+
+/*
+ * Minimum gutter above the mobile breakpoint.
+ *
+ * theme-black gives `.main-pane` 1rem of inline padding and then removes it
+ * entirely above 48rem (base.css:330-345), on the assumption that the centring
+ * margins will always supply the gap. They do not: between 48rem and the width
+ * at which the content measure starts binding, the column is the full pane and
+ * sits flush against the viewport edge — the splash page measured a 0px left
+ * margin from 768px to 1152px.
+ *
+ * Restricted to pages without a sidebar, which in practice means the splash
+ * landing page — the only layout whose column is ever the full pane. Applying it
+ * to article panes instead *causes* a regression: their `max-width` is a border
+ * box, so padding comes out of the 40rem measure (640px column became 592px) and
+ * the symmetric centring goes with it. Article pages never need it anyway; their
+ * narrowest measured gap is 57px at 768px.
+ *
+ * Mobile keeps the theme's own 1rem padding and is untouched.
+ */
+@media (min-width: 48rem) {
+	:root:not([data-has-sidebar]) .main-pane {
+		padding-inline: 1.5rem;
+	}
 }
 
 /*
@@ -250,6 +287,15 @@
    Let it wrap to a second line instead. */
 .pagination-links {
 	flex-wrap: wrap;
+}
+
+/* Wrapping the row is not enough when a single title is itself wider than the
+   column: the link carries `white-space: nowrap`, so at 320px "Malware Analysis
+   & Reverse Engineering" measured 308px inside a 273px container and scrolled
+   the page by 4px. Let the label wrap within the button. */
+.pagination-links a {
+	white-space: normal;
+	min-width: 0;
 }
 
 /* Same shape on the splash hero: the two call-to-action buttons sit in a

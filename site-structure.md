@@ -576,20 +576,31 @@ shape, and the controls applied to it.
 
 ## Cross-Cutting Threads
 
-The site's differentiator is the connective tissue. Candidate cross-section pieces:
+The site's differentiator is the connective tissue. **These are now written**, as pages under
+`src/content/docs/threads/` — a directory deliberately *not* in the `pillars` table in
+`astro.config.mjs`, so it never becomes an eleventh sidebar group. Each thread declares a spine
+pillar in frontmatter (satisfying the schema and the cross-link check trivially, since a thread
+is maximally cross-pillar) but lives in `threads/`, takes a neutral graph node colour rather than
+a pillar colour, and is surfaced through the homepage's "Cross-cutting threads" section plus the
+graph. This resolves the old open question about where threads live: neither pillar-of-origin nor
+an eleventh pillar, but a sidebar-invisible shared home. They are the graph's densest connector
+nodes by design — each spans five to eight pillars.
 
-- **Pentest finding → GRC control gap → AppSec fix → threat intel context.** One vulnerability traced through all four lenses.
-- **IAM misconfig as the shared root cause.** Same finding, four different reporting audiences.
-- **Agentic AI identity.** §2.6 (Zero Knowledge Trust) × §6.4 (orchestration) × §6.6 (securing AI).
-- **Risk prioritization as the universal problem.** §1.4 methods applied to AppSec backlogs, GRC findings, and pentest reports.
-- **Automation of the compliance-to-evidence pipeline.** §4.5 × §6.5.
-- **Communication as a technical skill.** §1.5 applied to §5.6 pentest and red team reports and §4.x audit narratives.
-- **Purple team loop.** §5.4/§5.5 emulation → §7.4 detection validation → §7.2 backlog → §1.4 prioritization. The full circuit from adversary technique to tested detection.
-- **The substrate trace.** One misconfigured network path as §8.2 architecture flaw, §5.2 pivot, §7.3 blind spot, and §4.x control gap.
-- **Encryption that proves nothing.** §8.4 key management vs. §4.x "data is encrypted at rest" as an audit answer — what the control actually buys.
-- **Alert to answer.** §7 fires a detection, §9.1 contains it, §9.3 reconstructs it, §9.4 tells you what the malware did — and §7.2 turns the lesson back into a rule.
-- **Deletion nobody can prove.** §10.3 defensible deletion against §4 audit evidence and §9.2 forensics, where the data you swore was gone is exactly what the investigation recovers.
-- **The telemetry gap.** §7.3 log coverage analysis as the shared prerequisite for detection, IR, threat hunting, and §4.x audit evidence.
+Nine written (the set featured on the homepage):
+
+- **[One finding, five lenses](/threads/one-finding-five-lenses/).** IAM misconfig through pentest, AppSec, GRC, detection and intel — reported five ways. (Merges the original "pentest finding → …" and "IAM misconfig as shared root cause" entries.)
+- **[The purple team loop](/threads/purple-team-loop/).** §5.4/§5.5 emulation → §7.4 validation → §7.2 backlog → §1.4 prioritization.
+- **[Agentic AI identity](/threads/agentic-ai-identity/).** §2.6 (Zero Knowledge Trust) × §6.4 (orchestration) × §6.6 (securing AI).
+- **[Risk prioritization as the universal problem](/threads/risk-prioritization-everywhere/).** §1.4 methods applied to AppSec, cloud posture, the detection backlog and the risk register.
+- **[The substrate trace](/threads/the-substrate-trace/).** One network path as §8.2 flaw, §5.2 pivot, §7.3 blind spot, §4.x control gap.
+- **[Alert to answer](/threads/alert-to-answer/).** §7 fires, §9.1 contains, §9.3 reconstructs, §9.4 analyses — lesson returns to §7.2.
+- **[Deletion nobody can prove](/threads/deletion-nobody-can-prove/).** §10.3 defensible deletion vs. §4 audit evidence vs. §9.2 forensics.
+- **[The telemetry gap](/threads/the-telemetry-gap/).** §7.3 log coverage as the shared prerequisite for detection, IR, hunting and audit.
+- **[Communication as a technical skill](/threads/communication-as-a-technical-skill/).** §1.5 applied to §5.6 reports and §4.x audit narratives.
+
+Not yet written (candidates from the original list): **Automation of the compliance-to-evidence
+pipeline** (§4.5 × §6.5) and **Encryption that proves nothing** (§8.4 key management vs. §4.x
+"encrypted at rest" as an audit answer).
 
 ---
 

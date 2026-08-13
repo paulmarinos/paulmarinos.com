@@ -195,6 +195,29 @@
 }
 
 /*
+ * Article content measure matches the landing page.
+ *
+ * theme-black sets `--sl-content-width` to 40rem (base.css:10, in `@layer black`),
+ * and Starlight's Page.astro raises it to 67.5rem — but only via
+ * `html:not([data-has-sidebar])`, which matches the splash page and never an
+ * article. So articles sat at a 40rem (640px) column while the landing page ran
+ * 67.5rem (1080px), and the request was to make them the same.
+ *
+ * Setting the variable to the landing value on sidebar'd pages does it through the
+ * existing clamps rather than a new width rule: the `min(100%, var(--sl-content-width))`
+ * caps on `.main-pane` and `.sl-container` above now resolve to 67.5rem, so the
+ * column grows to the landing measure wherever the two sidebars leave room and is
+ * viewport-capped below that — the full 1080px is reached once the viewport is wide
+ * enough to seat 1080px of content plus both sidebars, and it is as wide as the
+ * sidebars allow before then. Unlayered, so it beats the theme's layered `:root`
+ * value; scoped to `[data-has-sidebar]`, so the splash page is untouched (it already
+ * gets 67.5rem from Page.astro, and has no sidebars to leave room against).
+ */
+html[data-has-sidebar] {
+	--sl-content-width: 67.5rem;
+}
+
+/*
  * Minimum gutter above the mobile breakpoint.
  *
  * theme-black gives `.main-pane` 1rem of inline padding and then removes it
@@ -206,15 +229,35 @@
  *
  * Restricted to pages without a sidebar, which in practice means the splash
  * landing page — the only layout whose column is ever the full pane. Applying it
- * to article panes instead *causes* a regression: their `max-width` is a border
- * box, so padding comes out of the 40rem measure (640px column became 592px) and
- * the symmetric centring goes with it. Article pages never need it anyway; their
- * narrowest measured gap is 57px at 768px.
+ * to article panes at *every* width causes a regression: where the 67.5rem measure
+ * binds (wide desktop), `max-width` is a border box, so padding comes out of the
+ * measure and the article column no longer matches the landing page's 1080px.
  *
  * Mobile keeps the theme's own 1rem padding and is untouched.
  */
 @media (min-width: 48rem) {
 	:root:not([data-has-sidebar]) .main-pane {
+		padding-inline: 1.5rem;
+	}
+}
+
+/*
+ * Article gutter in the band where the left sidebar is hidden.
+ *
+ * theme-black shows the left sidebar only at >= 64rem (base.css). Below that the
+ * article column is the full pane, and once its measure was widened to 67.5rem
+ * (above) it fills the pane and sits flush against the viewport edge — measured at
+ * 768px, a 0px left gap where the old 40rem cap used to leave ~64px each side.
+ *
+ * Scoped to 48-64rem so it only touches that band: below 48rem the theme's own 1rem
+ * padding covers it; at/above 64rem the left sidebar supplies the left gap and the
+ * column is capped/centred. The 67.5rem measure does not bind in this band (viewport
+ * < 1080px), so border-box padding here only makes the gutter — it does not eat the
+ * measure the way it would at wide desktop, which is why this is safe where a blanket
+ * article gutter was not.
+ */
+@media (min-width: 48rem) and (max-width: 63.999rem) {
+	html[data-has-sidebar] .main-pane {
 		padding-inline: 1.5rem;
 	}
 }

@@ -1,0 +1,73 @@
+---
+title: Deserialization & Object Injection
+description: Why deserializing untrusted data with an object-instantiating format is remote code execution waiting for a payload — gadget chains, the languages where it bites, and why a data-only format is the only real fix.
+pillar: appsec
+contentType: deep-dive
+maturity: practitioner
+frameworks: [OWASP Top 10]
+attack: [T1190, T1059]
+relatedTo:
+  - appsec/insecure-coding
+  - pentest/web-app-pentesting
+  - ai-automation/securing-ai
+updated: 2026-08-13
+sidebar:
+  hidden: true
+---
+
+Deserializing untrusted data with a format that can instantiate arbitrary objects is remote code
+execution waiting for a payload. It belongs to the same family as
+[injection](/appsec/insecure-coding/injection/) — untrusted data crossing into something that
+acts on it — but the interpreter here is the language's own object machinery, which is what makes
+it so severe: the payload does not exploit your code, it exploits the deserializer's willingness
+to build whatever the bytes describe.
+
+## The mechanism
+
+An object-capable serializer does not just carry data; it carries *type* and *construction*. When
+it reads the bytes back, it instantiates the objects they name and runs the hooks those objects
+define on construction. If an attacker controls the bytes, they control which objects get built
+and which hooks fire.
+
+```python
+data = pickle.loads(request.body)   # attacker controls request.body -> RCE
+```
+
+Python's `pickle` will construct whatever the stream describes. It is not a parsing bug you can
+patch; it is what pickle is *for*. The same is true of Java's native serialization, .NET
+`BinaryFormatter`, Ruby's `Marshal`, and unsafe YAML loaders (`yaml.load` without `SafeLoader`)
+that resolve arbitrary tags into object construction.
+
+## Gadget chains
+
+The reason this is exploitable even when your own classes look harmless: attackers do not need a
+class that obviously runs code. They assemble a **gadget chain** — a sequence of otherwise
+innocent classes already on your classpath whose construction and cleanup hooks, wired together,
+end in command execution. Tools like ysoserial ship ready-made chains for common Java libraries.
+
+The consequence is that "there's nothing dangerous in *my* code" is not a defence. The danger is
+in the combination of the deserializer plus the entire dependency tree it can reach, which is
+almost never something you can fully audit.
+
+## The fix is categorical
+
+There is no safe way to deserialize an object graph from an untrusted source, so the fix is to
+stop doing it:
+
+- **Use a data-only format** — JSON, or a schema-validated parser — for anything crossing a
+  trust boundary. Data-only formats carry values, not types and constructors, so there is no
+  object to inject.
+- **If you must use an object serializer**, restrict it: allow-list the exact classes permitted
+  (Java's `ObjectInputFilter`, look-ahead deserialization), never an open blocklist.
+- **Treat the question as a design smell.** If you are deserializing objects from user input, the
+  useful question is not how to make it safe but why it is happening at all — a data transfer
+  object parsed from JSON is almost always what was actually wanted.
+
+## Where this connects
+
+Deserialization is a high-severity find in [web application pentesting](/pentest/web-app-pentesting/),
+and it is one of the [untrusted-data-into-an-interpreter](/appsec/insecure-coding/) failures this
+subsection is organised around — the object-machinery cousin of
+[injection](/appsec/insecure-coding/injection/). It has a sharp new surface in
+[AI systems](/ai-automation/securing-ai/): model weight formats and pickled artifacts from public
+hubs execute code on load, which is exactly this risk wearing a machine-learning label.

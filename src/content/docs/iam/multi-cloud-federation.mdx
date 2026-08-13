@@ -69,7 +69,7 @@ that principle applied across trust boundaries.
 Even with federation, some secrets remain — database passwords, third-party API keys, signing
 material. The discipline is that secrets live in a purpose-built store (HashiCorp Vault, AWS
 Secrets Manager, Azure Key Vault, GCP Secret Manager), never in code, config files, or
-[environment variables committed to git](/appsec/insecure-coding/).
+[environment variables committed to git](/appsec/insecure-coding/secrets-in-code/).
 
 What a real secrets store buys beyond "not in the repo":
 

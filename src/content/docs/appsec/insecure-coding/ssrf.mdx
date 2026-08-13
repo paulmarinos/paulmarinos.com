@@ -1,0 +1,76 @@
+---
+title: SSRF & Cloud Metadata
+description: Why server-side request forgery is a medium bug on-premise and a critical one in cloud — the metadata endpoint that turns a fetch into credential theft, and why the fix is an allowlist plus IMDSv2, never a blocklist.
+pillar: appsec
+contentType: deep-dive
+maturity: practitioner
+frameworks: [OWASP Top 10]
+cloud: [aws, azure, gcp, multi]
+attack: [T1190, T1552]
+relatedTo:
+  - appsec/insecure-coding
+  - pentest/cloud-pentesting
+  - cloud-infra/network-segmentation
+  - iam/aws-identity
+updated: 2026-08-13
+sidebar:
+  hidden: true
+---
+
+Server-Side Request Forgery — the server makes a request to a URL the user influenced — is a
+medium-severity bug on-premise and a **critical** one in cloud. Same code, wildly different
+impact, and the difference is one specific target. It sits in the same family as
+[injection](/appsec/insecure-coding/injection/): untrusted data reaching an interpreter, where the
+interpreter is the server's own outbound HTTP client.
+
+## The code, and the target
+
+```python
+requests.get(user_supplied_url)   # user points it at 169.254.169.254
+```
+
+The classic SSRF is a webhook, a URL-preview feature, a PDF renderer that fetches images, a
+document importer — anything that takes a URL from the user and fetches it server-side. On-prem,
+the worst case is usually internal network scanning or reaching an unauthenticated internal
+service. That is real, but bounded.
+
+In cloud it is not bounded, because of `169.254.169.254` — the **instance metadata endpoint**.
+On a misconfigured instance it returns the attached role's credentials to anything that asks from
+the host. SSRF becomes credential theft becomes whatever that role can reach:
+
+- **SSRF** — the application fetches the metadata URL on the attacker's behalf.
+- **Credential theft** — the response is the [role's temporary credentials](/iam/aws-identity/).
+- **Escalation** — those credentials are used directly against the cloud API, and the finding is
+  now an [IAM privilege-escalation](/pentest/cloud-pentesting/) one, not a web bug.
+
+This is the highest-impact chain in cloud-hosted applications, and the reason SSRF deserves
+attention out of proportion to its on-prem severity rating.
+
+## The fix has two halves
+
+Neither half is sufficient alone, which is why SSRF sits on the seam between AppSec and cloud:
+
+**The code half — allowlist, never blocklist.** The destination the server will fetch must be
+constrained to an explicit allowlist of hosts. Blocklists of "internal" ranges fail endlessly:
+`169.254.169.254` has decimal, octal and IPv6 encodings; a DNS name can resolve to an internal
+address (**DNS rebinding**, where the name resolves to a safe address on validation and a
+dangerous one on fetch); and redirects can bounce an allowed URL to a forbidden one. Validate the
+resolved address, follow no redirects to new hosts, and prefer an allowlist of destinations you
+actually intend to reach.
+
+**The architecture half — remove the reward.** [IMDSv2](/cloud-infra/network-segmentation/)
+requires a signed token for metadata access, which defeats the simple `GET` that plain SSRF
+performs; enforce it and disable IMDSv1. [Egress control](/cloud-infra/network-segmentation/)
+means a server that exfiltrates a stolen credential still has to reach the attacker, and a
+default-deny egress policy is where that chain breaks. And the role attached to the workload
+should be scoped so that even a stolen credential reaches little.
+
+## Where this connects
+
+SSRF is the bridge finding between the pillars: a web bug ([pentesting](/pentest/cloud-pentesting/)
+enumerates it) that lands as a [cloud IAM](/iam/aws-identity/) compromise. The architectural half
+of the fix is [network segmentation and egress](/cloud-infra/network-segmentation/), and the same
+metadata-to-credential chain is what makes an [SSRF in a Kubernetes pod](/appsec/api-cloud-native/kubernetes-workload-security/)
+bound to an over-scoped service account a cloud finding rather than a web one. It is one of the
+[untrusted-data-into-an-interpreter](/appsec/insecure-coding/) failures the subsection is built
+around.

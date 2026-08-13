@@ -65,7 +65,7 @@ The controls:
 - **Minimize and scope the token.** Default-read `GITHUB_TOKEN`, elevated only where needed.
 
 **Dependency tampering** and **artifact integrity** are the other half — covered by the
-[dependency and supply-chain pitfalls](/appsec/insecure-coding/) and by provenance below.
+[dependency and supply-chain pitfalls](/appsec/insecure-coding/supply-chain/) and by provenance below.
 
 ## Platform controls
 
@@ -75,7 +75,7 @@ The features exist; the failure is leaving them off.
 - **Branch protection** — required reviews, required checks, no force-push to protected
   branches. This is where "reviewed before merge" stops being a convention.
 - **CODEOWNERS** — the right reviewers auto-required for sensitive paths.
-- **Secret scanning with push protection** — blocks the [committed secret](/appsec/insecure-coding/)
+- **Secret scanning with push protection** — blocks the [committed secret](/appsec/insecure-coding/secrets-in-code/)
   at push, not after.
 - **Dependabot** — dependency updates and alerts.
 
@@ -109,6 +109,6 @@ unverifiable artifact.
 
 OIDC is [IAM](/iam/) in the build system, and its trust policy is a
 [cloud-architecture](/cloud-infra/) decision. The pipeline is where
-[dependency risk](/appsec/insecure-coding/) is contained or realized. And SBOMs plus build logs are
+[dependency risk](/appsec/insecure-coding/supply-chain/) is contained or realized. And SBOMs plus build logs are
 [detection](/detection-eng/) inputs — the pipeline is a monitored production system, or
 it's an unmonitored one with production access.

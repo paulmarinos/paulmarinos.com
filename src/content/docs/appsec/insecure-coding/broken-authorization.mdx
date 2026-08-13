@@ -1,0 +1,85 @@
+---
+title: Broken Object-Level Authorization
+description: The most common serious web vulnerability, and nearly invisible in code because the broken version looks complete — why the bug is an absent check, and why it has to be enforced in the data layer.
+pillar: appsec
+contentType: deep-dive
+maturity: practitioner
+frameworks: [OWASP Top 10, OWASP API Top 10]
+attack: [T1190]
+relatedTo:
+  - appsec/insecure-coding
+  - pentest/web-app-pentesting
+  - iam
+updated: 2026-08-13
+sidebar:
+  hidden: true
+---
+
+Broken object-level authorization — BOLA, or IDOR in the older name — is the most common serious
+web vulnerability, and the hardest to see in review, because the broken version looks complete. It
+belongs to a different failure mode than [injection](/appsec/insecure-coding/injection/): nothing
+untrusted is being misinterpreted. The bug is an **absent check** — a guard that should be there
+and is not.
+
+## The bug is what's missing
+
+```python
+@app.get("/invoices/<id>")
+def invoice(id):
+    return db.get_invoice(id)   # returns ANY invoice, not just the caller's
+```
+
+The code fetches an invoice by id and returns it. It parses cleanly, passes its tests (the test
+requests the user's *own* invoice, which works), and ships. What is missing is the check that
+*this authenticated user* owns *this invoice*. The vulnerability is the line that is not there.
+
+Because the bug is an absence rather than a bad line, it is nearly invisible to a reviewer
+skimming for something wrong, and it is why [scanners miss it](/appsec/code-scanning/): a SAST
+tool sees a database lookup, not a data-flow problem, so there is no tainted path to flag. Manual
+[authorization testing](/pentest/web-app-pentesting/) finds it precisely because the tester does
+the one thing the unit test never does — requests *another* user's identifier.
+
+## The family: object, function, and property level
+
+The OWASP API Top 10 splits the same absence three ways, and the split is worth keeping because
+each is a different missing check:
+
+- **Object level (BOLA)** — no check that the caller owns the object referenced by id. The case
+  above.
+- **Function level (BFLA)** — no check that the caller may invoke the *operation*. Admin
+  endpoints reachable with an ordinary token, usually because they were undocumented rather than
+  protected.
+- **Property level (BOPLA)** — mass assignment (the client sets a field it should not, like
+  `role`) and excessive data exposure (the response includes fields the UI hides but the API
+  returns). The check missing here is on which *fields* the caller may read or write.
+
+The unifying pattern is the one from [API and cloud-native AppSec](/appsec/api-cloud-native/): the
+UI enforced authorization and the API does not. When the client was the only caller, hiding a
+button was a control; against direct API access it is nothing.
+
+## The fix lives in the data layer
+
+The instinct is to add the ownership check in the controller. That works until the next endpoint,
+where someone forgets — and forgetting is the default, because the check is invisible when absent.
+The durable fix pushes enforcement down:
+
+- **Scope every query by the authenticated principal.** `get_invoice(id, owner=current_user)`
+  rather than `get_invoice(id)` — so the data layer cannot return another user's object even if a
+  controller forgets to ask.
+- **Make the safe path the only path.** A repository layer or query scope that always applies the
+  ownership filter means new endpoints inherit the check instead of re-implementing it.
+- **Prefer unpredictable identifiers** as defence in depth, but never as the control — a UUID is
+  not authorization, it is a slower enumeration.
+
+This is [identity](/iam/) enforced inside the application: the same least-privilege, check-at-the-
+resource logic the IAM pillar applies to cloud principals, applied to rows in a table.
+
+## Where this connects
+
+Broken authorization is the finding [web application pentesting](/pentest/web-app-pentesting/)
+leads with, and the offensive tooling that automates it — replaying every request as a
+low-privileged user — is in [web testing](/pentest/tools-commands/web-testing/). It is the
+code-level view of the [OWASP API Top 10](/appsec/api-cloud-native/) authorization risks, and its
+fix is [IAM](/iam/) discipline inside the app. As an absent-check bug it shares a failure mode
+with [race conditions](/appsec/insecure-coding/race-conditions/) — both are guards that are not
+there — which is the [organising idea](/appsec/insecure-coding/) of the subsection.

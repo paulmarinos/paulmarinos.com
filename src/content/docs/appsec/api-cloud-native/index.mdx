@@ -38,7 +38,7 @@ authorization.
 
 - **Broken Object-Level Authorization (BOLA/IDOR)** — the dominant API vulnerability. The API
   returns an object by id without checking the caller owns it. Nearly invisible in code, since
-  the [broken version looks complete](/appsec/insecure-coding/), and the API surface makes it
+  the [broken version looks complete](/appsec/insecure-coding/broken-authorization/), and the API surface makes it
   systematic to test — every parameterized endpoint, every other user's identifiers.
 - **Broken Function-Level Authorization** — admin endpoints reachable with non-admin tokens,
   usually just undocumented rather than protected.
@@ -63,7 +63,7 @@ A container image is a filesystem plus metadata, and its security decomposes cle
   push. This is [SCA](/appsec/code-scanning/) pointed at the image, and reachability matters just
   as much — a vulnerable package that never runs is noise.
 - **No secrets in images.** Build args and layers persist; a secret added and removed across
-  layers is still in the history, the [same failure as git](/appsec/insecure-coding/).
+  layers is still in the history, the [same failure as git](/appsec/insecure-coding/secrets-in-code/).
 - **Run as non-root**, read-only root filesystem, dropped capabilities. Defense in depth for
   when the app is compromised — this is the build-time half of the
   [Kubernetes hardening](/cloud-infra/workload-container/) the platform enforces at runtime.
@@ -95,5 +95,5 @@ S3 bucket or an over-permissive security group is a reviewable diff, not a runti
 This subsection is the AppSec/[cloud](/cloud-infra/) seam by design — image and IaC
 scanning are AppSec practices whose findings are cloud-infrastructure risks. The API material
 is the defensive half of [API and LLM pentesting](/pentest/specialized-testing/), and it
-rests on the [authorization](/appsec/insecure-coding/) and [IAM](/iam/) fundamentals the rest
+rests on the [authorization](/appsec/insecure-coding/broken-authorization/) and [IAM](/iam/) fundamentals the rest
 of the pillar builds.

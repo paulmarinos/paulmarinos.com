@@ -74,7 +74,7 @@ security decisions that never appear in the application source:
   it.
 - **`automountServiceAccountToken: false`** unless the workload actually calls the API server.
   Most don't, and the default mounts a credential into every container — the
-  [unsecured-credential](/appsec/insecure-coding/) pattern, granted by default rather than by
+  [unsecured-credential](/appsec/insecure-coding/secrets-in-code/) pattern, granted by default rather than by
   mistake.
 - **Secrets don't belong in manifests.** A Kubernetes Secret is base64, not encryption. Mount
   from a real secret store via CSI driver or a sync controller, and keep the
@@ -96,7 +96,7 @@ replaced, and it moves the entire question into
 [federation and role design](/iam/multi-cloud-federation/).
 
 It also means an application-level bug reaches cloud IAM in one hop. An
-[SSRF](/appsec/insecure-coding/) in a pod bound to an over-scoped role is an
+[SSRF](/appsec/insecure-coding/ssrf/) in a pod bound to an over-scoped role is an
 [AWS privilege escalation](/iam/aws-identity/) finding, not a web finding — which is why the
 role attached to a workload deserves the same scrutiny as the code running in it, and why the
 scoping decision has to happen at design time rather than when the deployment is unblocked.

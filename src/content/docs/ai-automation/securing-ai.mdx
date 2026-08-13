@@ -32,7 +32,7 @@ before relying on them.
 Prompt injection is the signature vulnerability of LLM applications, and the uncomfortable truth
 is that **it is not fully solved and may not be fully solvable** with current architectures. The
 root cause is structural: models process instructions and data in the same channel, so data that
-contains instructions can become instructions. This is [injection](/appsec/insecure-coding/)
+contains instructions can become instructions. This is [injection](/appsec/insecure-coding/injection/)
 in the classic sense — untrusted input interpreted as commands — but without the clean fix,
 because there is no [parameterization](/appsec/secure-coding/) that reliably separates code
 from data in natural language.
@@ -94,7 +94,7 @@ numbering:
 
 - **Prompt injection** (direct and indirect) — covered above.
 - **Insecure output handling** — trusting model output as safe. If a model's output is rendered
-  as HTML, run as code, or executed as a query, it's [untrusted input to that sink](/appsec/insecure-coding/)
+  as HTML, run as code, or executed as a query, it's [untrusted input to that sink](/appsec/insecure-coding/injection/)
   and needs the same encoding and validation as any user data. The model is not a trusted
   source.
 - **Excessive agency** — too much tool access, the authorization problem above.
@@ -107,12 +107,12 @@ the specific entries.
 
 ## Model supply chain
 
-The [supply-chain problem](/appsec/insecure-coding/) has a new surface. You increasingly run
+The [supply-chain problem](/appsec/insecure-coding/supply-chain/) has a new surface. You increasingly run
 models, adapters, and datasets you didn't produce, and the trust questions are unfamiliar:
 
 - **Model provenance.** A model downloaded from a hub is code and weights from a third party.
   Where did it come from, and what's your basis for trusting it? Serialized model formats can
-  [execute code on load](/appsec/insecure-coding/) — the same deserialization risk, new
+  [execute code on load](/appsec/insecure-coding/deserialization/) — the same deserialization risk, new
   file type.
 - **Poisoned models and datasets.** Training or fine-tuning data can carry backdoors and biases
   that survive into behaviour, and they're hard to detect by inspection.

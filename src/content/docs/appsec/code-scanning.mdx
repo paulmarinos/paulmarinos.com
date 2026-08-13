@@ -28,10 +28,10 @@ where tainted data reaches a sink without passing through a sanitizer.
 
 That mechanism defines the strengths and the hard limits:
 
-- **Finds** injection, [the SSRF/metadata pattern](/appsec/insecure-coding/), hardcoded secrets,
+- **Finds** injection, [the SSRF/metadata pattern](/appsec/insecure-coding/ssrf/), hardcoded secrets,
   unsafe API use — anything expressible as a dangerous data flow.
 - **Cannot find** authorization flaws, because "should this user access this object" is
-  business logic, not a data flow. [Broken object-level authorization](/appsec/insecure-coding/) —
+  business logic, not a data flow. [Broken object-level authorization](/appsec/insecure-coding/broken-authorization/) —
   the most common serious web bug — is invisible to SAST, which is exactly why manual review
   and [pentesting](/pentest/web-app-pentesting/) remain necessary.
 - **False positives** come from paths that look reachable but aren't, or sanitizers the tool
@@ -63,7 +63,7 @@ part and not the judgment.
 ## SCA — the dependencies
 
 Software Composition Analysis inventories dependencies and flags known-vulnerable versions.
-Since [your code is a minority of what ships](/appsec/insecure-coding/), this is often the
+Since [your code is a minority of what ships](/appsec/insecure-coding/supply-chain/), this is often the
 highest-return scanning you do — and the noisiest, for one reason.
 
 **Reachability is everything.** A vulnerable function in a dependency you never call is not

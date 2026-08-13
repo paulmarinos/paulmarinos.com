@@ -1,0 +1,77 @@
+---
+title: Dependency Confusion & Supply Chain
+description: Your code is a minority of what ships — dependency confusion and typosquatting as the entry points, lockfiles and resolver configuration as the baseline defence, and where the deeper provenance story begins.
+pillar: appsec
+contentType: deep-dive
+maturity: practitioner
+frameworks: [OWASP Top 10, SLSA]
+attack: [T1195, T1204]
+relatedTo:
+  - appsec/insecure-coding
+  - appsec/cicd-security
+  - ai-automation/securing-ai
+updated: 2026-08-13
+sidebar:
+  hidden: true
+---
+
+Your own code is a minority of what ships; the rest is dependencies, and you execute code you did
+not write and rarely read. This is the second [trusted-supply](/appsec/insecure-coding/) failure —
+the risk arrives not in a request but in what you pulled in. Dependency confusion is the sharpest
+single instance, but it is one entry point into a broader problem.
+
+## Dependency confusion and its neighbours
+
+**Dependency confusion** exploits how package resolvers choose between sources. Publish a
+malicious *public* package whose name matches an organisation's *internal private* package, and a
+resolver configured to check both — preferring the higher version or the public registry — pulls
+the attacker's package instead of the intended internal one. The install runs the attacker's code
+in your build. It works because the resolver's default preference was never meant to be a security
+decision.
+
+The family around it shares the theme of trusting a name or a source too readily:
+
+- **Typosquatting** — a package one keystroke from a popular name (`reqeusts`, `python-dateutil`
+  vs a lookalike), installed by a fat-fingered command or a copied-wrong tutorial.
+- **Compromised maintainer** — a legitimate, widely-used package whose maintainer account is
+  taken over or whose ownership quietly changes hands, shipping a malicious update to everyone who
+  auto-upgrades.
+- **Malicious install hooks** — `postinstall` scripts and their equivalents that run at
+  install time, before your code ever imports the package, so review-the-import is too late.
+
+## Baseline defences
+
+None of these is exotic to defend against, and the baseline is cheap relative to the blast radius:
+
+- **Pin versions and use lockfiles.** A lockfile with hashes means the build resolves to the exact
+  artifact you vetted, not "whatever is newest," which closes both the confusion and the
+  surprise-update paths.
+- **Configure the resolver so internal names cannot be shadowed.** Scoped registries, a private
+  index that is authoritative for internal names, and explicit source pinning remove the ambiguity
+  dependency confusion depends on. This is a configuration fix, and it fully closes the specific
+  attack.
+- **Vet before adoption, not just on CVE.** A package with a single maintainer, a recent ownership
+  change, or install-time scripts is a risk regardless of its download count. Popularity is not
+  provenance.
+- **Separate install from execution.** Where possible, disable install scripts by default and
+  build in an environment that cannot reach your secrets or production, so a malicious
+  `postinstall` lands in a sandbox.
+
+## Where the deeper story goes
+
+This page is the code-and-resolver layer. The heavier machinery — **provenance attestation,
+artifact signing, SBOMs, and the SLSA levels** that make "this artifact came from this reviewed
+source built by this builder" verifiable — is a build-system concern, covered in
+[CI/CD and platform security](/appsec/cicd-security/). The division is deliberate: choosing and
+pinning dependencies is the developer's daily decision; proving the integrity of the whole build
+pipeline is the platform's.
+
+## Where this connects
+
+Supply-chain risk is the trusted-supply sibling of
+[secrets in source control](/appsec/insecure-coding/secrets-in-code/) in the
+[subsection's structure](/appsec/insecure-coding/), and its provenance half is
+[pipeline security](/appsec/cicd-security/). It has a fast-growing new surface in
+[AI systems](/ai-automation/securing-ai/), where models, datasets and pickled artifacts pulled
+from public hubs are dependencies with the same trust problem — and, via
+[deserialization](/appsec/insecure-coding/deserialization/), the same execute-on-load risk.

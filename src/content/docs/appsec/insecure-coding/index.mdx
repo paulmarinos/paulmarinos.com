@@ -1,0 +1,78 @@
+---
+title: Common Insecure Coding Pitfalls
+description: The recurring vulnerability families in real code — injection, deserialization, SSRF into cloud metadata, broken object-level authorization, TOCTOU, and leaked secrets — organised by the failure mode underneath them.
+pillar: appsec
+contentType: deep-dive
+maturity: practitioner
+frameworks: [OWASP Top 10]
+relatedTo:
+  - appsec/secure-coding
+  - pentest/web-app-pentesting
+  - cloud-infra
+  - iam
+updated: 2026-08-13
+sidebar:
+  order: 2
+---
+
+The OWASP Top 10 is a useful map and a poor teacher, because a category name doesn't build
+the pattern-recognition that catches the bug in a diff. This is the same ground from the
+implementation side — the specific shapes these flaws take in real code, and why each one
+recurs. The [secure-coding paradigms](/appsec/secure-coding/) are the fixes; this is what they're
+fixing.
+
+## Three failure modes underneath the families
+
+The families read as a long list, but most reduce to three underlying mistakes — and learning
+the mistake, not the category name, is what transfers to code you have not seen before:
+
+- **Untrusted data crosses into an interpreter.** The data is treated as instructions instead of
+  values. The interpreter varies — a SQL engine, a shell, a template, an object deserializer, an
+  outbound HTTP client — but the tell is the same: user-influenced data reaching something that
+  acts on it. This is [injection](/appsec/insecure-coding/injection/),
+  [deserialization](/appsec/insecure-coding/deserialization/), and
+  [SSRF](/appsec/insecure-coding/ssrf/).
+- **A required check is absent.** The code does what it says; what is missing is the guard.
+  Nothing looks wrong on the line, because the bug is the line that is not there. This is
+  [broken authorization](/appsec/insecure-coding/broken-authorization/) and
+  [race conditions](/appsec/insecure-coding/race-conditions/) — one missing an ownership check,
+  the other missing atomicity.
+- **You trusted your own supply.** The risk is not in the request but in what you shipped: a
+  [secret committed to the repo](/appsec/insecure-coding/secrets-in-code/), or a
+  [dependency you executed without reading](/appsec/insecure-coding/supply-chain/).
+
+## The families
+
+Each family has its own page — the code shapes it takes, why it recurs, and the fix — grouped by
+the mode above.
+
+| Family | Failure mode | The tell |
+|---|---|---|
+| [Injection](/appsec/insecure-coding/injection/) | Untrusted → interpreter | Untrusted data concatenated into a query, command or template |
+| [Deserialization](/appsec/insecure-coding/deserialization/) | Untrusted → interpreter | A format that instantiates objects, fed from a trust boundary |
+| [SSRF](/appsec/insecure-coding/ssrf/) | Untrusted → interpreter | The server fetches a URL the user influenced |
+| [Broken authorization](/appsec/insecure-coding/broken-authorization/) | Absent check | An object returned by id with no owner check |
+| [Race conditions & TOCTOU](/appsec/insecure-coding/race-conditions/) | Absent check | A check and an action on shared state, with a gap between |
+| [Secrets in source control](/appsec/insecure-coding/secrets-in-code/) | Trusted supply | A key in the code, or in the git history |
+| [Dependency confusion & supply chain](/appsec/insecure-coding/supply-chain/) | Trusted supply | Code you run but did not write or read |
+
+## Why the categories mislead
+
+Two recurring traps cut across the families and belong here rather than in any one page:
+
+- **"Sanitize on input" is the wrong mental model.** Second-order injection stores data safely
+  and uses it unsafely later; the dangerous line contains no user input at all. The fix is to
+  handle data safely *at the sink*, which is why [taint analysis](/appsec/code-scanning/) tracks
+  flow across the whole program rather than checking the entry point.
+- **The worst bugs are absences, and tools are bad at absences.** A missing authorization check
+  and a non-atomic update both read as correct code executed once. That is precisely why
+  [scanners miss them](/appsec/code-scanning/) and manual review and
+  [authorization testing](/pentest/web-app-pentesting/) find them.
+
+## Where this connects
+
+These are the exploited findings in [pentesting](/pentest/web-app-pentesting/), read from
+the defender's side. The [paradigms](/appsec/secure-coding/) prevent them by construction, and
+[scanning](/appsec/code-scanning/) is how you find the instances already written. SSRF and secrets
+reach into [cloud](/cloud-infra/); authorization reaches into [IAM](/iam/); and every one of them
+[reappears in AI systems](/ai-automation/securing-ai/) as the same failure in new clothing.

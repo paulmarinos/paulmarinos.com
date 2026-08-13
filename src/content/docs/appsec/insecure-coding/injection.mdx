@@ -1,0 +1,85 @@
+---
+title: Injection
+description: One bug wearing many interpreters — SQL, command, template and NoSQL injection as the same failure, why second-order injection defeats input sanitisation, and the parameterisation that fixes all of them.
+pillar: appsec
+contentType: deep-dive
+maturity: practitioner
+frameworks: [OWASP Top 10]
+attack: [T1190, T1059]
+relatedTo:
+  - appsec/insecure-coding
+  - pentest/web-app-pentesting
+  - appsec/code-scanning
+updated: 2026-08-13
+sidebar:
+  hidden: true
+---
+
+Injection is one bug — **untrusted data interpreted as instructions** — wearing many
+interpreters. Learning it as "SQL injection" and then separately as "command injection" misses
+the point: they are the same failure, and the recognition skill is spotting untrusted data
+crossing into an interpreter by string-building, whatever the interpreter is.
+
+## The same failure, many interpreters
+
+- **SQL** — the canonical case. `"SELECT * FROM users WHERE id = " + user_id` lets the input
+  end the value and start a new clause. Fixed by [parameterization](/appsec/secure-coding/),
+  which sends the query and the data on separate channels so the data can never be parsed as
+  syntax.
+- **Command** — `os.system(f"convert {filename}")` where `filename` is user-controlled. The
+  shell metacharacters (`;`, `|`, `` ` ``, `$()`) are the injection surface. The fix is to pass
+  an **argument array** to the process directly (`subprocess.run(["convert", filename])`), never
+  a shell string, so there is no shell to interpret the metacharacters.
+- **Template (SSTI)** — user input rendered *as* a template rather than *into* one. This one
+  frequently reaches code execution, because template engines expose object internals and
+  Python/Ruby/Java reflection from inside a template walks to the runtime. Rendering user data
+  as template source is the mistake; user data should only ever be a template *value*.
+- **LDAP and NoSQL** — the same failure in different query languages. A MongoDB query built from
+  a request body can be steered with an operator: `{"password": {"$gt": ""}}` matches any
+  password. NoSQL does not mean no injection; it means the injection payload is JSON.
+
+The interpreter varies; the tell is the concatenation. Once you see "untrusted value being glued
+into something that will parse it," the specific technology is a detail.
+
+## Second-order injection defeats naive review
+
+The variant worth internalising, because it breaks the "sanitize on input" reflex:
+
+```python
+# request handler A — stores a display name, safely parameterized
+db.execute("INSERT INTO users (name) VALUES (?)", [request.name])
+
+# request handler B — later, builds a query from the stored value
+name = db.query("SELECT name FROM users WHERE id = ?", [uid])
+db.execute(f"... WHERE label = '{name}'")   # injection, no user input on this line
+```
+
+The dangerous line contains **no user input at all** — it uses a database value that originated
+as user input. Input validation at handler A cannot see the sink in handler B. This is why
+"sanitize on input" fails as a strategy and why [taint analysis](/appsec/code-scanning/) has to
+track data across the whole flow, from every source to every sink, rather than checking the front
+door.
+
+## The fix is structural, not vigilant
+
+Every interpreter has a safe API that separates code from data, and the fix is always to use it
+rather than to escape harder:
+
+- Parameterised queries / prepared statements for SQL.
+- Argument arrays for process execution.
+- Sandboxed or logic-less templates (and never user-supplied template source).
+- Query builders that treat operators as structure, not user data, for NoSQL.
+
+Escaping is the fragile alternative — it depends on getting every context right, every time,
+forever. Separation of code and data is correct by construction, which is the
+[secure-coding paradigm](/appsec/secure-coding/) the whole family points back to.
+
+## Where this connects
+
+Injection is the leading category in [web application pentesting](/pentest/web-app-pentesting/),
+and the offensive tooling that confirms it — sqlmap and the injection map — is in
+[web testing](/pentest/tools-commands/web-testing/). It is what
+[SAST taint analysis](/appsec/code-scanning/) is built to find, and the same
+untrusted-data-into-a-sink pattern is one of the [failure modes](/appsec/insecure-coding/) that
+unifies this whole subsection — including its [reappearance in LLM systems](/ai-automation/securing-ai/),
+where the prompt is the untrusted input and the tool call is the sink.

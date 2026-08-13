@@ -1,0 +1,80 @@
+---
+title: Race Conditions & TOCTOU
+description: The gap between checking a condition and acting on it — why coupon double-spends and withdrawal races read as correct code, and why atomicity rather than a bigger check is the only fix.
+pillar: appsec
+contentType: deep-dive
+maturity: practitioner
+frameworks: [OWASP Top 10]
+attack: [T1190]
+relatedTo:
+  - appsec/insecure-coding
+  - pentest/web-app-pentesting
+  - appsec/secure-coding
+updated: 2026-08-13
+sidebar:
+  hidden: true
+---
+
+Time-of-check to time-of-use (TOCTOU) is a gap between verifying a condition and acting on it,
+during which the condition changes. It is the second of the two
+[absent-check](/appsec/insecure-coding/) failures — where
+[broken authorization](/appsec/insecure-coding/broken-authorization/) is missing a guard,
+this one is missing *atomicity* — and it is the hardest family to catch in review, because the
+code reads perfectly correctly when you execute it once in your head.
+
+## The gap
+
+```python
+if account.balance >= amount:      # check (time-of-check)
+    # two requests reach here simultaneously, both saw balance >= amount
+    account.balance -= amount      # use (time-of-use)
+```
+
+Executed once, this is obviously fine. Executed twice concurrently, both requests pass the check
+before either performs the debit, both subtract, and the balance goes negative. The check was
+true when it was made and false by the time it was used, and nothing in the code is *wrong* — the
+bug is in the interleaving, which the single-threaded reading never shows.
+
+This is the mechanism behind a whole class of business-logic exploits:
+
+- **Coupon and gift-card double-spend** — redeem the same one-time code from many parallel
+  requests before the "already used" flag is written.
+- **Withdrawal and transfer races** — the balance case above, drained past zero.
+- **Limit bypasses** — "one per customer," rate limits, and inventory counts, all defeated by
+  firing requests faster than the check-then-write cycle completes.
+- **Filesystem TOCTOU** — check a path's permissions, then open it, with a symlink swapped in
+  between; the classic systems-level form.
+
+Attackers trigger these deliberately with tools that fire many requests in a single packet burst
+to minimise the timing window — so "the window is tiny" is not a defence.
+
+## The fix is atomicity, not a bigger check
+
+The wrong instinct is to add another check or check more carefully. The window still exists; you
+have only made it smaller. The fix is to remove the gap by making check-and-act a single
+indivisible operation:
+
+- **Conditional update** — push the check into the write: `UPDATE accounts SET balance =
+  balance - :amt WHERE id = :id AND balance >= :amt`. The database evaluates the condition and
+  applies the change atomically; the row is either updated or not, with no window between.
+- **Database constraints** — a `CHECK (balance >= 0)`, a unique constraint on a redemption code,
+  or an atomic counter lets the datastore reject the second operation rather than relying on
+  application timing.
+- **Locks and transactions** — `SELECT ... FOR UPDATE` or an application-level lock where a
+  compound operation genuinely cannot be expressed as one statement, accepting the throughput
+  cost.
+- **Idempotency keys** — for request retries and webhooks, so a duplicate delivery is
+  recognised and dropped rather than re-applied.
+
+The principle underneath all of them: **never a check followed by a separate action on mutable
+shared state.** That is the [secure-coding paradigm](/appsec/secure-coding/) the family reduces
+to — move the invariant into the layer that can enforce it atomically.
+
+## Where this connects
+
+Race conditions are a business-logic finding [web application pentesting](/pentest/web-app-pentesting/)
+probes deliberately, and they share the [absent-check failure mode](/appsec/insecure-coding/) with
+[broken authorization](/appsec/insecure-coding/broken-authorization/) — both are guards that are
+not there, one missing an owner check and the other missing atomicity. The fix is the same
+fail-closed, enforce-in-the-right-layer discipline as the rest of
+[secure coding](/appsec/secure-coding/).

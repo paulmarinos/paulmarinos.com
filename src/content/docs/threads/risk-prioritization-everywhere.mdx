@@ -1,0 +1,64 @@
+---
+title: Risk Prioritisation as the Universal Problem
+description: The same methods that order a vulnerability queue order an AppSec backlog, a posture-finding pile, a detection backlog, and a GRC risk register — every pillar reinvents a local scheme for one shared problem.
+pillar: threat-intel
+contentType: deep-dive
+maturity: practitioner
+relatedTo:
+  - threat-intel/risk-prioritization
+  - appsec/code-scanning
+  - cloud-infra/posture-iac
+  - grc/risk-management
+updated: 2026-08-13
+sidebar:
+  hidden: true
+---
+
+Almost every pillar on this site ends up with a pile of findings larger than the capacity to fix
+them, and almost every pillar invents its own way to order that pile. They are all solving one
+problem — the [100:1 problem](/threat-intel/risk-prioritization/) — and the methods that solve it
+are the same each time. Only the queue changes.
+
+## The same shape, five times
+
+- **AppSec.** A [scanner](/appsec/code-scanning/) emits thousands of findings, most of them
+  [CVSS 7+](/threat-intel/risk-prioritization/cvss/), which selects far too many to fix. Sorting
+  by severity produces an unworkable queue; sorting by
+  [exploitation signal](/threat-intel/risk-prioritization/epss-kev/) and reachability cuts it to
+  something a team can land.
+- **Cloud posture.** [CSPM and IaC scanning](/cloud-infra/posture-iac/) produce findings by the
+  thousand, and the difference between a queue and a wall is whether they are ordered by exposure
+  and consequence rather than by the tool's own severity label.
+- **Detection backlog.** The [detection lifecycle](/detection-eng/detection-lifecycle/) has more
+  candidate detections than it can build and maintain, so which technique to cover next is a
+  prioritisation call — informed by which adversary you actually face.
+- **GRC risk register.** [Risk management](/grc/risk-management/) ranks risks for treatment, and
+  its honest version is quantitative — [FAIR and loss exceedance](/threat-intel/risk-prioritization/)
+  — at the portfolio level, deciding between whole programmes rather than individual findings.
+- **Pentest and intel.** A [report](/pentest/report-writeups/) that rates every finding critical
+  is a report where nothing is, and [intel](/threat-intel/report-writing/) exists to make the
+  prioritisation argument at all.
+
+## The method that transfers
+
+The [four inputs](/threat-intel/risk-prioritization/) do not care which queue they are applied to:
+confirmed exploitation first, then likelihood as a threshold, then exposure — which
+[architecture](/cloud-infra/network-segmentation/) can change more cheaply than any score — then
+business consequence, the one input no vendor can sell you. Anything that clears all four is not a
+prioritisation question; it is an incident with a date. Everything else is a queue you can defend.
+The [SSVC](/threat-intel/risk-prioritization/ssvc/) move — stop scoring, start deciding — is the
+same whether the object is a CVE, a misconfiguration, or a missing detection.
+
+## Why it keeps getting reinvented
+
+Because the pillars are staffed and tooled separately, each grows its own severity dialect: the
+scanner's rating, the CSPM's risk score, the register's heat map. They look different and they are
+the same arithmetic — a signal correlated with actual harm, thresholded against a fixed capacity.
+An organisation that recognises this writes the prioritisation argument **once**, in
+[intel](/threat-intel/risk-prioritization/), and projects it onto every queue, rather than paying
+five teams to derive it five times and defend five incompatible schemes to the same executive.
+
+That "derive it once, project it everywhere" logic is the same one behind
+[compliance mapping](/grc/compliance-mapping/) for controls and behind
+[one finding, five lenses](/threads/one-finding-five-lenses/) for findings — the site's recurring
+argument that the leverage is in the connective tissue, not the individual pillar.

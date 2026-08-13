@@ -1,0 +1,72 @@
+---
+title: The Purple Team Loop
+description: The full circuit from adversary technique to tested detection — emulation, detection validation, backlog, and prioritisation — and why breaking the loop is what makes red teaming theatre.
+pillar: detection-eng
+contentType: deep-dive
+maturity: advanced
+relatedTo:
+  - pentest/red-team-operations
+  - pentest/mitre-attack
+  - detection-eng/detection-quality
+  - threat-intel/risk-prioritization
+updated: 2026-08-13
+sidebar:
+  hidden: true
+---
+
+A red team engagement that ends with a report of what got compromised has delivered half its
+value and thrown the other half away. The half that lasts is the loop: the technique the
+adversary used becomes a tested detection, which changes what the *next* adversary can get away
+with. Without the loop, offense and defense are two teams measuring each other; with it, they are
+one system that improves.
+
+## Emulate
+
+It starts with [adversary emulation](/pentest/red-team-operations/) — not "can we get in" but
+"can we execute *this actor's* techniques and see who notices." The engagement is
+[threat-informed](/threat-intel/analytic-methods/): pick an actor whose targeting pattern makes
+you plausibly next, [emulate its TTPs](/pentest/mitre-attack/), and treat detection evasion as a
+*measurement instrument* rather than a trophy. What got caught, what didn't, and why, is the
+data — which means the engagement has to be instrumented and deconflicted, not just successful.
+
+## Validate
+
+The engagement timeline is now a list of techniques with a caught/not-caught verdict against each.
+That is exactly the input [detection quality](/detection-eng/detection-quality/) needs. Each
+"not caught" is a coverage gap; each "caught" is a control to regression-test so it does not
+silently rot. [Atomic Red Team and adversary emulation](/detection-eng/detection-quality/) turn
+the one-time engagement finding into a repeatable test — the difference between "we weren't
+detecting this in March" and "we detect this, and we prove it every build."
+
+## Backlog
+
+A validated gap is a [detection lifecycle](/detection-eng/detection-lifecycle/) intake. The
+hypothesis is handed the technique, checks whether the data source even exists to see it, and if
+so produces a rule that is tuned, deployed and monitored for drift. This is where the loop most
+often breaks: a red team finds twenty gaps, three become rules, and the other seventeen are a PDF
+nobody actioned. The loop only closes if the finding enters a backlog with an owner.
+
+## Prioritise
+
+Twenty gaps do not get fixed at once, so the backlog is a
+[prioritisation](/threat-intel/risk-prioritization/) problem — the same one every queue on this
+site inherits. Order by which techniques the emulated actor actually leads with, which map to
+exposed assets, which have the business behind them. A gap in a technique your threat model says
+you will face beats a gap in one you will not, and the
+[base-rate discipline](/threat-intel/statistics/) keeps the queue honest.
+
+## The circuit, closed
+
+The output of prioritise feeds the next emulate: the technique you decided to build a detection
+for is the one the next engagement should try to slip past, to confirm the rule works against a
+live operator rather than only against a replay. Emulate → validate → backlog → prioritise →
+emulate. Each lap raises the floor.
+
+The reason this is a thread and not a single pillar's article is that no pillar owns it.
+[Red teaming](/pentest/red-team-operations/) owns emulate, [detection engineering](/detection-eng/)
+owns validate and backlog, [intel](/threat-intel/risk-prioritization/) owns prioritise — and an
+organisation that staffs those separately, with no handoff between them, has bought all four
+capabilities and none of the loop. It is the same disconnect that lets
+[one finding be rediscovered five times](/threads/one-finding-five-lenses/), and its natural
+sequel is [alert to answer](/threads/alert-to-answer/), which picks up when a detection built here
+actually fires.

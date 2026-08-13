@@ -1,0 +1,75 @@
+---
+title: "One Finding, Five Lenses"
+description: A single overpermissioned role read as a pentest finding, an IAM design failure, a GRC control gap, a detection opportunity, and a risk to prioritise — the same fact in five vocabularies, for five audiences.
+pillar: iam
+contentType: deep-dive
+maturity: practitioner
+relatedTo:
+  - pentest/cloud-pentesting
+  - grc/compliance-mapping
+  - detection-eng/detection-lifecycle
+  - threat-intel/risk-prioritization
+updated: 2026-08-13
+sidebar:
+  hidden: true
+---
+
+Take one unremarkable fact: a service account in AWS holds `iam:PassRole` and can assume a role
+far more privileged than its job requires. Nothing exotic — the single most common serious
+cloud finding there is. Watch what happens as it moves through the disciplines, because the fact
+never changes and the meaning changes completely each time.
+
+## The pentest finding
+
+To a [cloud pentester](/pentest/cloud-pentesting/) it is a privilege-escalation primitive. The
+enumeration surfaces the over-broad grant; the [tooling](/pentest/tools-commands/cloud-tooling/)
+chains it — `PassRole` into a role that can read the state bucket, which holds another
+credential, which reaches production. The deliverable is a path: foothold to domain, with each
+hop evidenced. It reads as *"here is how I owned the account."*
+
+## The IAM design failure
+
+To the [identity](/iam/aws-identity/) engineer who owns the policy, the same fact is a design
+error — a trust policy written with a wildcard because scoping it correctly was harder on the day.
+The fix is not "remove this grant" but the discipline that produced it: least privilege generated
+from actual usage, permissions boundaries, an access analyzer catching the next one. It reads as
+*"our policy process let this through."*
+
+## The GRC control gap
+
+To the auditor it is a failed control. Least privilege is a required control in
+[every framework](/grc/common-frameworks/) — a SOC 2 criterion, an ISO 27001 Annex A control, an
+800-53 `AC` family entry. The finding is evidence that access control is not operating as
+attested, and through [compliance mapping](/grc/compliance-mapping/) it is one fact answering
+several audits at once. It reads as *"the control we claimed is not effective."*
+
+## The detection opportunity
+
+To the [detection engineer](/detection-eng/detection-lifecycle/) it is a gap in coverage. The
+role assumption is a CloudTrail event; a mature program alerts when this service account assumes
+that role, because legitimate use is narrow and predictable. The finding becomes a
+[detection backlog](/detection-eng/detection-lifecycle/) item — turn the pentester's path into a
+rule that fires the next time someone walks it. It reads as *"we could have seen this and didn't."*
+
+## The risk to prioritise
+
+To whoever owns the queue it is one item among forty thousand. Is it
+[confirmed-exploited, likely, exposed, and consequential](/threat-intel/risk-prioritization/)? An
+over-permissioned role reachable from an internet-facing workload with production behind it clears
+every input; the same grant on an isolated sandbox does not. The finding reads as *"where does
+this sit against everything else we could fix?"* — and the honest answer decides whether it is
+touched this quarter.
+
+## Five reports, one fact
+
+The last lens is [communication](/threads/communication-as-a-technical-skill/). The pentester writes it for the
+developer who has to fix it. The GRC analyst writes it for the auditor. The detection engineer
+writes it as a rule with a false-positive note. Intel writes it for the director deciding whether
+to fund the IAM programme. **Same fact, five audiences, five documents** — and the finding that
+gets acted on is the one written in the reader's vocabulary, not the finder's.
+
+This is the argument the whole site is making, in one example. The disciplines are staffed,
+tooled and sold separately, which is exactly why the overpermissioned role gets rediscovered five
+times by five teams who never compare notes. Seeing it as one fact with five faces is the
+capability the seams reward — and it is why the [purple team loop](/threads/purple-team-loop/) and
+[the substrate trace](/threads/the-substrate-trace/) are worth following next.

@@ -1,0 +1,68 @@
+---
+title: Agentic AI Identity
+description: Zero Knowledge Trust, agent orchestration, and tool-use authorisation are one problem — scoped, revocable, auditable authority for a non-human actor — and the newest material on this site.
+pillar: iam
+contentType: deep-dive
+maturity: advanced
+relatedTo:
+  - ai-automation/agent-orchestration
+  - ai-automation/securing-ai
+  - iam/frameworks
+  - detection-eng/threat-hunting
+updated: 2026-08-13
+sidebar:
+  hidden: true
+---
+
+An autonomous agent with tools is a principal with permissions. The moment an LLM can call an
+API, move money, or read a database, it is an actor making authenticated requests — and the
+question of what it may do, on whose behalf, and how you take that away, is an identity question
+wearing an AI hat. Three areas that are usually written about separately are the same problem seen
+from three sides.
+
+## The identity side
+
+[Zero Knowledge Trust](/iam/frameworks/) is the identity pillar's name for the unsolved problem:
+credential lifecycle, delegated authority, on-behalf-of flows, revocation and containment, and
+audit trails for a *non-human* actor. Classic IAM assumes a human or a service with a stable role.
+An agent is neither — it is spun up to pursue a goal, acts on behalf of a user whose authority it
+must not exceed, and should lose its access the instant the task ends. Standing credentials for an
+agent are the [long-lived access key](/iam/aws-identity/) problem with a worse blast radius,
+because the agent decides its own actions.
+
+## The orchestration side
+
+[Agent orchestration](/ai-automation/agent-orchestration/) is where the authority actually gets
+exercised. A planner/executor or supervisor pattern hands sub-agents tasks, and each tool call is
+a privileged operation. The design decisions that matter for security are identity decisions:
+does each agent get its own scoped credential or do they share one; is authority *attenuated* as
+it is delegated down the chain (the sub-agent gets less than its parent) or inherited whole; and
+does the loop terminate, or can a runaway agent keep spending authority it was granted once. The
+[federation logic](/iam/multi-cloud-federation/) — short-lived, exchanged, attenuated credentials
+— is the right model, applied to actors that did not exist when it was designed.
+
+## The securing-AI side
+
+[Securing AI systems](/ai-automation/securing-ai/) is where it breaks. Indirect prompt injection
+means the agent's *instructions* are attacker-influenceable: a document it reads, a web page it
+fetches, a tool result it receives can contain text that becomes its next command. So the agent is
+a [confused deputy](/iam/aws-identity/) by construction — a principal whose intent an attacker can
+steer. That reframes the defence: you cannot make the agent trustworthy, so you must make its
+*authority* small enough that a hijacked agent cannot do much. Tool-use authorisation and
+blast-radius limitation are the control, exactly as they are for a human principal you cannot fully
+trust.
+
+## One problem
+
+Put the three together and the shape is single: **scoped, revocable, auditable authority for an
+actor whose behaviour you cannot fully predict.** That is a sentence the IAM pillar has been
+writing for human and machine identity for years — least privilege, just-in-time elevation,
+revocation, audit — and the agent is just the hardest instance of it, because its intent is
+attacker-reachable and its actions are its own.
+
+The defensive telemetry follows from that. An agent's tool calls are auth events, so
+[hunting](/detection-eng/threat-hunting/) over them — an agent reaching a tool it has never used,
+or acting outside its task window — is the same identity-threat-detection discipline applied to a
+new kind of principal. This thread is the site's newest and least-settled material; it shares its
+confused-deputy core with [one finding, five lenses](/threads/one-finding-five-lenses/), where the
+overpermissioned principal is a human's mistake rather than an agent's hijack.

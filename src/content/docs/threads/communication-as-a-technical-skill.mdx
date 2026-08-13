@@ -1,0 +1,65 @@
+---
+title: Communication as a Technical Skill
+description: The same discipline behind a good intel product, a good pentest report, and a good audit narrative — writing that changes a decision, treated as an engineering skill rather than a soft one.
+pillar: threat-intel
+contentType: deep-dive
+maturity: foundational
+relatedTo:
+  - threat-intel/effective-communication
+  - pentest/report-writeups
+  - grc/compliance-mapping
+  - dfir/investigation-method
+updated: 2026-08-13
+sidebar:
+  hidden: true
+---
+
+The finding that gets acted on is not the best finding; it is the best-*communicated* one. That is
+uncomfortable for a technical field, because it means the analysis is only half the job and the
+half that decides the outcome is the writing. Communication is treated as a soft skill and it is
+not — it is a technical discipline with rules, failure modes, and the same
+[audience-fit logic](/threat-intel/effective-communication/) whether the document is an intel
+product, a pentest report, or an audit narrative.
+
+## The same discipline, three documents
+
+- **The intel product.** [Threat intel](/threat-intel/report-writing/) fails at the last mile far
+  more often than at collection: the analysis is sound and then lands in a PDF nobody reads. BLUF
+  structure, [calibrated confidence language](/threat-intel/report-writing/), and a "so what" are
+  not stylistic preferences — they are what make a finding legible to someone who will not read
+  paragraph four.
+- **The pentest report.** A [writeup](/pentest/report-writeups/) is written for the developer who
+  has to fix the bug, which changes everything about it: reproduction over cleverness, impact in
+  the reader's terms, severity justified rather than asserted. A report where everything is
+  critical is one where nothing is, and the client learns to discount you — a communication
+  failure that destroys the technical work behind it.
+- **The audit narrative.** [GRC](/grc/compliance-mapping/) is, at bottom, the argument that a
+  control exists and works, told to an auditor who is a downstream consumer of that argument.
+  Evidence assembled without a narrative is a pile; evidence framed as "here is the control, here
+  is it operating" is an answer.
+
+## The shared rules
+
+Strip the context and the same discipline is underneath all three:
+
+- **Lead with the decision, not the method.** The reader wants the finding and what to do; the
+  methodology is defence, not the message.
+- **Fit the audience's vocabulary.** The engineer, the director and the board need the same fact
+  in three languages — the [five-lenses](/threads/one-finding-five-lenses/) problem, restated as a
+  writing problem.
+- **Quantify uncertainty without hedging into uselessness.** "We assess with moderate confidence"
+  is a finding; "it might be bad" is noise. This matters most under time pressure, which is why an
+  [investigation](/dfir/investigation-method/) written so a second analyst reaches the same
+  conclusion is a communication artefact as much as a forensic one.
+- **Do not inflate.** Credibility is a budget; spend it on the findings that are genuinely
+  critical, and it is there when you need it.
+
+## Why it is the through-line
+
+Every pillar on this site produces a document as its actual output — a report, a rule with a note,
+an evidence package, an incident narrative — and in every case the technical work is only realised
+when someone else acts on it. Communication is the conversion step, and treating it as an
+engineering skill rather than a soft one is what separates analysis that changes decisions from
+analysis that gets filed. It is the least technical-sounding thread and the one that most often
+decides whether any of the others mattered — the last lens in
+[one finding, five lenses](/threads/one-finding-five-lenses/), made the whole point.

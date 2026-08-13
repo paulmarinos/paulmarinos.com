@@ -1,0 +1,63 @@
+---
+title: The Telemetry Gap
+description: Log coverage analysis as the shared prerequisite for detection, incident response, threat hunting, and audit evidence — the one input four disciplines depend on and none of them owns.
+pillar: detection-eng
+contentType: deep-dive
+maturity: practitioner
+relatedTo:
+  - detection-eng/data-pipeline
+  - dfir/investigation-method
+  - detection-eng/threat-hunting
+  - grc/compliance-mapping
+updated: 2026-08-13
+sidebar:
+  hidden: true
+---
+
+You cannot detect, investigate, hunt, or evidence what you never logged. That single sentence is a
+dependency four disciplines share and none of them is quite responsible for — which is exactly why
+the telemetry gap is where all four quietly fail together. It is the unglamorous prerequisite
+underneath the more visible threads: [the substrate trace](/threads/the-substrate-trace/) is one
+instance of it, where the network design decides what is loggable.
+
+## Four disciplines, one prerequisite
+
+- **Detection** cannot fire on an event that never reached the pipeline. A rule for a technique
+  whose data source is not collected is a rule that will never trigger — coverage on paper, blind
+  in practice. [Log coverage gap analysis](/detection-eng/data-pipeline/) is the honest map of what
+  you can and cannot see, and it bounds the whole detection programme.
+- **Incident response** reconstructs from what was recorded. An [investigation](/dfir/investigation-method/)
+  can only prove the boundary of a compromise if the telemetry to scope it exists; where it does
+  not, the responder is guessing, and "we cannot rule it out" replaces "we proved it did not
+  spread."
+- **Threat hunting** is a search, and a search needs a corpus. [Hunting](/detection-eng/threat-hunting/)
+  in cloud and identity data is only possible where that data is retained and queryable; the hunt
+  hypothesis you cannot test for lack of logs is the hunt you never run.
+- **Audit** wants evidence, and evidence is telemetry. Logging and monitoring is a control in
+  [every framework](/grc/compliance-mapping/), and the audit answer *is* the log — so the same
+  coverage gap that blinds detection also fails the control.
+
+## The blind spot is systematic, not random
+
+The uncomfortable part is that the gaps are not evenly distributed — they cluster exactly where
+they hurt most. [Internal telemetry under-represents your blind spots by construction](/threat-intel/statistics/):
+you can only observe what you instrumented, so the places you did not instrument are invisible
+*and* uncounted, which means you do not even know their size. East-west network traffic, identity
+events in an unfederated corner, actions on a shadow-IT system — these are simultaneously the
+likeliest attack paths and the least-logged surfaces, because logging follows the systems teams
+think about and attackers prefer the ones they do not.
+
+## Why it has no owner
+
+Each discipline treats telemetry as an input it *consumes* rather than one it *produces*, so log
+coverage falls into the gap between them. Detection assumes the pipeline team collects the right
+sources; the pipeline team collects what detection asked for; IR discovers the gap mid-incident;
+audit discovers it at assessment. The fix is to treat log coverage as a
+[first-class, shared artefact](/detection-eng/data-pipeline/) — a map of sources against the
+attack surface, owned deliberately — rather than the residue of four teams' independent
+assumptions.
+
+That "shared prerequisite nobody owns" pattern is the connective-tissue argument in its purest
+form: the highest-leverage work is not inside any pillar but in the dependency between them, the
+same lesson as [risk prioritisation everywhere](/threads/risk-prioritization-everywhere/) and
+[the purple team loop](/threads/purple-team-loop/).

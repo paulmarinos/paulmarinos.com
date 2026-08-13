@@ -35,7 +35,7 @@ Named defensively:
 
 - **Kerberoasting** — any authenticated user can request a service ticket for any account
   with an SPN and crack it offline, at leisure, with no failed-logon telemetry. The defence
-  is not detection but removing the target: group managed service accounts (gMSA) with
+  is removing the target, not detection: group managed service accounts (gMSA) with
   machine-generated 120-character passwords, and deleting SPNs that no longer correspond to
   a service. Any SPN account with a human-chosen password should be treated as exposed.
 - **AS-REP roasting** — accounts with Kerberos pre-authentication disabled hand a crackable

@@ -60,7 +60,7 @@ stop doing it:
 - **If you must use an object serializer**, restrict it: allow-list the exact classes permitted
   (Java's `ObjectInputFilter`, look-ahead deserialization), never an open blocklist.
 - **Treat the question as a design smell.** If you are deserializing objects from user input, the
-  useful question is not how to make it safe but why it is happening at all — a data transfer
+  useful question is why it is happening at all, not how to make it safe — a data transfer
   object parsed from JSON is almost always what was actually wanted.
 
 ## Where this connects

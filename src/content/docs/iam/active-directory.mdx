@@ -23,8 +23,9 @@ other way around, because the on-prem directory is usually the authoritative sou
 cloud one.
 
 This is also the pillar's clearest asymmetry elsewhere on the site: the offensive tooling
-for AD is covered in [Tools & Commands](/pentest/tools-commands/). This is the defensive
-half.
+for AD is covered in
+[Active Directory & Identity tooling](/pentest/tools-commands/active-directory/). This is the
+defensive half.
 
 ## The protocol design is the attack surface
 
@@ -114,7 +115,8 @@ issuance — and identity threat detection is where that becomes
 
 The hybrid seam is shared with [Azure Identity](/iam/azure-identity/), and reviewing the two
 directories separately is what lets the escalation path survive. The offensive tooling that
-enumerates all of the above is in [Tools & Commands](/pentest/tools-commands/), and the ACL
+enumerates all of the above is in
+[Active Directory & Identity tooling](/pentest/tools-commands/active-directory/), and the ACL
 graph it produces is the best privilege inventory available. Ticket and replication telemetry
 feed [threat hunting](/detection-eng/threat-hunting/); credential revocation across both
 directories is usually the fastest containment lever in an [incident](/dfir/incident-response/);

@@ -61,11 +61,21 @@
 - Handling uncertainty without hedging into uselessness
 - Narrative structure for incident retrospectives
 
-### 1.6 Collection & Sourcing *(placeholder — to expand)*
+### 1.6 Collection & Sourcing
 - OSINT tradecraft and operational security
 - Feed evaluation and deduplication
 - Internal telemetry as intelligence source
 - Structured formats: STIX/TAXII, MISP
+
+### 1.7 Analytic Methods & Attribution
+- Models and what each is for: Cyber Kill Chain, Diamond Model (pivoting as the point),
+  ATT&CK as vocabulary rather than analytic framework
+- Structured analytic techniques: ACH, key assumptions check, devil's advocacy
+- Activity clustering — the evidence hierarchy, and commodity tooling as the weakest link
+- Levels of attribution: cluster → group → organization → individual → state, and why
+  defensive work rarely needs past the first
+- Actor naming across vendors: aliases, not a shared namespace
+- Pyramid of Pain and why behavioural conclusions outlive indicators
 
 ---
 
@@ -87,19 +97,39 @@
 - Common misconfigs: overprivileged service principals, stale app registrations, consent grant abuse, unscoped Owner assignments
 - Solutions: PIM, Access Reviews, workload identity federation
 
-### 2.3 Multi-Cloud & Federation
+### 2.3 GCP Identity
+- Resource hierarchy (org → folder → project) and additive, inherited allow policies
+- Basic vs. predefined vs. custom roles; why basic roles are the recurring finding
+- Service accounts as principal *and* resource — the `actAs` / `getAccessToken` /
+  `serviceAccountKeys.create` escalation primitives
+- Default Compute Engine service account with Editor, reached via the metadata server
+- Exported JSON keys as GCP's long-lived access key; Workload Identity Federation and GKE
+  Workload Identity as the elimination path
+- Guardrails: org policy constraints, Policy Analyzer and Recommender, IAM Deny policies
+
+### 2.4 Active Directory & Hybrid Identity
+- Why the on-prem directory is still the escalation path *upward* into the cloud
+- Kerberos/NTLM design as attack surface: Kerberoasting, AS-REP roasting, delegation
+  (unconstrained/constrained/RBCD), ACL paths and shadow admins, DCSync and forged tickets
+- AD CS certificate template misconfiguration (the ESC classes)
+- Enterprise Access Model, tiering, and the clean source principle; PAWs, LAPS, Protected
+  Users, Credential Guard
+- Hybrid seam: Entra Connect as Tier 0, PHS vs. PTA vs. ADFS, Golden SAML, seamless SSO
+  (`AZUREADSSOACC`), and the cloud → on-prem paths (Intune, Azure Arc)
+
+### 2.5 Multi-Cloud & Federation
 - SAML, OIDC, SCIM — how they actually differ
 - Federated access patterns across AWS/Azure/GCP
 - Secrets management (Vault, Secrets Manager, Key Vault)
 - Machine-to-machine auth and mTLS
 
-### 2.4 Frameworks
+### 2.6 Frameworks
 - **Zero Trust:** NIST SP 800-207, policy decision/enforcement points, microsegmentation, maturity models (CISA ZTMM)
 - **Zero Knowledge:** ZK proofs, ZK-based authentication, password-authenticated key exchange, privacy-preserving verification
 - **Zero Knowledge Trust — agentic AI identity:** identity for non-human/agent actors, delegated authority and scoping, credential lifecycle for autonomous agents, on-behalf-of flows, revocation and containment, audit trails for agent actions
 - Comparing frameworks: where each fails in practice
 
-### 2.5 Governance of Identity *(placeholder — to expand)*
+### 2.7 Governance of Identity
 - Joiner/mover/leaver automation
 - Entitlement review at scale
 - Identity threat detection (ITDR)
@@ -196,7 +226,7 @@
 - Policy-as-code and drift detection
 - Treating auditors as a downstream consumer of an API
 
-### 4.6 Risk Management *(placeholder — to expand)*
+### 4.6 Risk Management
 - Risk register mechanics
 - Qualitative vs. quantitative (FAIR)
 - Third-party/vendor risk
@@ -255,7 +285,7 @@
 - Retest and closure reporting
 - Writing for the developer who has to fix it
 
-### 5.7 Specialized Testing *(placeholder — to expand)*
+### 5.7 Specialized Testing
 - API and GraphQL
 - Mobile
 - AI/LLM application testing
@@ -305,12 +335,12 @@
 - Compliance evidence automation
 - Threat intel summarization pipelines
 
-### 6.6 Securing AI Systems *(placeholder — to expand)*
+### 6.6 Securing AI Systems
 - Prompt injection (direct and indirect)
 - OWASP Top 10 for LLM Applications
 - Tool-use authorization and blast radius
 - Model supply chain
-- Ties directly to §2.4 agent identity
+- Ties directly to §2.6 agent identity
 
 ---
 
@@ -361,7 +391,7 @@
 - Agent-assisted triage (ties to §6.5)
 - Human approval gates for destructive actions
 
-### 7.7 Program Metrics *(placeholder — to expand)*
+### 7.7 Program Metrics
 - MTTD/MTTR and their limitations
 - Coverage vs. capability reporting
 - Detection engineering team models and staffing
@@ -392,7 +422,7 @@ both could apply, the test is whether the subject is the workload or the substra
 - Egress control and DNS security — the exfiltration path nobody instruments
 - Microsegmentation and east-west controls
 - TLS termination, mTLS and service mesh
-- ZTNA vs. VPN, and where each actually helps (ties to §2.4)
+- ZTNA vs. VPN, and where each actually helps (ties to §2.6)
 
 ### 8.3 Workload & Container Security
 - Minimal base images, image provenance and admission control (OPA/Gatekeeper, Kyverno)
@@ -404,7 +434,7 @@ both could apply, the test is whether the subject is the workload or the substra
 ### 8.4 Cryptography & Key Management
 - KMS and HSM design, key hierarchies, envelope encryption
 - Encryption at rest and in transit — what each actually defends against, and what it doesn't
-- Secrets architecture vs. secrets management tooling (ties to §2.3)
+- Secrets architecture vs. secrets management tooling (ties to §2.5)
 - PKI: internal CAs, certificate lifecycle, rotation and revocation
 - Post-quantum: NIST PQC standards, harvest-now-decrypt-later, crypto agility as a design property
 
@@ -415,7 +445,7 @@ both could apply, the test is whether the subject is the workload or the substra
 - Benchmarks and well-architected security pillars as baselines
 - Prioritizing posture findings so the queue stays finite (ties to §1.4)
 
-### 8.6 Resilience & Recovery *(placeholder — to expand)*
+### 8.6 Resilience & Recovery
 - Backup and restore as a security control, not an ops concern
 - Immutable and air-gapped backups; restore testing as the only real evidence
 - DDoS and edge protection
@@ -465,7 +495,7 @@ reconstruction of a known incident.
 - Extracting IOCs and behavioural signatures that feed §7 and §1
 - Capability assessment: what the sample can actually do
 
-### 9.5 Evidence Handling & Legal *(placeholder — to expand)*
+### 9.5 Evidence Handling & Legal
 - Chain of custody and defensible process
 - Legal hold, privilege, and working with counsel
 - Regulatory breach notification clocks (ties to §4)
@@ -514,7 +544,7 @@ shape, and the controls applied to it.
 - Egress paths: endpoint, SaaS, cloud storage, AI tooling (ties to §8.2)
 - Insider risk and the detection tradeoffs it forces (ties to §7)
 
-### 10.6 Data Governance for AI *(placeholder — to expand)*
+### 10.6 Data Governance for AI
 - Training-data provenance, licensing and consent
 - PII in prompts, embeddings and vector stores (ties to §6.2)
 - Model memorization and extraction risk
@@ -528,7 +558,7 @@ The site's differentiator is the connective tissue. Candidate cross-section piec
 
 - **Pentest finding → GRC control gap → AppSec fix → threat intel context.** One vulnerability traced through all four lenses.
 - **IAM misconfig as the shared root cause.** Same finding, four different reporting audiences.
-- **Agentic AI identity.** §2.4 (Zero Knowledge Trust) × §6.4 (orchestration) × §6.6 (securing AI).
+- **Agentic AI identity.** §2.6 (Zero Knowledge Trust) × §6.4 (orchestration) × §6.6 (securing AI).
 - **Risk prioritization as the universal problem.** §1.4 methods applied to AppSec backlogs, GRC findings, and pentest reports.
 - **Automation of the compliance-to-evidence pipeline.** §4.5 × §6.5.
 - **Communication as a technical skill.** §1.5 applied to §5.6 pentest and red team reports and §4.x audit narratives.
@@ -565,6 +595,9 @@ The site's differentiator is the connective tissue. Candidate cross-section piec
 - ~~Is threat hunting (§7.5) on the right side of the §7/§9 line?~~ Resolved once both were written: hunting is discovery in an environment presumed healthy, investigation is reconstruction of a known incident. The blur during a long-running compromise resolves on declaration — the activity changes discipline when an incident is declared, taking on evidence-handling, documentation and scope-proof obligations. Same analyst, same tools, different standard. Stated in §7.5 and §9.3.
 - Does §10.6 (data governance for AI) stay in Data Security, or migrate to §6 as that pillar's "securing AI" half fills out?
 - Does IaC security live in §3.6 (as a scanning tool) or §8.5 (as a posture program)? Current split is tooling vs. programme; watch whether that holds as both fill out.
+- **Where does a glossary live?** `contentType: glossary` exists in the schema and nothing uses it. A site-wide glossary belongs to no pillar, but `src/content.config.ts` requires `pillar` on everything except `contentType: landing`, so it needs either a schema exemption or per-pillar glossaries. Per-pillar is the cheaper answer and probably the better one — a term means something slightly different in each, and the difference is the interesting part.
+- **Where do the cross-cutting threads live?** Twelve are listed above and none are written, and by construction each belongs to two or more pillars. Options: file each under the pillar it starts from, or add an eleventh non-pillar section. Note the graph constraint if a new section is added — the colour slots are exhausted at ten (see `AGENTS.md`).
+- **Section numbers in published prose.** Pages refer to "§8.4" and "§2.6", but the numbering only exists in this file, which is not published — so a reader has no way to resolve them. Either publish this document, or convert the references to named links. Roughly two dozen occurrences across the pillar overview pages.
 
 ---
 

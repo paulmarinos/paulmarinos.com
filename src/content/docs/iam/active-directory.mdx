@@ -1,0 +1,122 @@
+---
+title: Active Directory & Hybrid Identity
+description: The protocol design that makes Kerberoasting, delegation abuse and AD CS structural rather than patchable — plus the sync server that quietly makes on-prem compromise a cloud compromise.
+pillar: iam
+contentType: deep-dive
+maturity: practitioner
+cloud: [azure]
+attack: [T1558, T1550, T1484]
+relatedTo:
+  - iam/azure-identity
+  - pentest/tools-commands
+  - detection-eng/threat-hunting
+updated: 2026-08-13
+sidebar:
+  order: 4
+---
+
+Cloud identity gets the attention, and Active Directory still holds the keys. Most
+enterprises are hybrid, which means the cloud tenant's trust ultimately terminates in a
+directory designed in 1999 for a network whose interior was assumed friendly. The attack
+path that matters most in a hybrid estate runs **on-prem upward into the cloud**, not the
+other way around, because the on-prem directory is usually the authoritative source for the
+cloud one.
+
+This is also the pillar's clearest asymmetry elsewhere on the site: the offensive tooling
+for AD is covered in [Tools & Commands](/pentest/tools-commands/). This is the defensive
+half.
+
+## The protocol design is the attack surface
+
+Kerberos and NTLM assume a trusted domain boundary. Almost every well-known AD attack is a
+legitimate protocol feature used by someone who should not have been inside the boundary.
+Named defensively:
+
+- **Kerberoasting** — any authenticated user can request a service ticket for any account
+  with an SPN and crack it offline, at leisure, with no failed-logon telemetry. The defence
+  is not detection but removing the target: group managed service accounts (gMSA) with
+  machine-generated 120-character passwords, and deleting SPNs that no longer correspond to
+  a service. Any SPN account with a human-chosen password should be treated as exposed.
+- **AS-REP roasting** — accounts with Kerberos pre-authentication disabled hand a crackable
+  blob to anyone who asks for it. There is essentially no legitimate modern reason for the
+  flag; audit for it and clear it.
+- **Delegation** — unconstrained delegation caches the TGT of every user who authenticates
+  to the host, which makes that host equivalent to all of them. Constrained and
+  resource-based delegation narrow the blast radius and bring their own abuse paths.
+  Eliminate unconstrained delegation, mark privileged accounts sensitive and not-delegable,
+  and put them in Protected Users.
+- **ACL paths** — `GenericAll`, `WriteDacl`, `WriteOwner`, `AddMember` accumulate over
+  decades of ad-hoc grants and produce shadow admins who never appear in Domain Admins. This
+  is what graph tooling enumerates, and the defensive job is pruning the graph. That graph is
+  also the only honest inventory of who is actually privileged — the group membership list
+  is not.
+- **AD CS** — certificate template misconfigurations (the ESC classes) let a low-privileged
+  user request a certificate that authenticates as somebody else. The most consequential AD
+  finding class of recent years, because a certificate survives the password reset that
+  would otherwise be the remediation. Audit templates for enrollee-supplied subject combined
+  with a client-authentication EKU, restrict enrollment rights, and enable strong certificate
+  mapping.
+- **DCSync, Golden and Silver tickets** — directory replication rights allow extraction of
+  the `krbtgt` hash, and with it tickets can be forged indefinitely for any principal.
+  Recovery requires rotating `krbtgt` twice, and most organizations have never rehearsed it.
+
+The honest position: none of this is patchable. It is design. The mitigations are
+structural — reduce what is privileged, and reduce what a privileged credential can reach.
+
+## Tiering is the actual control
+
+Microsoft's Enterprise Access Model is the successor to the tier and red-forest designs, and
+most of its value sits in one rule: the **clean source principle**. A system may only be
+administered from a system of equal or higher trust.
+
+A domain admin logging into an ordinary workstation to fix a printer places Tier 0
+credentials on a Tier 2 asset. That single habit defeats most of the other controls on this
+page, which is why the model is an administrative-practice problem rather than a
+configuration one. Supporting controls:
+
+- Privileged access workstations for Tier 0 administration, with no email or browsing
+- Separate administrative accounts, never used for daily work
+- **LAPS** for unique local administrator passwords — this alone removes the local-admin
+  hash reuse that most lateral movement depends on
+- Credential Guard, Protected Users, and disabling NTLM everywhere it can be disabled
+
+## Hybrid is where the two worlds leak
+
+- **Entra Connect** is the sync engine, and its server holds credentials with directory
+  replication rights. That makes it **Tier 0 — as privileged as a domain controller** — and
+  it is very often built, patched and administered as an ordinary member server. If the sync
+  server is not inside the Tier 0 boundary, the tiering model has a hole straight through it.
+- **Password hash sync, pass-through authentication and federation** fail differently. PHS
+  places derived hashes in the cloud. PTA keeps authentication on-prem and puts agents in the
+  path. Federation via ADFS makes the token-signing certificate the crown jewel: stealing it
+  enables **Golden SAML**, forged tokens for any user, produced entirely outside the identity
+  provider and therefore absent from its sign-in logs.
+- **Seamless SSO** depends on the `AZUREADSSOACC` computer account, whose password is rarely
+  rotated. Its hash forges Kerberos tickets for cloud resources.
+- **The path also runs downward.** Entra Connect service accounts, Intune script deployment
+  and Azure Arc all give a sufficiently privileged cloud administrator code execution
+  on-prem — so [Entra role assignments](/iam/azure-identity/) are on-prem exposure too, and
+  the two directories should be reviewed as one trust boundary rather than two.
+
+## Direction of travel
+
+The goal is not a perfect Active Directory. It is a smaller one. Move applications to modern
+authentication so the directory stops being the authentication path, shrink Tier 0 until it
+is a set you can enumerate from memory, and cut the on-prem → cloud escalation route. What
+remains is an application backend rather than the identity control plane.
+
+Until then, the highest-value work is visibility. AD produces excellent telemetry that most
+organizations do not collect — ticket requests, replication, ACL modification, certificate
+issuance — and identity threat detection is where that becomes
+[hunting material](/detection-eng/threat-hunting/) rather than log volume.
+
+## Where this connects
+
+The hybrid seam is shared with [Azure Identity](/iam/azure-identity/), and reviewing the two
+directories separately is what lets the escalation path survive. The offensive tooling that
+enumerates all of the above is in [Tools & Commands](/pentest/tools-commands/), and the ACL
+graph it produces is the best privilege inventory available. Ticket and replication telemetry
+feed [threat hunting](/detection-eng/threat-hunting/); credential revocation across both
+directories is usually the fastest containment lever in an [incident](/dfir/incident-response/);
+and the entitlement sprawl that creates shadow admins is what
+[identity governance](/iam/governance/) exists to keep in check.

@@ -1,0 +1,126 @@
+---
+title: Analytic Methods & Attribution
+description: The reasoning between collection and reporting — what the Diamond Model is actually for, how activity clusters form, and why attribution past "same cluster" rarely changes a defensive decision.
+pillar: threat-intel
+contentType: deep-dive
+maturity: practitioner
+frameworks: [Diamond Model, Cyber Kill Chain, MITRE ATT&CK, ICD 203]
+relatedTo:
+  - threat-intel/collection-sourcing
+  - pentest/mitre-attack
+  - dfir/investigation-method
+updated: 2026-08-13
+sidebar:
+  order: 7
+---
+
+This pillar covers where observations come from, the arithmetic that keeps them honest, and
+the formats they leave in. This page is the part in between: how a set of observations
+becomes a judgement, and how much of a judgement the evidence actually supports.
+
+It is the step most often skipped, because it is the one with no tooling and no deliverable.
+The result is reporting that describes what was seen and then asserts what it means, with
+nothing connecting the two.
+
+## Models, and what each is for
+
+- **Cyber Kill Chain** — linear and intrusion-centric. Useful shared vocabulary for "how far
+  did they get." Weak on intrusions that begin with valid credentials and never involve
+  malware, which is most cloud and identity-first activity.
+- **Diamond Model** — adversary, capability, infrastructure, victim, joined by relationships.
+  Its value is not the diagram, it is **pivoting**: any known vertex is a route to
+  discovering another, and a chain of pivots is how tracking sustains itself over months.
+  This is the model that actually supports clustering.
+- **ATT&CK** — a taxonomy of observed behaviour. Covered in
+  [MITRE ATT&CK](/pentest/mitre-attack/).
+
+The common error is treating ATT&CK as an analytic framework. It is a shared vocabulary,
+which is enormously valuable and a different thing. It tells you what to *call* what you
+observed; it does not tell you what to conclude from it. A report that maps twelve techniques
+and draws no inference has described an intrusion, not analysed one.
+
+## Structured analytic techniques
+
+Analysts anchor on the first plausible explanation and then collect evidence that confirms
+it. The techniques exist to make that expensive:
+
+- **Analysis of Competing Hypotheses.** Enumerate hypotheses first, then score each piece of
+  evidence by how *inconsistent* it is with each one. The discriminating power lives in the
+  inconsistencies, because evidence consistent with everything tells you nothing. The output
+  is the hypothesis with the least evidence against it — a different and more robust question
+  than which has the most for it.
+- **Key assumptions check.** Write down what is being taken as given, then ask what changes
+  if each is wrong. Assumptions inherited unexamined from an earlier report are the ones that
+  bite, because they were load-bearing there and are invisible here.
+- **Devil's advocacy.** Worth the cost only on high-consequence judgements.
+
+Match the technique to the decision. A daily triage note does not need ACH. A judgement that
+prompts customer notification or a public statement does.
+
+## Clustering: what makes two intrusions the same thing
+
+Clustering is the operational core, and attribution is downstream of it. Evidence types, in
+roughly descending order of how much weight they can carry:
+
+1. Shared non-public infrastructure under common control
+2. Malware with shared code, build artefacts, or unique configuration values
+3. Distinctive tradecraft — the *sequence* and operational habits, not individual techniques
+4. Targeting and timing overlap
+5. Shared commodity tooling — the weakest, and the most consistently overweighted
+
+Commodity tooling is where clusters get wrongly merged. Public offensive tools and widely
+sold RATs are used by unrelated actors, so their presence is close to evidence-free no matter
+how distinctive it looks in isolation. This is exactly the
+[base rate problem](/threat-intel/statistics/): a feature common across the population has
+almost no discriminating power, however striking it is in the single case in front of you.
+
+The mirror-image trap is attributing by victimology when your visibility covers one sector.
+The actor appears sector-focused because you cannot see anything else — sampling bias
+producing a finding about your own telemetry and reporting it as a finding about the
+adversary.
+
+## Attribution has levels, and most work needs only the first
+
+Distinguish clearly between: an activity cluster, a named group, a real-world organization, a
+named individual, and national responsibility. Each step requires a different class of
+evidence, and the last two generally require collection a private defender does not have.
+
+The honest position: past "same cluster," attribution rarely changes a defensive decision.
+Whether the operator is a criminal crew or a state service, the patch, the detection and the
+control are identical. Its genuine uses are narrow — prioritisation when an actor's targeting
+pattern says you are plausibly next, legal and policy response, and executive communication.
+
+It is also where the most confident-sounding and least falsifiable claims in the industry
+live, which is precisely why it deserves the strictest
+[confidence language](/threat-intel/report-writing/) you have. "We assess with moderate
+confidence" is not a hedge here; it is the finding.
+
+## Actor naming is not a shared namespace
+
+Every vendor names independently, from its own visibility: APT numbers, animal pairs, weather
+names, UNC and TA identifiers. Two names are not two actors — and they are not reliably one
+actor either, because vendors cluster on different evidence and their groups genuinely have
+different boundaries. Recent cross-vendor mapping efforts help, but they publish *mappings*,
+not merges, and the distinction matters.
+
+Practical discipline: track your own clusters against your own evidence, attach vendor names
+to them as aliases carrying their own confidence, and never let a vendor name enter your
+reporting as though it were an entity you observed directly.
+
+## What is worth tracking
+
+The Pyramid of Pain ranks indicators by what it costs the adversary when you burn them.
+Hashes and addresses are changed trivially; tooling and tradecraft are not. That ordering is
+why behavioural analysis outlives indicator collection, and why the durable output of
+analysis is a detection idea rather than a list — the handoff into
+[the detection backlog](/detection-eng/detection-lifecycle/).
+
+## Where this connects
+
+This sits directly downstream of [collection](/threat-intel/collection-sourcing/) and
+upstream of [reporting](/threat-intel/report-writing/), and it fails in the ways
+[statistics](/threat-intel/statistics/) predicts — base rates and sampling bias, wearing
+analytic clothes. [ATT&CK](/pentest/mitre-attack/) supplies the vocabulary the analysis is
+written in. [Investigation method](/dfir/investigation-method/) is the same discipline under
+time pressure, with evidentiary obligations attached, and behavioural conclusions land as
+[detection ideas](/detection-eng/detection-lifecycle/) rather than indicators.

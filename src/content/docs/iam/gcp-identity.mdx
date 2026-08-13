@@ -1,0 +1,125 @@
+---
+title: GCP Identity
+description: Additive inheritance down the resource hierarchy, service accounts that are principal and resource at once, and why escalation in GCP is almost always a two-hop rather than one bad binding.
+pillar: iam
+contentType: deep-dive
+maturity: practitioner
+cloud: [gcp]
+attack: [T1078, T1098]
+relatedTo:
+  - iam/aws-identity
+  - pentest/cloud-pentesting
+  - cloud-infra/architecture-landing-zones
+updated: 2026-08-13
+sidebar:
+  order: 3
+---
+
+GCP's identity model is close enough to AWS and Azure to invite pattern-matching, and
+different in exactly the places that decide where the misconfigurations end up. Two
+differences carry most of it: permissions are inherited additively down a resource
+hierarchy, and a service account is simultaneously an identity and a thing you can hold
+permissions *on*.
+
+## The hierarchy is the policy model
+
+Organization → folders → projects → resources. An IAM policy can attach at any level, and
+bindings **inherit downward and accumulate**. The effective permission set is the union of
+everything granted at every level above.
+
+For most of GCP's life there was no explicit deny at all, so that union *was* the answer.
+IAM Deny policies exist now and evaluate before allows, but they arrived late and are still
+comparatively rare in the wild — assume an estate is allow-union until you've confirmed
+otherwise.
+
+The practical consequence is a different investigative question than in AWS. There, you
+reason about an explicit deny that wins from anywhere. Here, you ask what a principal
+inherited from three levels up — and the answer is rarely visible from the resource you're
+standing on. A binding at the folder level is invisible in the project's policy view, which
+is where people look.
+
+## Roles: basic, predefined, custom
+
+- **Basic** — Owner, Editor, Viewer. Legacy, and each spans thousands of permissions across
+  every service in the project. Editor in particular is Owner minus IAM management, which is
+  a much smaller reduction than it sounds. Basic roles surviving at project or folder level
+  is the single most common finding.
+- **Predefined** — per-service, maintained by Google as services add permissions. The right
+  default.
+- **Custom** — organization- or project-scoped, and necessary for genuine least privilege.
+  They carry a real maintenance cost: they do not pick up new permissions when a service
+  gains them, so a custom role silently drifts out of date as the workload evolves.
+
+## Service accounts are identity and resource at once
+
+This is the GCP-specific idea, and nearly every escalation path runs through it. A service
+account is a principal — it can be granted roles. It is *also* a resource — other principals
+can be granted roles **on it**. That duality is the primitive:
+
+- **`iam.serviceAccountKeys.create`** — mint a long-lived JSON key for any service account
+  you can reach and become it permanently.
+- **`iam.serviceAccounts.getAccessToken`**, `signJwt`, `signBlob` — become it without
+  creating a key, and without leaving a key behind.
+- **`iam.serviceAccounts.actAs`** plus any deploy permission — attach the service account to
+  a Cloud Function, Cloud Run service, Compute instance or Dataflow job you control, and
+  inherit it. This is the analogue of [`iam:PassRole`](/iam/aws-identity/), and it is broader,
+  because the set of services that will run something with an attached identity is large.
+- **`resourcemanager.projects.setIamPolicy`** — grant yourself the rest.
+
+So escalation here is rarely one overprivileged binding. It is a two-hop: a modest role that
+can *act as* a service account that holds the role the attacker actually wants. Reviewing
+the direct grants on a principal and declaring it least-privileged misses this entirely —
+the question is the transitive one.
+
+**Default service accounts** deserve a line of their own. The default Compute Engine service
+account is granted **Editor** on the project unless an organization policy prevents it, and
+older instances run with broad access scopes. A foothold on any such VM is an Editor-level
+foothold, reachable through the metadata server with no credential theft at all.
+
+## Exported keys are the recurring failure
+
+The service account JSON key file is GCP's long-lived access key and meets the same end:
+committed to repositories, baked into images, pasted into CI variables. It does not expire,
+and rotation is entirely manual.
+
+The fix is to never create one:
+
+- **Workload Identity Federation** — an external IdP token (GitHub Actions, another cloud,
+  any OIDC provider) exchanged for short-lived credentials. The same shape as the
+  [OIDC-to-cloud pattern](/appsec/cicd-security/) that replaced static keys elsewhere.
+- **GKE Workload Identity** — binds a Kubernetes service account to a Google one, so pods
+  authenticate as themselves instead of inheriting the node's identity. The alternative is
+  every pod on a node sharing whatever that node can do.
+- **Attached service accounts** — for anything running inside GCP, the metadata server
+  supplies credentials and there is no key material to leak.
+- **`constraints/iam.disableServiceAccountKeyCreation`** — turn the failure mode off
+  centrally rather than auditing for it forever.
+
+## Guardrails and least privilege
+
+- **Organization policy constraints** are the structural control: key creation,
+  `allowedPolicyMemberDomains` to block `allUsers`, `allAuthenticatedUsers` and external
+  domains, public IP restrictions. This is guardrail architecture rather than identity
+  policy, and it belongs with [landing zone design](/cloud-infra/architecture-landing-zones/) —
+  but it is what makes the identity policy hold.
+- **Policy Analyzer and Recommender** — the counterpart to AWS Access Analyzer. Recommender
+  derives least-privilege role suggestions from observed usage; Policy Analyzer answers "who
+  can actually access this resource," inheritance included, which is the question the console
+  does not answer.
+- **Deny policies** — worth adopting for the narrow set of permissions that should never be
+  exercised by anyone, since they evaluate ahead of the inherited allow union.
+
+The findings that recur, in rough order of frequency: basic roles at project or folder
+level; exported service account keys, unrotated; `allUsers` bindings on buckets and Cloud
+Run services; the default Compute service account left with Editor; and custom roles that
+drifted broader than the workload they were written for.
+
+## Where this connects
+
+The evaluation logic is the interesting contrast with [AWS](/iam/aws-identity/) — union-of-inherited
+versus explicit-deny-wins — and the service account duality is what
+[cloud pentesting](/pentest/cloud-pentesting/) enumeration is chasing. Organization policy
+constraints are [landing zone](/cloud-infra/architecture-landing-zones/) work rather than
+identity work, key elimination is a [pipeline](/appsec/cicd-security/) decision, and service
+account impersonation is a high-value [detection](/detection-eng/) signal precisely because
+legitimate use of it is narrow and predictable.

@@ -26,7 +26,7 @@ orchestration.
 
 ## How this connects
 
-- **→ [IAM](/iam/):** agent identity is the same problem as §2.4 Zero Knowledge Trust. An agent with tools is a principal with permissions, and it needs a credential lifecycle, scoping, and revocation.
+- **→ [IAM](/iam/):** agent identity is the same problem as [Zero Knowledge Trust](/iam/frameworks/). An agent with tools is a principal with permissions, and it needs a credential lifecycle, scoping, and revocation.
 - **→ [Detection Engineering](/detection-eng/):** agent-assisted triage and SOAR enrichment are the production use case — with human approval gates on anything destructive.
 - **→ [GRC](/grc/):** automated evidence pipelines are the highest-ROI application in security, and the EU AI Act makes the models themselves a compliance surface.
 - **→ [Threat Intel](/threat-intel/):** summarization pipelines scale collection, and hallucinated intel is the failure mode that discredits the whole program.
@@ -48,7 +48,7 @@ orchestration.
 | [Securing AI Systems](/ai-automation/securing-ai/) | Direct and indirect prompt injection, OWASP Top 10 for LLM Applications, tool-use authorization and blast radius, model supply chain |
 
 :::tip[The thread worth following]
-**Agentic identity.** Take Zero Knowledge Trust from [IAM §2.4](/iam/), agent orchestration
+**Agentic identity.** Take [Zero Knowledge Trust](/iam/frameworks/), agent orchestration
 from here, and tool-use authorization from Securing AI Systems, and you get one coherent
 problem: what does it mean to grant an autonomous actor scoped, revocable, auditable
 authority? That's the newest material on this site.

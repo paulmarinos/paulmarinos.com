@@ -13,9 +13,10 @@ meaningful authorization decision moved into IAM — and the interesting failure
 it. Not "the firewall was open," but "the trust policy said `*`," or "the service
 principal had Owner and nobody reviewed it in two years."
 
-This pillar covers the two major clouds in depth, the federation layer that stitches them
-together, and the frameworks people invoke when they talk about identity — including the
-one that's still being invented: identity for autonomous agents.
+This pillar covers the three major clouds, the on-prem directory that most hybrid estates
+still ultimately trust, the federation layer that stitches them together, and the
+frameworks people invoke when they talk about identity — including the one that's still
+being invented: identity for autonomous agents.
 
 ## Why it matters
 
@@ -29,7 +30,7 @@ upward, since the impact is a *path*, not a single flaw.
 - **→ [Penetration Testing & Red Teaming](/pentest/):** IAM privesc chains are the substance of cloud pentesting. The misconfigs listed here are what the enumeration tooling is looking for.
 - **→ [Detection Engineering](/detection-eng/):** identity telemetry (CloudTrail, Entra sign-in logs) is the richest detection surface, and identity-centric containment is the fastest lever in cloud IR.
 - **→ [GRC](/grc/):** access review, joiner/mover/leaver, and least privilege are control requirements in every framework — this is where the evidence comes from.
-- **→ [AI & Automation](/ai-automation/):** §2.4 agent identity and agent orchestration are the same problem viewed from two sides. Delegated authority for a non-human actor is an IAM question wearing an AI hat.
+- **→ [AI & Automation](/ai-automation/):** [agent identity](/iam/frameworks/) and agent orchestration are the same problem viewed from two sides. Delegated authority for a non-human actor is an IAM question wearing an AI hat.
 - **→ [AppSec](/appsec/):** OIDC from CI to cloud is the correct fix for long-lived pipeline credentials — an IAM design decision made in the build system.
 - **→ [Threat Intel](/threat-intel/):** identity is the reported initial-access path often enough that it should anchor prioritization.
 - **→ [Cloud & Infrastructure Security](/cloud-infra/):** the two-plane split. Identity policy lives here; org-level guardrail architecture — SCPs and Azure Policy as blast-radius design — lives there.
@@ -42,6 +43,8 @@ upward, since the impact is a *path*, not a single flaw.
 |---|---|
 | [AWS Identity](/iam/aws-identity/) | Policy evaluation logic, STS, cross-account trust and confused deputy, `iam:PassRole` chains, boundaries/SCPs/Access Analyzer |
 | [Azure Identity](/iam/azure-identity/) | Entra objects, the Azure RBAC vs. Entra roles two-plane confusion, Conditional Access design, PIM and Access Reviews |
+| [GCP Identity](/iam/gcp-identity/) | Additive inheritance down the resource hierarchy, service accounts as principal *and* resource, `actAs` escalation, key elimination and org policy |
+| [Active Directory & Hybrid Identity](/iam/active-directory/) | Kerberos and NTLM attack surface as design rather than defect, AD CS, tiering and the clean source principle, Entra Connect as Tier 0 |
 | [Multi-Cloud & Federation](/iam/multi-cloud-federation/) | SAML/OIDC/SCIM differences, federated access patterns, secrets management, mTLS and machine-to-machine auth |
 | [Frameworks](/iam/frameworks/) | Zero Trust (NIST SP 800-207, CISA ZTMM), Zero Knowledge proofs and ZK auth, and Zero Knowledge Trust for agentic AI identity |
 | [Governance of Identity](/iam/governance/) | Joiner/mover/leaver automation, entitlement review at scale, ITDR |

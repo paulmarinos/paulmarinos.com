@@ -253,12 +253,17 @@
 - Rules of engagement and provider policies
 
 ### 5.3 Tools & Commands
-- Recon: nmap, amass, subfinder, httpx
-- Web: Burp Suite, ZAP, ffuf, sqlmap, Nuclei
-- Cloud: Pacu, ScoutSuite, Prowler, ROADrecon, AzureHound, Cloudsplaining
-- AD/identity: BloodHound, Impacket, CrackMapExec/NetExec, Kerbrute
-- C2 and post-ex: Sliver, Havoc, Mythic
-- Format: command → what it does → what the output means → what to do next
+Second subsection to grow a third level — the five tool families are the split, and the hub
+keeps the phase-independent judgement (passive-before-active, loud-has-a-place). Format
+throughout: command → what it does → what the output means → what to do next.
+- **5.3.1 Recon & Enumeration** — nmap, masscan, amass/subfinder, dnsx, httpx, ffuf/feroxbuster
+- **5.3.2 Web Application Testing** — Burp workbench, sqlmap, Nuclei, parameter and JWT tooling
+- **5.3.3 Cloud** — ScoutSuite/Prowler posture, Pacu, ROADrecon/AzureHound, the GCP
+  service-account path; posture-before-foothold vs. enumeration-after
+- **5.3.4 Active Directory & Identity** — BloodHound, NetExec, Impacket (Kerberoast/DCSync/relay),
+  Kerbrute, Responder, Certipy (AD CS ESC); the offensive mirror of §2.4
+- **5.3.5 C2 & Post-Exploitation** — Sliver/Havoc/Mythic, listener and implant profiles,
+  the detection surface; infrastructure and OPSEC depth stays in §5.5
 
 ### 5.4 MITRE ATT&CK
 - Matrix structure: tactics, techniques, sub-techniques
@@ -578,8 +583,12 @@ The site's differentiator is the connective tissue. Candidate cross-section piec
   directory: the existing page moves to `index.mdx` and becomes a hub that indexes its
   children, which sit beside it and are hidden from the sidebar. The sidebar therefore never
   grows past pillar -> subsection no matter how much lands underneath, and third-level
-  articles are found through the hub, search, the graph and backlinks instead. Worked example:
-  `appsec/api-cloud-native/kubernetes-workload-security`. Mechanics in `AGENTS.md`.
+  articles are found through the hub, search, the graph and backlinks instead. Mechanics in
+  `AGENTS.md`. Two subsections have grown a third level so far, and they exercise the two
+  shapes: `appsec/api-cloud-native` split off a single sibling article
+  (`kubernetes-workload-security`), while `pentest/tools-commands` fanned out into five
+  phase pages at once with the hub reduced to orientation plus an index. Both leave the
+  sidebar at pillar -> subsection.
   A fourth level is not planned — if a third-level article needs children, that is evidence
   the subsection above it should have been split.
 - **Per-section landing page:** what this is, why it matters, how it connects to the other six, then subsection index.

@@ -72,7 +72,7 @@ principle — least privilege on the identity, so inheriting it is worth as litt
   on Graph deserve the scrutiny of admin role assignments, because that's what they are.
 - **Consent grant abuse.** A phishing path: trick a user into consenting to a malicious app's
   Graph access, and the app has the user's data without ever touching a password. It defeats
-  MFA because it's not authentication — it's authorization the user granted.
+  MFA because it rides on authorization the user granted, not on the authentication path.
 - **Stale app registrations.** Forgotten applications with live credentials and standing
   permissions — trust relationships nobody remembers, which is exactly what makes them useful.
 - **Unscoped Owner assignments.** Owner at the subscription or management-group level where a

@@ -36,12 +36,12 @@ finds true problems.
 What they only *appear* to catch is where the honesty is needed:
 
 - **Findings without reachability.** A "critical" open security group on a host nothing exposes
-  is not critical, but it's colored critical, and the tool rarely knows the difference.
+  is colored critical without being critical, and the tool rarely knows the difference.
 - **Coverage that looks complete and isn't.** Tools cover the resource types and checks they
   implement; a gap in coverage looks identical to a clean result — the
   [no-coverage vs. no-data problem](/detection-eng/data-pipeline/) again.
-- **Volume mistaken for value.** Ten thousand findings is not ten thousand problems; it's
-  usually a few hundred that matter buried in noise the tool can't rank.
+- **Volume mistaken for value.** Ten thousand findings is
+  usually a few hundred that matter buried in noise the tool can't rank — not ten thousand problems.
 
 The reframing: a posture tool is a finding *generator*, and its output is raw material for a
 program, not a to-do list. The tool is the cheap part; the program that turns its output into

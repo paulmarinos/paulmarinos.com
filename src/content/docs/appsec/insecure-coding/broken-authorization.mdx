@@ -68,8 +68,7 @@ The durable fix pushes enforcement down:
   controller forgets to ask.
 - **Make the safe path the only path.** A repository layer or query scope that always applies the
   ownership filter means new endpoints inherit the check instead of re-implementing it.
-- **Prefer unpredictable identifiers** as defence in depth, but never as the control — a UUID is
-  not authorization, it is a slower enumeration.
+- **Prefer unpredictable identifiers** as defence in depth, but never as the control — a UUID buys slower enumeration, not authorization.
 
 This is [identity](/iam/) enforced inside the application: the same least-privilege, check-at-the-
 resource logic the IAM pillar applies to cloud principals, applied to rows in a table.

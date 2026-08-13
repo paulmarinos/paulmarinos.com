@@ -63,8 +63,8 @@ guardrails** (here) set outer bounds no principal in that account can exceed, re
 their identity policy grants.
 
 - **AWS SCPs** — deny whole regions, deny disabling CloudTrail, deny root actions, deny
-  weakening specific controls. An SCP is not "who can do this" — it's "this cannot be done here,
-  by anyone."
+  weakening specific controls. An SCP declares "this cannot be done here, by anyone," not "who can
+  do this."
 - **Azure Policy** — enforce and audit resource configuration: require encryption, deny public
   IPs, enforce tagging and allowed regions.
 - **GCP Org Policy** — organization-wide constraints like disabling service-account key

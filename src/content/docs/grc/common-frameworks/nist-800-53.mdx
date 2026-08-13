@@ -1,0 +1,82 @@
+---
+title: NIST SP 800-53
+description: The deep control catalog underpinning US federal security — control families, the low/moderate/high baselines, control enhancements, and why 800-53 is the common denominator most other frameworks map back to.
+pillar: grc
+contentType: deep-dive
+maturity: practitioner
+frameworks: [NIST 800-53, NIST 800-53B, OSCAL]
+relatedTo:
+  - grc/compliance-mapping
+  - cloud-infra/posture-iac
+  - iam/aws-identity
+updated: 2026-08-13
+sidebar:
+  hidden: true
+---
+
+NIST SP 800-53 is not a framework you comply with so much as a **catalog you select from**. It
+is the deep reservoir of security and privacy controls behind US federal security, and its real
+significance to everyone else is that it is the vocabulary a great many other frameworks quietly
+translate into — which makes it the useful common denominator for
+[crosswalks](/grc/compliance-mapping/).
+
+## A catalog, organized into families
+
+The controls are grouped into families, each a two-letter prefix: AC (Access Control), AU (Audit
+and Accountability), SC (System and Communications Protection), IA (Identification and
+Authentication), CM (Configuration Management), IR (Incident Response), and more — around twenty
+in the current revision (Rev 5), which folded privacy controls into the same catalog rather than
+keeping them separate.
+
+Each control has a base statement and, often, **control enhancements** — numbered strengthenings
+of the base. `AC-2` is account management; `AC-2(1)` adds automated support; `AC-2(12)` adds
+account monitoring for atypical use. The enhancements are where a baseline gets its teeth, and
+where the difference between a moderate and a high system mostly lives.
+
+The catalog is deliberately more than any one system needs. You are not meant to implement all
+of it — you are meant to select the subset your risk level calls for. That selection is the next
+idea.
+
+## Baselines come from 800-53B, not 800-53
+
+A point that confuses newcomers: the control catalog and the baselines are two documents.
+**SP 800-53** is the catalog of controls; **SP 800-53B** defines the low, moderate and high
+baselines — the pre-selected control sets keyed to the impact level of the system, which comes
+from the FIPS 199 categorization of what the system would cost you if its confidentiality,
+integrity or availability were lost.
+
+So the workflow is: categorize the system's impact (low/moderate/high), take the matching
+baseline from 800-53B as a starting set, then tailor — adding, removing or parameterizing
+controls with a documented rationale. Tailoring is the skill; a baseline applied without it is
+either over-built or full of controls that do not fit the system.
+
+## OSCAL — the catalog as data
+
+NIST publishes 800-53 in **OSCAL** (Open Security Controls Assessment Language), a
+machine-readable representation of controls, baselines and assessment results. This is what
+makes [compliance-as-code](/grc/grc-engineering/) tractable: when the catalog, the baseline and
+your implementation statements are all structured data, the crosswalk and the evidence pipeline
+stop being spreadsheet work. It is the most concrete link between the framework and
+[GRC engineering](/grc/grc-engineering/).
+
+## Why it is the crosswalk denominator
+
+Because [FedRAMP](/grc/common-frameworks/fedramp/) baselines *are* 800-53 selections, because
+[CSF](/grc/common-frameworks/nist-csf/) Informative References point into it, and because
+[CMMC](/grc/common-frameworks/cmmc/) derives from 800-171 which is itself a 800-53 subset,
+800-53 sits underneath much of the US compliance landscape. Map your controls to 800-53 once and
+a large fraction of the other mappings come nearly for free — which is exactly the leverage
+[compliance mapping](/grc/compliance-mapping/) is built to capture.
+
+800-171 is worth naming as the near sibling: a slimmer catalog of the controls needed to protect
+Controlled Unclassified Information on non-federal systems, and the basis of the defense
+industrial base requirements CMMC certifies.
+
+## Where this connects
+
+The families are the other pillars in catalog form: AC and IA are [IAM](/iam/aws-identity/), SC
+is [network and crypto architecture](/cloud-infra/posture-iac/), AU is
+[detection](/detection-eng/), IR is [incident response](/dfir/). 800-53 is the denominator that
+makes [compliance mapping](/grc/compliance-mapping/) work, and its OSCAL form is what
+[GRC engineering](/grc/grc-engineering/) automates against. Its place among the frameworks is in
+[Common Frameworks](/grc/common-frameworks/).

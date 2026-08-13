@@ -1,0 +1,81 @@
+---
+title: CMMC
+description: The US defense supply chain's certification of NIST 800-171 — the three levels, the FCI versus CUI distinction that decides which level applies, how assessment works, and the DFARS basis.
+pillar: grc
+contentType: deep-dive
+maturity: practitioner
+frameworks: [CMMC, NIST 800-171, NIST 800-172]
+relatedTo:
+  - grc/common-frameworks
+  - cloud-infra/architecture-landing-zones
+  - dfir/evidence-legal
+updated: 2026-08-13
+sidebar:
+  hidden: true
+---
+
+CMMC — the Cybersecurity Maturity Model Certification — is the mechanism by which the US
+Department of Defense verifies that the companies in its supply chain, the Defense Industrial
+Base, actually implement the security controls their contracts already require. The key insight
+is that CMMC **certifies compliance with an existing standard** rather than defining a new one:
+the controls are [NIST 800-171](/grc/common-frameworks/nist-800-53/), and CMMC is the audit that
+turns self-attestation into verified assurance.
+
+## Why it exists: self-attestation was not working
+
+Defense contractors handling sensitive information were already contractually obligated (through
+the DFARS clause 252.204-7012) to implement 800-171 and self-attest to it. The problem CMMC
+addresses is that self-attestation was uneven — contractors claimed compliance they had not
+achieved. CMMC adds **third-party (and, at the top, government) verification** so the assurance is
+earned rather than asserted. It is the defense sector's answer to the same design-versus-operation
+gap [SOC 2 Type II](/grc/common-frameworks/soc-2/) addresses, applied through the acquisition
+system.
+
+## FCI versus CUI decides the level
+
+Which CMMC level a contract requires is driven by the *kind* of information involved:
+
+- **FCI** (Federal Contract Information) — information provided by or generated for the government
+  under a contract, not intended for public release, but not the sensitive category.
+- **CUI** (Controlled Unclassified Information) — the sensitive category: technical data, export
+  controlled information, and the like, whose loss is what CMMC most exists to prevent.
+
+Handling only FCI lands a contractor at the bottom level; handling CUI pushes it up. Getting this
+mapping right is the first scoping decision, because it sets the entire compliance burden.
+
+## The three levels
+
+CMMC 2.0 streamlined an earlier five-level model down to three:
+
+- **Level 1 (Foundational)** — the 15 basic safeguarding requirements for **FCI**, assessed by
+  **annual self-assessment**.
+- **Level 2 (Advanced)** — the full **110 controls of NIST 800-171**, for **CUI**. Assessed
+  every three years by a **C3PAO** (a certified third-party assessment organization) for most
+  contracts, with self-assessment permitted for a limited subset.
+- **Level 3 (Expert)** — Level 2 plus a subset of the enhanced controls from **NIST 800-172**,
+  for the most critical programs, assessed by the **government** itself (the DIBCAC).
+
+The assessor escalates with the level — self, third-party, government — which mirrors the
+escalating consequence of the information being protected.
+
+## The rollout and its weight
+
+CMMC is being phased into defense contracts over time through the DFARS rule, so the requirement
+appears in solicitations on a schedule rather than all at once. For a contractor, the practical
+reality is that **a Level 2 certification is a prerequisite to bid** on the relevant work — no
+certification, no contract — which gives CMMC a harder edge than a framework adopted for
+assurance. It is compliance as a gate to a market.
+
+Because CUI carries handling and incident-reporting obligations, CMMC also reaches into
+[evidence handling](/dfir/evidence-legal/): a contractor must be able to report and preserve
+appropriately when CUI is involved in an incident.
+
+## Where this connects
+
+CMMC is [800-171 — itself a subset of 800-53](/grc/common-frameworks/nist-800-53/) — with a
+verification regime bolted on, so the
+control work is [cloud architecture and enclave design](/cloud-infra/architecture-landing-zones/):
+a compliant CUI enclave is an architecture problem before a paperwork one. Its incident
+obligations tie to [evidence and legal handling](/dfir/evidence-legal/), and it sits alongside
+[FedRAMP](/grc/common-frameworks/fedramp/) as the two US-government mandatory regimes. Its place
+among the frameworks is in [Common Frameworks](/grc/common-frameworks/).

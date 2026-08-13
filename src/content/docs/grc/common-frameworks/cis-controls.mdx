@@ -1,0 +1,78 @@
+---
+title: CIS Controls & Benchmarks
+description: The prescriptive, practical framework — the Controls as a prioritized action list with Implementation Groups, the Benchmarks as specific hardening configurations, and why they double as posture baselines.
+pillar: grc
+contentType: deep-dive
+maturity: foundational
+frameworks: [CIS Controls, CIS Benchmarks]
+relatedTo:
+  - grc/common-frameworks
+  - cloud-infra/posture-iac
+  - appsec/code-scanning
+updated: 2026-08-13
+sidebar:
+  hidden: true
+---
+
+The CIS material is the most practical corner of the framework landscape. Where the others tell
+you *what* outcome to achieve, CIS often tells you the actual setting — which is why it does
+double duty as a governance framework and as the [posture baseline](/cloud-infra/posture-iac/) a
+scanner checks against. There are two distinct things under the CIS name, and they operate at
+different altitudes.
+
+## The Controls — a prioritized action list
+
+The **CIS Critical Security Controls** (v8) are 18 controls, deliberately ordered so that the
+early ones deliver the most risk reduction: inventory of enterprise assets and software first
+(you cannot protect what you have not enumerated), then data protection, secure configuration,
+account and access management, and onward through incident response and penetration testing.
+
+Two features make them usable:
+
+- **Safeguards.** Each control decomposes into specific safeguards — concrete, checkable actions
+  rather than aspirations. Around 150 across the set.
+- **Implementation Groups (IG1, IG2, IG3).** The safeguards are tiered by organizational
+  capacity. **IG1** is the "basic cyber hygiene" set every organization should meet; IG2 and IG3
+  add safeguards for organizations with more resources and higher risk. This is the answer to
+  "where do we start" — IG1 is a defensible, finite starting scope, which is exactly what a small
+  team drowning in framework requirements needs.
+
+The Controls' prioritization philosophy is the whole point: they are opinionated about *order*,
+which most frameworks refuse to be.
+
+## The Benchmarks — the actual settings
+
+The **CIS Benchmarks** are a different artifact: consensus-developed, prescriptive hardening
+configurations for specific technologies — operating systems, cloud providers, Kubernetes,
+databases, browsers. Hundreds of them, each a detailed document of specific settings, usually
+with two profile levels (Level 1 for a sensible baseline, Level 2 for high-security environments
+that can absorb the operational friction).
+
+This is where CIS stops being a governance framework and becomes an engineering input. A
+Benchmark says, for a given platform, exactly which setting should have which value — which is
+precisely the form a [posture or IaC scanner](/cloud-infra/posture-iac/) can enforce
+automatically. **CIS-CAT** is CIS's own assessment tool, but the Benchmarks' real reach is that
+the whole CSPM and hardening tooling ecosystem ships them as built-in policy.
+
+## Why they double as posture baselines
+
+The line between "compliance framework" and "technical baseline" is thinnest here. A CIS
+Benchmark for EKS or for Ubuntu is simultaneously a governance artifact (evidence for an
+auditor that hosts are hardened to a recognized standard) and an operational one (the exact
+config a [pipeline](/appsec/code-scanning/) or [runtime posture tool](/cloud-infra/posture-iac/)
+checks). That dual nature is why CIS appears in both the GRC pillar and the cloud pillar on this
+site — it is the same document read by two audiences.
+
+The honest limit is the mirror of PCI's prescriptiveness: a Benchmark tells you the setting but
+not whether the setting fits your environment. Applied without judgement, Level 2 hardening
+breaks working systems. The Benchmarks are a strong default to tailor from, not a config to
+apply blind.
+
+## Where this connects
+
+CIS is the practical, prescriptive counterpart to the outcome-based frameworks — it maps to
+[CSF](/grc/common-frameworks/nist-csf/) and [800-53](/grc/common-frameworks/nist-800-53/) as
+Informative References, so adopting it does not orphan you from the crosswalk. Its Benchmarks are
+[posture and IaC baselines](/cloud-infra/posture-iac/) and [pipeline](/appsec/code-scanning/)
+policy, which is where a governance framework becomes an automated control. Its place among the
+frameworks is in [Common Frameworks](/grc/common-frameworks/).

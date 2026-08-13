@@ -1,0 +1,85 @@
+---
+title: FedRAMP
+description: Authorization to sell cloud services to the US government — the 800-53 baselines, the authorization paths and the 3PAO, continuous monitoring, and the cost that the 20x modernization aims at.
+pillar: grc
+contentType: deep-dive
+maturity: practitioner
+cloud: [multi]
+frameworks: [FedRAMP, NIST 800-53]
+relatedTo:
+  - grc/common-frameworks
+  - cloud-infra/architecture-landing-zones
+  - pentest/cloud-pentesting
+updated: 2026-08-13
+sidebar:
+  hidden: true
+---
+
+FedRAMP is the US government's authorization program for cloud services: a cloud provider cannot
+sell to federal agencies until its offering has been authorized. It is a **mandatory regime**,
+not a voluntary framework, and it is the most rigorous and expensive of the common frameworks to
+achieve — which is itself the fact that shapes most decisions about it.
+
+## Built on 800-53 baselines
+
+FedRAMP does not invent its own controls. It is a **selection and process wrapper around
+[NIST 800-53](/grc/common-frameworks/nist-800-53/)**: the FedRAMP baselines are 800-53 control
+sets, tailored for cloud, at four impact levels:
+
+- **Low**, **Moderate**, and **High** — matching the FIPS 199 impact categorization, where
+  Moderate is the common target because most federal data lands there.
+- **Li-SaaS** (Low-Impact SaaS, the "tailored" baseline) — a lighter path for low-risk SaaS
+  that does not store meaningful government data.
+
+The impact level drives the control count, and the jump from Moderate to High is large. Choosing
+the right level for the data the service will actually hold is the first consequential decision,
+because over-scoping to High multiplies cost for controls the data does not require.
+
+## The authorization paths
+
+There is more than one route to an authorization, and the program has been consolidating them:
+
+- **Agency ATO** — a specific federal agency reviews the package and issues an Authorization to
+  Operate. Historically the more common route: you need a sponsoring agency that wants your
+  service.
+- **The centralized authorization** (the successor to the older JAB P-ATO) — a
+  program-office-led review that produces an authorization usable across agencies, for offerings
+  with broad government demand.
+
+Either way, an accredited independent assessor — a **3PAO** (Third Party Assessment
+Organization) — performs the security assessment and writes the Security Assessment Report. The
+provider produces the System Security Plan (SSP) documenting how each control is met; the 3PAO
+tests it; the authorizing body decides. This separation of build, assess and authorize is the
+spine of the process.
+
+## Continuous monitoring is the real cost
+
+Authorization is not the finish line. FedRAMP requires **continuous monitoring (ConMon)**:
+monthly vulnerability scans, ongoing POA&M (Plan of Action and Milestones) management to track
+and close findings, and annual assessments. An authorized service that stops feeding ConMon
+loses its standing. This is where the expense actually lives — not the one-time assessment, but
+the standing program that keeps the authorization alive, which is why FedRAMP is a commitment
+rather than a project.
+
+## The modernization direction
+
+FedRAMP's cost and slowness are widely acknowledged, and the **FedRAMP 20x** effort aims
+squarely at them: pushing toward automated, machine-readable validation of controls
+([OSCAL](/grc/common-frameworks/nist-800-53/)-based) rather than document-and-review cycles, so
+that a control's status can be continuously proven rather than periodically attested. The
+specifics move — cite the current program guidance rather than any snapshot — but the direction
+is the same [compliance-as-code](/grc/grc-engineering/) shift the rest of this pillar argues for,
+applied to the most process-heavy framework there is.
+
+**StateRAMP** is worth naming as the state-and-local analogue, built on the same 800-53 baselines
+for governments below the federal level.
+
+## Where this connects
+
+FedRAMP is [800-53](/grc/common-frameworks/nist-800-53/) plus a heavy process, so the control
+work is [cloud architecture and landing zones](/cloud-infra/architecture-landing-zones/) — the
+authorization boundary is an architecture decision before it is a paperwork one. A penetration
+test is a required part of the assessment, which is where [cloud pentesting](/pentest/cloud-pentesting/)
+becomes a compliance input, and the continuous-monitoring burden is the clearest argument for
+[GRC engineering](/grc/grc-engineering/). Its place among the frameworks is in
+[Common Frameworks](/grc/common-frameworks/).

@@ -1,0 +1,86 @@
+---
+title: PCI DSS v4.x
+description: The payment-card standard enforced by the brands rather than a government — the twelve requirements, scope as the whole game, the customized approach new in v4, and how validation actually works.
+pillar: grc
+contentType: deep-dive
+maturity: practitioner
+frameworks: [PCI DSS]
+relatedTo:
+  - grc/common-frameworks
+  - data-privacy/protection-transformation
+  - iam/aws-identity
+updated: 2026-08-13
+sidebar:
+  hidden: true
+---
+
+PCI DSS is the Payment Card Industry Data Security Standard, and it is unusual among the common
+frameworks in two ways: it is enforced by the **card brands** (Visa, Mastercard and the rest)
+through the contracts in the payment chain rather than by a government, and it is **narrow and
+prescriptive** — scoped tightly to cardholder data, and deep and specific within that scope. It
+tells you the actual settings where most frameworks tell you the outcome.
+
+## The twelve requirements
+
+PCI DSS organizes into six goals and twelve requirements, covering the familiar control families
+aimed specifically at the cardholder data environment: build and maintain a secure network
+(firewalls, no vendor-default passwords), protect stored cardholder data (encryption, and *not
+storing* what you do not need), maintain a vulnerability management program, implement strong
+access control, monitor and test networks regularly, and maintain an information security policy.
+
+Within each, the requirements get concrete in a way other frameworks avoid — specific about
+encryption, key management, logging retention, and testing cadence. This prescriptiveness is why
+PCI reads more like [CIS Benchmarks](/grc/common-frameworks/cis-controls/) than like
+[ISO 27001](/grc/common-frameworks/iso-27001/): less "manage access appropriately," more "do
+this."
+
+## Scope is the entire game
+
+The most important PCI skill is **scope reduction**, because the standard applies to every system
+that stores, processes or transmits cardholder data — *and* every system connected to those.
+Left unmanaged, scope sprawls until the whole network is in the cardholder data environment (CDE)
+and the assessment becomes ruinous.
+
+The moves that matter are architectural: **network segmentation** to wall the CDE off from
+everything else, and **not storing cardholder data at all** where possible — tokenization and
+outsourcing to a compliant payment processor remove data from scope entirely. This is where PCI
+becomes a [data protection](/data-privacy/protection-transformation/) problem: the cheapest
+cardholder data to protect is the data you never hold. Reducing scope is worth more than any
+control applied inside a bloated CDE.
+
+## The customized approach — new in v4
+
+PCI DSS v4.0 (and the v4.0.1 maintenance update) introduced the biggest structural change in the
+standard's history: the **customized approach**. Alongside the traditional "defined approach"
+(meet the requirement as written), an organization may now meet a requirement's stated
+**objective** by its own means, provided it documents a controls matrix and a targeted risk
+analysis and its assessor validates that the alternative genuinely meets the objective.
+
+This is PCI moving toward the risk-and-objective posture the other frameworks already have —
+without giving up the prescriptive default. It rewards mature organizations with strong
+engineering and adds documentation burden for everyone else. v4 also carries a set of
+future-dated requirements that phase in over time, so the applicable set depends on the date —
+check the current requirement schedule rather than assuming all of v4 is live.
+
+## How validation works
+
+Validation depends on volume and role:
+
+- **SAQ** (Self-Assessment Questionnaire) — for smaller merchants, in several types keyed to how
+  cards are handled (a fully outsourced e-commerce merchant fills a very different SAQ from one
+  that touches card data directly).
+- **ROA/ROC** (Report on Compliance) — for higher-volume merchants and service providers, a
+  **QSA** (Qualified Security Assessor) performs the assessment.
+- **ASV scans** — quarterly external vulnerability scans by an Approved Scanning Vendor.
+
+The right validation path is a function of how much card data you touch, which loops back to
+scope: reduce what you handle and you reduce not just the controls but the assessment itself.
+
+## Where this connects
+
+PCI is first an architecture and data problem — segmentation and
+[tokenization](/data-privacy/protection-transformation/) to shrink scope, and strong
+[access control](/iam/aws-identity/) inside it — and only then a paperwork one. It overlaps
+[regulations by industry](/grc/regulations-industry/) where financial-sector rules also bite, and
+its prescriptive style is the near neighbour of [CIS](/grc/common-frameworks/cis-controls/). Its
+place among the frameworks is in [Common Frameworks](/grc/common-frameworks/).

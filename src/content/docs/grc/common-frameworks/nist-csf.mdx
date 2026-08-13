@@ -1,0 +1,75 @@
+---
+title: NIST Cybersecurity Framework 2.0
+description: An organizing structure rather than a control list — the six functions as a way to reason about program coverage, Tiers and Profiles, and why CSF 2.0 making Govern its own function mattered.
+pillar: grc
+contentType: deep-dive
+maturity: foundational
+frameworks: [NIST CSF 2.0]
+relatedTo:
+  - grc/common-frameworks
+  - detection-eng/program-metrics
+  - iam/governance
+updated: 2026-08-13
+sidebar:
+  hidden: true
+---
+
+The NIST Cybersecurity Framework is the most widely adopted security framework that certifies
+nothing. That is the point of it: it is a **voluntary organizing structure**, a way to reason
+about whether a security program covers the ground it should, not a list of controls to
+implement or an audit to pass. Mistaking it for a control catalog is the first error, and it
+leads teams to ask "are we CSF compliant" — a question the framework does not define.
+
+## The functions are the framework
+
+CSF 2.0 organizes all of security into six functions, and their value is as a coverage map —
+where the program is strong, where it is thin:
+
+- **Govern** — the newest, and the one that reframes the rest. Risk management strategy, roles,
+  policy, and oversight. It is the function that decides how the other five are prioritized and
+  resourced.
+- **Identify** — know what you have and what threatens it: assets, data, suppliers, risk.
+- **Protect** — the safeguards: access control, training, data security, platform hardening.
+- **Detect** — find the thing when it happens. This is where [detection engineering](/detection-eng/)
+  lives against the framework.
+- **Respond** — act on a detected incident: containment, analysis, communication.
+- **Recover** — restore, and learn.
+
+The functions decompose into Categories and Subcategories, and the Subcategories are where CSF
+touches actual outcomes — but even there they are outcome statements ("access permissions are
+managed"), not prescriptions of how. The *how* comes from the Informative References that map
+each Subcategory to [800-53](/grc/common-frameworks/nist-800-53/), ISO 27001 and CIS. CSF is the
+scaffold; the references are the lumber.
+
+## Govern was always there — 2.0 named it
+
+The single most consequential change from 1.1 to 2.0 was promoting Govern from something
+implicit to a function of its own. It makes explicit what mature programs already knew:
+governance is not a byproduct of doing security well, it is the input that decides what "well"
+means for a given organization. The other five functions are how; Govern is why and how much.
+
+For a reader, that means a CSF 2.0 assessment that scores Protect and Detect highly but has an
+empty Govern column is describing a program running on autopilot — capable, but not steering.
+
+## Tiers and Profiles
+
+Two mechanisms make CSF usable rather than abstract:
+
+- **Tiers** (Partial, Risk Informed, Repeatable, Adaptive) describe how rigorous and
+  integrated the risk management *practice* is. They are not maturity grades to maximize — a
+  small organization operating well at Tier 2 is not failing.
+- **Profiles** are the actual tool. A Current Profile records where you are across the
+  Subcategories; a Target Profile records where you have decided to be. The gap between them is
+  a prioritized, defensible roadmap — and because it is expressed in CSF's own vocabulary, it
+  survives the conversation with executives who will never read a control catalog.
+
+## Where this connects
+
+CSF is the organizing spine most programs should start from, and it earns that by mapping
+outward: its Informative References are the crosswalk into
+[800-53](/grc/common-frameworks/nist-800-53/) and [ISO 27001](/grc/common-frameworks/iso-27001/),
+which is the same [common-control logic](/grc/compliance-mapping/) the whole pillar runs on. Its
+Detect function is [detection engineering](/detection-eng/program-metrics/) seen from the
+governance side, and Govern is where [identity governance](/iam/governance/) and the rest get
+their mandate. Its role among the other frameworks is set out in
+[Common Frameworks](/grc/common-frameworks/).

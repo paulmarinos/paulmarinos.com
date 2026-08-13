@@ -1,0 +1,83 @@
+---
+title: ISO/IEC 27001 & 27002
+description: The international certifiable standard — why 27001 certifies a management system rather than a control set, the Annex A controls and the Statement of Applicability, and how the certification cycle actually runs.
+pillar: grc
+contentType: deep-dive
+maturity: practitioner
+frameworks: [ISO 27001, ISO 27002, ISO 27701]
+relatedTo:
+  - grc/common-frameworks
+  - appsec/sdlc
+  - iam/governance
+updated: 2026-08-13
+sidebar:
+  hidden: true
+---
+
+ISO/IEC 27001 is the international, certifiable information security standard, and the thing to
+understand first is *what* gets certified. It is not the controls. It is the **management
+system** — the ISMS — the ongoing process by which an organization governs security, assesses
+risk, and improves. An organization can implement excellent controls and still fail
+certification if it cannot show the system that governs them.
+
+## 27001 is the system; 27002 is the guidance
+
+The pair is routinely conflated:
+
+- **ISO 27001** is the certifiable standard. Its main clauses (4–10) define the ISMS
+  requirements: context, leadership, planning, support, operation, performance evaluation and
+  improvement. This is the auditable part, and it is deliberately about management discipline —
+  risk assessment methodology, defined roles, management review, corrective action.
+- **ISO 27002** is not certifiable. It is the implementation guidance for the controls,
+  explaining each in depth. You use 27002 to build controls well; you are audited against 27001.
+
+The controls themselves live in **Annex A** of 27001, and the 2022 revision restructured them:
+93 controls grouped into four themes — Organizational, People, Physical, and Technological —
+down from the 114 controls in fourteen domains of the 2013 version, with eleven genuinely new
+controls (threat intelligence, information security for cloud services, secure coding, data
+leakage prevention among them).
+
+## The Statement of Applicability
+
+The document that carries an ISO certification is the **Statement of Applicability (SoA)**. For
+every Annex A control, the SoA records whether it applies, whether it is implemented, and — the
+important part — the *justification* for including or excluding it. An excluded control is
+legitimate if the risk assessment supports the exclusion; an exclusion with no rationale is a
+finding.
+
+This is what makes ISO risk-driven rather than checklist-driven: the controls you implement are
+the ones your own risk assessment selected, and the SoA is where you defend that selection to an
+auditor. It is the ISO analogue of [800-53 tailoring](/grc/common-frameworks/nist-800-53/) — the
+same idea of a justified subset, expressed as a certifiable artifact.
+
+## How certification actually runs
+
+The cycle is a three-year rhythm, not a one-time event:
+
+- **Stage 1** — a documentation review. The auditor checks the ISMS is designed and the
+  paperwork exists.
+- **Stage 2** — the certification audit proper. The auditor gathers evidence that the ISMS is
+  *operating* — that risk assessments happen, management reviews occur, corrective actions
+  close.
+- **Surveillance audits** in years one and two, lighter checks that the system is still running.
+- **Recertification** in year three, a full reassessment.
+
+The through-line is that ISO tests a living process. A binder assembled the month before Stage 2
+fails the same way a [SOC 2 Type II](/grc/common-frameworks/soc-2/) fails when controls were
+designed but never operated — both standards are built specifically to catch that.
+
+## The 27000 family
+
+27001 anchors a family worth knowing by name: **27017** and **27018** extend it to cloud
+services and cloud PII, and **27701** extends the ISMS into a privacy information management
+system (PIMS) — the bridge from security certification into
+[privacy engineering](/data-privacy/privacy-engineering/) and GDPR-adjacent obligations.
+
+## Where this connects
+
+ISO 27001 is the international counterpart to [SOC 2](/grc/common-frameworks/soc-2/) — both
+certifiable, both testing operation over design — and the two are the most common
+[mapping](/grc/compliance-mapping/) pair for a company selling internationally. Its Annex A
+controls are the other pillars in obligation form: secure coding and change management are
+[AppSec SDLC](/appsec/sdlc/), access control is [identity governance](/iam/governance/). Its
+place among the frameworks is set out in [Common Frameworks](/grc/common-frameworks/).

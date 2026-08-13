@@ -150,14 +150,18 @@ modes and the FAIR/loss-exceedance note; the three scoring systems each earn a r
 - Language-specific guidance (Python, Go, JS/TS, Java, Rust)
 
 ### 3.2 Common Insecure Coding Pitfalls
-- OWASP Top 10 — walked through with real code
-- Injection families (SQL, command, template, LDAP, NoSQL)
-- Deserialization and object injection
-- SSRF and its cloud-metadata consequences
-- Authn/authz flaws: IDOR, broken object-level authorization
-- Race conditions and TOCTOU
-- Secrets in source control
-- Dependency confusion and supply chain
+Grown a third level. OWASP Top 10 walked through with real code. The hub reframes the seven
+families by the failure mode underneath them — untrusted-data-into-an-interpreter (injection,
+deserialization, SSRF), an absent check (broken authorization, race conditions), and trusting
+your own supply (secrets, dependencies) — and indexes the children; each family is its own page.
+- **3.2.1 Injection** — SQL, command, template/SSTI, LDAP/NoSQL, second-order; parameterisation
+- **3.2.2 Deserialization & Object Injection** — pickle/Java/YAML, gadget chains, data-only formats
+- **3.2.3 SSRF & Cloud Metadata** — the 169.254.169.254 chain, allowlist-not-blocklist, IMDSv2
+- **3.2.4 Broken Object-Level Authorization** — BOLA/BFLA/BOPLA as absent checks, data-layer fix
+- **3.2.5 Race Conditions & TOCTOU** — check-use gaps, atomicity via conditional updates and constraints
+- **3.2.6 Secrets in Source Control** — git history, rotation over deletion, push protection
+- **3.2.7 Dependency Confusion & Supply Chain** — namespace confusion, lockfiles, resolver config;
+  the provenance/SLSA half stays in §3.4
 
 ### 3.3 SDLC Best Practices
 - Threat modeling (STRIDE, PASTA, attack trees) and when it's worth it
@@ -597,12 +601,13 @@ The site's differentiator is the connective tissue. Candidate cross-section piec
   children, which sit beside it and are hidden from the sidebar. The sidebar therefore never
   grows past pillar -> subsection no matter how much lands underneath, and third-level
   articles are found through the hub, search, the graph and backlinks instead. Mechanics in
-  `AGENTS.md`. Four subsections have grown a third level so far, across a spectrum of split
+  `AGENTS.md`. Five subsections have grown a third level so far, across a spectrum of split
   width: `appsec/api-cloud-native` split off a single sibling article
   (`kubernetes-workload-security`); `threat-intel/risk-prioritization` split into three
   (the CVSS / EPSS+KEV / SSVC scoring systems); `pentest/tools-commands` into five phase
-  pages; and `grc/common-frameworks` into nine, one per framework. In every case the hub is
-  reduced to durable framing plus an index and the detail moves down, and the sidebar stays at
+  pages; `appsec/insecure-coding` into seven vulnerability families; and
+  `grc/common-frameworks` into nine, one per framework. In every case the hub is reduced to
+  durable framing plus an index and the detail moves down, and the sidebar stays at
   pillar -> subsection.
   A fourth level is not planned — if a third-level article needs children, that is evidence
   the subsection above it should have been split.

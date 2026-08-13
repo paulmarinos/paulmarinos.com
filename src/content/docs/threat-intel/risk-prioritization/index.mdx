@@ -10,7 +10,7 @@ relatedTo:
   - appsec
   - cloud-infra
   - detection-eng
-updated: 2026-08-11
+updated: 2026-08-13
 sidebar:
   order: 4
 ---
@@ -28,25 +28,26 @@ question was being asked.
 
 | System | Question it answers | What it is not |
 |---|---|---|
-| **CVSS** | How bad is this flaw if exploited, in the abstract? | Not a measure of likelihood, and not a priority |
-| **EPSS** | How likely is exploitation in the next 30 days? | Not a measure of impact on *you* |
-| **KEV** | Is this being exploited right now, confirmed? | Not exhaustive — absence proves little |
-| **SSVC** | What should we *do*, given our context? | Not a score; a decision tree |
+| [**CVSS**](/threat-intel/risk-prioritization/cvss/) | How bad is this flaw if exploited, in the abstract? | Not a measure of likelihood, and not a priority |
+| [**EPSS**](/threat-intel/risk-prioritization/epss-kev/) | How likely is exploitation in the next 30 days? | Not a measure of impact on *you* |
+| [**KEV**](/threat-intel/risk-prioritization/epss-kev/) | Is this being exploited right now, confirmed? | Not exhaustive — absence proves little |
+| [**SSVC**](/threat-intel/risk-prioritization/ssvc/) | What should we *do*, given our context? | Not a score; a decision tree |
 
-The single most common error is treating CVSS base score as a priority. It was never
-designed as one — the specification says so explicitly. A 9.8 on a service reachable only
-from a management VLAN with no data behind it can rank far below a 6.5 on an
-internet-facing authentication path.
+Each system has its own page — how it is built, how to read it, and how it fails when misused.
+The single most common error is treating CVSS base score as a priority. It was never designed as
+one — the specification says so explicitly. A 9.8 on a service reachable only from a management
+VLAN with no data behind it can rank far below a 6.5 on an internet-facing authentication path.
 
 ## Why severity alone produces an unworkable queue
 
-The distributions are the argument. CVSS clusters heavily in the 7–10 band, so "critical
-and high" routinely selects 40–60% of findings — no reduction worth the name.
+The distributions are the argument. [CVSS](/threat-intel/risk-prioritization/cvss/) clusters
+heavily in the 7–10 band, so "critical and high" routinely selects 40–60% of findings — no
+reduction worth the name.
 
 Exploitation, by contrast, is rare. Only a small minority of published CVEs are ever
 exploited in the wild. That asymmetry is the entire opportunity: a signal correlated with
-*actual* exploitation cuts far more aggressively than one correlated with theoretical
-severity.
+*actual* [exploitation](/threat-intel/risk-prioritization/epss-kev/) cuts far more aggressively
+than one correlated with theoretical severity.
 
 This is the same base-rate reasoning that governs detection quality — a rule firing on a
 rare event needs precision proportional to its rarity, or the queue drowns. The maths is
@@ -60,12 +61,14 @@ remembered from a conference talk — including from this page.
 
 ## A prioritization model that survives challenge
 
-The useful move is to stop scoring and start deciding. Four inputs, in order of how much
+The useful move is to stop scoring and start deciding — which is the logic
+[SSVC](/threat-intel/risk-prioritization/ssvc/) formalizes. Four inputs, in order of how much
 they usually change the answer:
 
-1. **Confirmed exploitation** — KEV membership, or credible reporting. This is a near-binary
-   escalation, not a modifier.
-2. **Exploitation likelihood** — EPSS, used as a threshold rather than a number to average.
+1. **Confirmed exploitation** — [KEV](/threat-intel/risk-prioritization/epss-kev/) membership, or
+   credible reporting. This is a near-binary escalation, not a modifier.
+2. **Exploitation likelihood** — [EPSS](/threat-intel/risk-prioritization/epss-kev/), used as a
+   threshold rather than a number to average.
 3. **Exposure** — is the asset reachable by the actor you're worried about? This is where
    [architecture](/cloud-infra/) does more for the queue than any score: segmentation
    changes reachability, and reachability changes priority.

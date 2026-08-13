@@ -1,0 +1,80 @@
+---
+title: EPSS & KEV
+description: The two exploitation signals that cut the queue — EPSS as a probability of exploitation in the next 30 days, KEV as confirmed exploitation happening now, and how to use each as a threshold rather than a number to average.
+pillar: threat-intel
+contentType: deep-dive
+maturity: practitioner
+frameworks: [EPSS, KEV]
+relatedTo:
+  - threat-intel/risk-prioritization
+  - appsec/code-scanning
+  - detection-eng/detection-lifecycle
+updated: 2026-08-13
+sidebar:
+  hidden: true
+---
+
+[CVSS](/threat-intel/risk-prioritization/cvss/) tells you how bad a flaw *would* be. EPSS and KEV
+tell you whether anyone is *actually* using it — and because exploitation is rare, that is the
+signal that does the real cutting. Only a small minority of published CVEs are ever exploited in
+the wild, so a signal correlated with actual exploitation cuts the queue far more aggressively
+than one correlated with theoretical severity. These two are the exploitation signals, and they
+answer subtly different questions.
+
+## EPSS — probability of exploitation
+
+The **Exploit Prediction Scoring System** is a data-driven model, maintained by FIRST, that
+produces for each CVE a **probability (0 to 1) that it will be exploited in the next 30 days**.
+It is trained on real-world exploitation data correlated against features of each vulnerability —
+so it is a statistical prediction, not a human judgement, and it updates as the evidence changes.
+
+Two numbers come with each CVE and they are not the same:
+
+- The **probability** — e.g. 0.08, an 8% chance of exploitation in the window.
+- The **percentile** — where that CVE ranks against all others. A 90th-percentile CVE is more
+  likely to be exploited than 90% of the catalogue.
+
+The percentile is usually the more useful for setting a policy, because it is stable against
+shifts in the absolute scale. The critical usage rule is to treat EPSS as a **threshold, not a
+number to average**: "escalate everything above the Nth percentile" is a defensible policy;
+folding EPSS into a blended score with CVSS destroys exactly the independent information that made
+it worth having. And because EPSS **moves daily**, a queue ordered by it once is a snapshot
+presented as a policy — it has to be re-read on a cadence.
+
+## KEV — confirmed exploitation, now
+
+CISA's **Known Exploited Vulnerabilities** catalogue is a different kind of signal: not a
+prediction but a **confirmation**. A CVE is on the KEV list because exploitation has been
+*observed* — reliable evidence it is being used in the wild. It exists as part of US federal
+Binding Operational Directive 22-01, which sets remediation deadlines for federal agencies, but
+its value is universal: KEV membership is about as close to certainty as vulnerability
+intelligence gets.
+
+That makes KEV a **near-binary escalation** in any prioritization model — if it is on the list,
+it jumps the queue, full stop. The one discipline it demands is the inverse: **absence from KEV
+is not safety**. It is a catalogue of *confirmed* exploitation, not a complete census of all
+exploitation. Plenty of exploited vulnerabilities are not (yet) on it, so "not in KEV" means
+"not confirmed," never "not dangerous."
+
+## The two together
+
+They stack rather than compete. KEV is the certain-but-narrow signal; EPSS is the
+probabilistic-but-broad one. A working policy reads: **anything in KEV escalates immediately;
+above it, EPSS percentile sets the threshold for what gets attention next.** That ordering —
+confirmed exploitation, then predicted likelihood — is the top of the
+[four-input model](/threat-intel/risk-prioritization/), and it is what turns an unworkable
+severity-sorted queue into a defensible one.
+
+Both are exploitation signals about the vulnerability, not about *you* — neither knows whether
+the affected asset is internet-facing or air-gapped, which is why exposure and business
+consequence remain the other two inputs the model needs.
+
+## Where this connects
+
+EPSS and KEV are the likelihood and confirmation inputs to the
+[prioritization model](/threat-intel/risk-prioritization/), the signals that actually cut the
+queue that [CVSS](/threat-intel/risk-prioritization/cvss/) severity alone cannot. They are what a
+[scanning programme](/appsec/code-scanning/) should sort by instead of raw severity, and
+confirmed-exploitation signal is also an input to the
+[detection backlog](/detection-eng/detection-lifecycle/) — a vulnerability being exploited in the
+wild is a detection you want, not only a patch you owe.

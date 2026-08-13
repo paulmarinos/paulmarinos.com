@@ -1,0 +1,85 @@
+---
+title: SSVC
+description: The scoring system that isn't a score — Stakeholder-Specific Vulnerability Categorization as a decision tree, its four outcomes, the inputs that feed it, and why a decision beats a number for a queue.
+pillar: threat-intel
+contentType: deep-dive
+maturity: practitioner
+frameworks: [SSVC]
+relatedTo:
+  - threat-intel/risk-prioritization
+  - appsec/code-scanning
+  - cloud-infra/posture-iac
+updated: 2026-08-13
+sidebar:
+  hidden: true
+---
+
+SSVC — Stakeholder-Specific Vulnerability Categorization — is the odd one out among the scoring
+systems, because it is **not a score**. It is a decision tree. Where [CVSS](/threat-intel/risk-prioritization/cvss/)
+gives you a number and leaves you to decide what to do with it, SSVC takes the inputs and outputs
+the decision directly. Developed at Carnegie Mellon's SEI and adopted in a tailored form by CISA,
+it is the formalization of the "stop scoring and start deciding" move that the
+[prioritization model](/threat-intel/risk-prioritization/) is built on.
+
+## A decision tree, not a number
+
+The mechanics are deliberately un-mathematical. You answer a small set of questions about a
+vulnerability *in your context*, and the tree walks to a categorical outcome. There is no
+arithmetic, no weighted average, no 0-to-10 scale — because the designers' argument is that the
+false precision of a number is itself the problem. A 6.7 implies a confidence the underlying
+judgements do not support; a decision does not.
+
+That also means SSVC is **transparent and auditable** in a way a score is not. When someone
+challenges why a finding was ranked where it was, the answer is the path through the tree — this
+was reachable, this was being exploited, this asset is mission-critical — rather than an appeal to
+an opaque formula. For [writing prioritization down so it survives a hostile reading](/threat-intel/report-writing/),
+that legibility is the whole point.
+
+## The inputs
+
+SSVC's decision points are the same factors the four-input model uses, made explicit as tree
+branches. The CISA coordinator/deployer version turns on:
+
+- **Exploitation status** — none, proof-of-concept, or active. This is where
+  [KEV and EPSS](/threat-intel/risk-prioritization/epss-kev/) feed in: KEV membership sets
+  "active," and that single fact moves the outcome hard.
+- **Exposure** — how reachable the affected system is, which is an
+  [architecture](/cloud-infra/posture-iac/) fact, not a property of the vulnerability.
+- **Mission impact / automatable** — whether exploitation can be automated at scale, and what its
+  effect on the mission would be.
+- **Well-being / safety impact** — the human consequence, for systems where that applies.
+
+The inputs are yours, which is the "stakeholder-specific" in the name — the same CVE produces
+different SSVC outcomes for different organizations, by design, because the exposure and mission
+branches differ.
+
+## The four outcomes
+
+The deployer tree lands each vulnerability in one of four buckets, and their value is that they
+map to *action* rather than to severity:
+
+- **Track** — no immediate action; monitor and remediate on the normal cycle.
+- **Track\*** — monitor closely; there is something that could change the answer.
+- **Attend** — needs attention sooner than the normal cycle; bring in the relevant owners.
+- **Act** — remediate urgently; pull in leadership and treat it as the priority.
+
+A queue sorted into Track / Attend / Act is immediately more actionable than one sorted by CVSS
+number, because each bucket is a decision that has already been made rather than a figure someone
+still has to interpret.
+
+## The honest cost
+
+SSVC's inputs — exposure, mission impact — are ones you have to *know*, which means it demands
+asset context that many organizations have not assembled. That is a real adoption cost, and it is
+also the point: the context SSVC forces you to supply is exactly the context that was missing when
+CVSS-sorted queues went wrong. The cost is not overhead; it is the work that prioritization
+actually requires, made unavoidable.
+
+## Where this connects
+
+SSVC is the decision-tree expression of the whole [prioritization model](/threat-intel/risk-prioritization/)
+— it consumes [CVSS](/threat-intel/risk-prioritization/cvss/) severity and the
+[EPSS/KEV](/threat-intel/risk-prioritization/epss-kev/) exploitation signals and turns them, plus
+exposure and mission context, into an action. Its exposure branch is an
+[architecture and posture](/cloud-infra/posture-iac/) question, and its output is what a
+[scanning programme](/appsec/code-scanning/) should route findings by instead of a raw score.

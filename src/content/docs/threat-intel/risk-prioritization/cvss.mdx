@@ -1,0 +1,82 @@
+---
+title: CVSS
+description: The severity score everyone misuses as a priority — what the base, temporal and environmental metrics actually measure, why the base score was never a priority, and what changed in v4.0.
+pillar: threat-intel
+contentType: deep-dive
+maturity: practitioner
+frameworks: [CVSS]
+relatedTo:
+  - threat-intel/risk-prioritization
+  - appsec/code-scanning
+  - detection-eng/detection-quality
+updated: 2026-08-13
+sidebar:
+  hidden: true
+---
+
+The Common Vulnerability Scoring System answers one question: **how bad is this flaw if it is
+exploited, in the abstract?** It is a severity model, and a good one for what it is. Almost every
+problem people have with CVSS comes from using it to answer a question it does not address —
+which vulnerability to fix first. Its own specification says the base score is not a priority; the
+industry uses it as one anyway.
+
+## Three metric groups, and only one gets published
+
+CVSS is built from three groups, and the confusion starts with the fact that only the first is
+normally what you see:
+
+- **Base** — the intrinsic characteristics of the vulnerability, constant over time and
+  independent of any environment. Attack vector (network, adjacent, local, physical), attack
+  complexity, privileges required, user interaction, and the impact on confidentiality,
+  integrity and availability. **This is the single number vendors publish** — the "CVSS 9.8" in
+  an advisory.
+- **Temporal** (renamed *Threat* in v4) — factors that change over time: is exploit code
+  available, is there a fix. These *lower* or adjust the base as the situation evolves.
+- **Environmental** — your context: how much the affected asset matters to you, and any mitigating
+  controls already in place. This is where a score becomes about *your* system.
+
+The trap is baked into the ecosystem: the base score is the one that travels, and it is precisely
+the one that knows nothing about your environment. The temporal and environmental groups, which
+carry the context that would make the score decision-relevant, are the ones almost nobody
+computes.
+
+## The vector string is the real artifact
+
+Behind every CVSS score is a **vector string** — `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H` —
+that records every metric choice. The number is a lossy summary of the vector, and the vector is
+what you actually reason from. Two "9.8" vulnerabilities with different vectors are different
+problems: one may be network-reachable with no privileges, the other may require local access.
+Reading the vector, not the number, is the difference between using CVSS and being used by it.
+
+The exploitability sub-metrics (how the attacker reaches it) and the impact sub-metrics (what
+they get) are separable in the vector, and keeping them separate is what lets CVSS feed a real
+model rather than collapse into a single misleading figure.
+
+## Why the base score is not a priority
+
+The distribution is the proof. CVSS base scores cluster heavily in the high band — a large
+fraction of all CVEs land at 7.0 or above — so ranking by base score selects an unworkable
+fraction of the queue and orders it badly within that fraction. A 9.8 on a service reachable only
+from a management VLAN, behind authentication, with nothing sensitive behind it, can matter far
+less than a 6.5 on an internet-facing login path. Severity is an input to priority, not priority
+itself, which is the whole argument of the [prioritization model](/threat-intel/risk-prioritization/).
+
+## What changed in v4.0
+
+CVSS v4.0 responded to exactly these criticisms. It splits the old base into clearer
+exploitability and impact halves, adds explicit provisions for supplementary metrics
+(automatable, recovery, safety), and — most importantly for how it should be *used* — introduces
+nomenclature (CVSS-B, CVSS-BTE) that names whether a score includes only Base, or Base plus
+Threat and Environmental. The naming is a direct attempt to stop people quoting the base-only
+number as if it were the whole picture. Adoption is gradual, so v3.1 vectors remain common; know
+which version a score is in before comparing.
+
+## Where this connects
+
+CVSS is the severity input to the [prioritization model](/threat-intel/risk-prioritization/),
+where it is one of four factors rather than the answer. It is the number
+[scanners](/appsec/code-scanning/) attach to every finding — which is why a scanning programme
+that sorts by CVSS inherits exactly the unworkable-queue problem this page describes — and the
+base-rate reasoning behind that failure is the same maths as
+[detection quality](/detection-eng/detection-quality/). The likelihood signals that CVSS
+deliberately excludes are [EPSS and KEV](/threat-intel/risk-prioritization/epss-kev/).

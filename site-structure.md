@@ -47,12 +47,15 @@
 - Anti-patterns: red/yellow/green theater, 3D pie charts, meaningless risk quadrants
 
 ### 1.4 Risk Prioritization
-- CVSS vs. EPSS vs. SSVC — what each is actually for
-- KEV catalog and exploit-in-the-wild signals
-- Asset criticality and business context weighting
-- Threat-informed defense: prioritizing by observed adversary behavior
-- Building a defensible prioritization model
-- Quantitative approaches (FAIR, loss exceedance curves)
+Grown a third level. The hub keeps the four-input model, the base-rate argument, the failure
+modes and the FAIR/loss-exceedance note; the three scoring systems each earn a reference page.
+- Asset criticality and business context weighting; threat-informed defense
+- Building a defensible prioritization model; quantitative approaches (FAIR, loss exceedance)
+- **1.4.1 CVSS** — base/temporal/environmental, the vector string, why the base score is not a
+  priority, what changed in v4.0
+- **1.4.2 EPSS & KEV** — probability of exploitation vs. confirmed exploitation, threshold use,
+  why absence from KEV is not safety
+- **1.4.3 SSVC** — the decision tree, its four outcomes, the inputs it forces you to know
 
 ### 1.5 Effective Communication
 - Writing for the audience: engineer, director, board
@@ -191,13 +194,23 @@
 `/grc`
 
 ### 4.1 Common Frameworks
-- NIST CSF 2.0 and SP 800-53
-- ISO/IEC 27001 & 27002
-- SOC 2 (Trust Services Criteria, Type I vs. Type II)
-- FedRAMP (baselines, authorization paths, 20x/modernization)
-- CIS Controls and benchmarks
-- PCI DSS v4.x
-- HITRUST, CMMC
+Third subsection to grow a third level, and the widest split so far: one page per framework
+rather than by kind. The hub keeps the durable framing (frameworks differ in kind not detail;
+what they share; choosing without collecting them all) plus a kind-grouped index; each child
+is a real deep-dive on one framework.
+- **4.1.1 NIST CSF 2.0** — the six functions as a coverage map, Tiers and Profiles, Govern
+- **4.1.2 NIST SP 800-53** — the catalog and families, 800-53B baselines, OSCAL, the crosswalk
+  denominator (and 800-171 as the near sibling)
+- **4.1.3 ISO/IEC 27001 & 27002** — ISMS vs. control guidance, Annex A and the SoA, the
+  certification cycle, the 27000 family
+- **4.1.4 SOC 2** — Trust Services Criteria, Type I vs. II, reading the report, SOC 1/2/3
+- **4.1.5 FedRAMP** — 800-53 baselines, authorization paths and the 3PAO, ConMon, 20x
+- **4.1.6 PCI DSS v4.x** — the twelve requirements, scope reduction, the customized approach,
+  validation (SAQ/ROC/ASV)
+- **4.1.7 CIS Controls & Benchmarks** — the prioritized Controls and Implementation Groups, the
+  prescriptive Benchmarks, why they double as posture baselines
+- **4.1.8 HITRUST CSF** — harmonization of many sources, the e1/i1/r2 tiers, inheritance
+- **4.1.9 CMMC** — certification of NIST 800-171, the three levels, FCI vs. CUI, the DFARS basis
 
 ### 4.2 Regulations by Industry
 - Healthcare: HIPAA, HITECH
@@ -584,11 +597,13 @@ The site's differentiator is the connective tissue. Candidate cross-section piec
   children, which sit beside it and are hidden from the sidebar. The sidebar therefore never
   grows past pillar -> subsection no matter how much lands underneath, and third-level
   articles are found through the hub, search, the graph and backlinks instead. Mechanics in
-  `AGENTS.md`. Two subsections have grown a third level so far, and they exercise the two
-  shapes: `appsec/api-cloud-native` split off a single sibling article
-  (`kubernetes-workload-security`), while `pentest/tools-commands` fanned out into five
-  phase pages at once with the hub reduced to orientation plus an index. Both leave the
-  sidebar at pillar -> subsection.
+  `AGENTS.md`. Four subsections have grown a third level so far, across a spectrum of split
+  width: `appsec/api-cloud-native` split off a single sibling article
+  (`kubernetes-workload-security`); `threat-intel/risk-prioritization` split into three
+  (the CVSS / EPSS+KEV / SSVC scoring systems); `pentest/tools-commands` into five phase
+  pages; and `grc/common-frameworks` into nine, one per framework. In every case the hub is
+  reduced to durable framing plus an index and the detail moves down, and the sidebar stays at
+  pillar -> subsection.
   A fourth level is not planned — if a third-level article needs children, that is evidence
   the subsection above it should have been split.
 - **Per-section landing page:** what this is, why it matters, how it connects to the other six, then subsection index.

@@ -37,15 +37,26 @@ quietly missing.
   lifecycle's contribution is the word *against*. Collection without a requirement is
   hoarding.
 - **Processing.** Turning raw material into something analysable: parsing, normalising,
-  deduplicating, translating, extracting. Unglamorous and mostly engineering, which is why
-  it is chronically under-resourced relative to how much analyst time it silently consumes.
+  deduplicating, enriching. Mostly engineering, chronically under-resourced, and the one
+  phase no other subsection owns — covered in full in
+  [Processing & Enrichment](/threat-intel/intelligence-lifecycle/processing/).
 - **Analysis.** The step where observations become a judgement — the whole subject of
   [Analytic Methods](/threat-intel/analytic-methods/).
 - **Dissemination.** The judgement, in a form its consumer can act on:
   [reporting](/threat-intel/report-writing/) and
   [briefing](/threat-intel/effective-communication/).
 - **Feedback.** Whether it answered the question, what the consumer did, and what the
-  requirement should become next.
+  requirement should become next. Instrumenting this phase is
+  [its own page](/threat-intel/intelligence-lifecycle/feedback/).
+
+Three parts of the loop earn pages of their own; the rest of the phases live with their
+craft elsewhere in the pillar:
+
+| Page | What it covers |
+|---|---|
+| [F3EAD](/threat-intel/intelligence-lifecycle/f3ead/) | The targeting cycle translated to defense, phase by phase, and the exploit discipline defenders skip |
+| [Processing & Enrichment](/threat-intel/intelligence-lifecycle/processing/) | Normalization, deduplication, enrichment and indicator aging — the phase that eats analyst time invisibly |
+| [Feedback & Product Health](/threat-intel/intelligence-lifecycle/feedback/) | The signals that reveal whether intelligence changed anything, ranked by strength, and retiring products |
 
 ## Feedback separates programs from report factories
 
@@ -59,26 +70,21 @@ because of this?* It is uncomfortable precisely because it is diagnostic. A cons
 cannot name an action, a decision, or a changed prior is telling you the product serves no
 requirement — and that finding should flow back to direction and change what gets made.
 This is also the honest basis for program metrics: work produced against a requirement
-counts differently from work produced because it was interesting.
+counts differently from work produced because it was interesting. Which signals count,
+how to collect them without begging, and when to retire a product are covered in
+[Feedback & Product Health](/threat-intel/intelligence-lifecycle/feedback/).
 
 ## F3EAD, the loop at operations tempo
 
 Targeting doctrine runs a different cycle: **find, fix, finish, exploit, analyze,
 disseminate**. Where the classic cycle runs on requirements and a production calendar,
-F3EAD runs on contact — each engagement generates the material for the next.
-
-Translated to defense, find/fix/finish is the incident response arc: detect, scope,
-[contain](/dfir/incident-response/). The interesting phase is **exploit**, because it names
-something defenders systematically waste. A finished incident is collection — ground truth
-about your own environment, your actual adversary, and your controls under load, richer
-than anything a feed will ever deliver. Mining those artefacts, analysing them, and
-disseminating the results into detections and requirements is the difference between an
-incident that cost you and an incident that taught you.
-
-The two loops fit different teams and compose. Standing production against strategic
-requirements wants the classic cycle; a team embedded with a SOC runs closer to F3EAD's
-tempo. A mature program runs both and wires them together: what F3EAD's exploit phase
-surfaces becomes an update to the standing requirements the slower loop runs on.
+F3EAD runs on contact — the [incident response arc](/dfir/incident-response/) up front,
+and behind it the **exploit** phase, which names something defenders systematically waste:
+a finished incident is ground truth about your own environment, your actual adversary, and
+your controls under load, richer than anything a feed will ever deliver. The two loops fit
+different teams and compose — what the fast loop's exploit phase surfaces becomes an
+update to the standing requirements the slow loop runs on. The full defensive
+translation, phase by phase, is in [F3EAD](/threat-intel/intelligence-lifecycle/f3ead/).
 
 ## Where the neat loop breaks
 

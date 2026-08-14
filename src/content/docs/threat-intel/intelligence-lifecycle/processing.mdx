@@ -1,0 +1,117 @@
+---
+title: Processing & Enrichment
+description: The phase with no deliverable — normalization into a canonical store, deduplication and feed overlap, enrichment joins, indicator aging, and where automation genuinely helps instead of hallucinating.
+pillar: threat-intel
+contentType: deep-dive
+maturity: practitioner
+frameworks: [STIX/TAXII, MISP]
+relatedTo:
+  - threat-intel/intelligence-lifecycle
+  - threat-intel/collection-sourcing
+  - detection-eng/data-pipeline
+  - ai-automation/security-applications
+  - ai-automation/verification
+updated: 2026-08-14
+sidebar:
+  hidden: true
+---
+
+Processing sits between [collection](/threat-intel/collection-sourcing/) and analysis:
+everything that turns raw material into something an analyst can reason over. It is
+[the lifecycle's](/threat-intel/intelligence-lifecycle/) invisible phase because it
+produces no deliverable — nobody briefs a normalization job — and its neglect is invisible
+too, until you measure where analyst time actually goes.
+
+The symptom of an unbuilt processing phase has a name: **the analyst as ETL layer**.
+Copying indicators between portals, reformatting one vendor's export for another vendor's
+import, manually checking whether this hash has been seen before, re-reading the same
+advisory from three feeds. In immature programs this quietly consumes the largest single
+share of analyst hours — skilled judgement doing pipeline work, and the pipeline still
+unreliable because it lives in browser tabs.
+
+## Normalization and the canonical store
+
+Collection arrives in every shape: STIX bundles, CSV exports, PDF advisories, emails from
+the [sharing community](/threat-intel/sharing-community/), a spreadsheet from IR.
+Processing's first job is a **canonical store** — one place where every observation lands
+in one shape, with its provenance attached. A MISP instance, a commercial TIP, even a
+disciplined database: the platform matters less than the property that *everything goes
+through it*.
+
+The store is what makes the team's most common question — *have we seen this before?* —
+answerable in seconds instead of in someone's memory. That is institutional memory as
+infrastructure: it survives the analyst who would otherwise have been the lookup table.
+Treat STIX as an exchange format at the edges rather than a modelling constraint inside;
+the store's schema should serve your analysis, and speak STIX at the door.
+
+## Deduplication is provenance accounting
+
+The same indicator arriving from four feeds is one observation with four deliveries, and
+conflating the two corrupts everything downstream: "widely reported" starts to mean
+"widely syndicated," and confidence inflates with circulation. Deduplication therefore
+collapses copies while *keeping* the provenance trail — which sources carried it, who was
+first, who added context beyond the copy.
+
+That trail is a free byproduct with a direct use: measured over months, it is the feed
+overlap analysis that [procurement](/threat-intel/running-a-cti-program/) needs. A feed
+that is consistently second and adds nothing beyond syndication is a line item answering
+to data rather than to a renewal pitch.
+
+## Enrichment: the joins that make observables analysable
+
+A bare indicator answers nothing. Enrichment attaches the context questions are made of:
+
+- **Internal**: have we seen it, where, and does it touch anything critical — the asset
+  and identity joins.
+- **External**: infrastructure registration and hosting history, sandbox verdicts,
+  related samples, who else reports it.
+- **Temporal**: first seen, last seen, and by whom — the fields aging depends on.
+
+This is the same join discipline [detection engineering runs](/detection-eng/data-pipeline/)
+over events; here it runs over intelligence, and the two pipelines profit from sharing
+sources — the asset inventory that enriches an alert is the one that should enrich an
+indicator. Enrichment is also where automation pays first: every join above is mechanical,
+and every one done by hand is analyst time spent being a script.
+
+## Indicators rot at different speeds
+
+An unmaintained store fills with the dead. Hashes are invalidated by recompilation in
+seconds; IP addresses and domains turn over in days to weeks — and infrastructure is
+resold, so yesterday's C2 is tomorrow's legitimate host; behavioural intelligence holds
+for months to years. The gradient is the Pyramid of Pain read as a decay curve, and it is
+the same reason [behavioural conclusions outlive indicators](/threat-intel/analytic-methods/)
+in analysis.
+
+Processing owns the decay policy: type-based expiry as the default, sightings extending
+life, expiry demoting rather than deleting (the historical record stays queryable — *was*
+this ever bad — while leaving the active set). The cost of skipping this lands downstream:
+expired indicators exported into detection content become false positives against reused
+infrastructure, and every such alert [erodes the SOC's trust](/detection-eng/detection-quality/)
+in everything else the intel team ships.
+
+## Automation, and the line it must not cross
+
+The phase is automation's natural home precisely because it is mechanical: parsing,
+format conversion, dedup, enrichment joins, expiry runs, and increasingly
+[LLM summarization of advisory prose](/ai-automation/security-applications/) into
+structured entries. The economics are straightforward — every hour of pipeline replaces
+recurring analyst hours forever.
+
+One line needs guarding. A hallucinated summary written into the canonical store becomes
+institutional memory with a citation, and later analysis will trust it *because it came
+from the store*. Extraction into the store therefore needs
+[verification discipline](/ai-automation/verification/) — grounding against the source
+document, schema validation, and spot-checking — in a way that a draft on an analyst's
+screen does not. Automate the mechanical; keep judgement, and anything that writes
+unreviewed "facts," out of the pipeline.
+
+## Where this connects
+
+Upstream is [Collection & Sourcing](/threat-intel/collection-sourcing/), which decides
+what arrives; downstream is [analysis](/threat-intel/analytic-methods/), which inherits
+whatever this phase failed to clean. The enrichment joins mirror
+[the detection data pipeline](/detection-eng/data-pipeline/), decay debt surfaces as
+[detection quality problems](/detection-eng/detection-quality/), and the automation that
+scales the phase comes from [§6's pipelines](/ai-automation/security-applications/) under
+[verification guardrails](/ai-automation/verification/). Feed overlap measured here feeds
+[procurement](/threat-intel/running-a-cti-program/).

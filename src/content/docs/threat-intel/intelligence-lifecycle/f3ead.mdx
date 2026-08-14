@@ -1,0 +1,117 @@
+---
+title: F3EAD
+description: Find, fix, finish, exploit, analyze, disseminate — the targeting cycle translated phase by phase to defense, why exploit is the phase defenders waste, and how to wire the fast loop to the slow one.
+pillar: threat-intel
+contentType: deep-dive
+maturity: practitioner
+frameworks: [F3EAD]
+relatedTo:
+  - threat-intel/intelligence-lifecycle
+  - threat-intel/analytic-methods
+  - threat-intel/sharing-community
+  - dfir/incident-response
+  - dfir/malware-analysis
+  - detection-eng/detection-lifecycle
+updated: 2026-08-14
+sidebar:
+  hidden: true
+---
+
+F3EAD came out of special-operations targeting doctrine, built for a tempo at which
+[the deliberate intelligence cycle](/threat-intel/intelligence-lifecycle/) is too slow:
+engagements arriving faster than a requirements committee can meet. Its structural idea is
+that operations and intelligence are one loop — the first half (find, fix, finish) acts,
+the second half (exploit, analyze, disseminate) turns the action's residue into the next
+action's starting point. Operations *produce* intelligence, by design rather than as a
+byproduct.
+
+That idea translates cleanly to defense, because a security team in contact with an
+adversary is running engagements whether it names them or not.
+
+## The defensive translation
+
+- **Find.** A lead appears: a detection fires, a
+  [hunt hypothesis](/detection-eng/threat-hunting/) pays off, a
+  [sharing community](/threat-intel/sharing-community/) passes a warning, an external
+  party notifies you. Find is lead development — deciding which signals are worth an
+  engagement.
+- **Fix.** Confirm and scope. The adversary's presence is localized in time and space:
+  which accounts, which hosts, since when. This is
+  [investigation method](/dfir/investigation-method/) under another name, and the
+  discipline of proving a boundary rather than assuming one.
+- **Finish.** Contain and evict — [the response arc](/dfir/incident-response/). One
+  honest caveat travels with the word: in defense, finish ends the *intrusion*, and the
+  adversary continues to exist, retooling included. That asymmetry is exactly why the
+  second half of the loop carries the long-term value.
+- **Exploit.** Harvest everything the engagement produced — treated fully below, because
+  it is the phase that separates teams that learn from teams that merely recover.
+- **Analyze.** Put the harvest in context:
+  [cluster it against prior activity, pivot on it](/threat-intel/analytic-methods/),
+  compare it with community reporting. Was this the same operator as March? Does the
+  tooling match anything shared last quarter?
+- **Disseminate.** The outputs land where they change something:
+  [detection ideas into the backlog](/detection-eng/detection-lifecycle/), behavioural
+  writeups [across the tearline to the community](/threat-intel/sharing-community/),
+  requirement updates into the slow loop, and the executive account of what happened.
+
+## Exploit, the phase defenders skip
+
+A finished incident is the richest collection event a defender ever gets: ground truth
+about the adversary's tradecraft against *your* controls, in *your* environment, with full
+telemetry. What deserves harvesting before it evaporates:
+
+- Initial access artefacts — the phish, the exploited service, the abused credential, and
+  the control that should have stopped each.
+- Command-and-control configuration and infrastructure —
+  [extracted from samples](/dfir/malware-analysis/), pivotable to related infrastructure.
+- Operator behaviour: working hours, tool sequence, mistakes, reactions to containment —
+  the tradecraft layer that clusters better than any indicator.
+- Dwell-time evidence: what fired late, what stayed silent, which log source would have
+  shortened the timeline.
+
+The skipping has causes worth naming, because each has a fix. The team is exhausted and
+the business wants the ticket closed — so make intelligence sign-off a condition of
+incident closure, a checklist line rather than an aspiration. The retrospective focuses on
+process ("did the playbook work?") and never asks about the adversary — so give the retro
+a second agenda item. Rebuilds destroy artefacts before anyone images them — so
+[evidence preservation](/dfir/evidence-legal/) needs to outrank the restore clock for the
+few hosts that matter analytically.
+
+## Wiring the fast loop to the slow one
+
+F3EAD self-perpetuates: exploit output generates pivots, pivots generate finds, and a team
+in sustained contact can run on this loop alone for months. Left unwired, that becomes its
+own failure mode — a team perpetually fighting the last incident, with
+[standing requirements](/threat-intel/intelligence-requirements/) frozen the day they were
+written.
+
+The wiring is one deliberate step at the end of each engagement: exploit and analyze
+output is read against the standing requirement set, and the set is amended — a new
+requirement raised, an existing one sharpened, a stale one retired. The fast loop supplies
+the evidence; the slow loop decides what it means for direction. Teams that skip this step
+have tactical memory and strategic amnesia.
+
+The reverse wiring matters equally: the slow loop decides which finds deserve an
+engagement at all. Without requirements, F3EAD's find phase degrades into chasing
+whatever fired most recently — tempo without direction.
+
+## When F3EAD is the wrong model
+
+The model assumes contact. Strategic questions — where targeting is trending, what next
+year's controls budget should assume, whether an actor's shift toward your sector is real
+— have no engagement to anchor on, and forcing them into F3EAD produces strategy
+extrapolated from your last incident, a sample of one. Those questions belong to the
+deliberate cycle, on its calendar, against its requirements. The test is simple: if there
+is a live adversary action at the center, run F3EAD; if the center is a question, run
+[the cycle](/threat-intel/intelligence-lifecycle/).
+
+## Where this connects
+
+The find-fix-finish arc is [incident response](/dfir/incident-response/) and
+[investigation method](/dfir/investigation-method/) wearing targeting vocabulary, with
+[malware analysis](/dfir/malware-analysis/) doing exploit's technical heavy lifting.
+Analyze is [analytic methods](/threat-intel/analytic-methods/) at engagement tempo, and
+dissemination lands in [the detection backlog](/detection-eng/detection-lifecycle/) and
+[the sharing community](/threat-intel/sharing-community/). The loop's relationship to
+requirements — both directions — is the wiring described in
+[the parent page](/threat-intel/intelligence-lifecycle/).

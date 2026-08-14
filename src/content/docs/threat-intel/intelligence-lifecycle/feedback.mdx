@@ -1,0 +1,107 @@
+---
+title: Feedback & Product Health
+description: Instrumenting the lifecycle's final phase — the four feedback signals ranked by strength, mechanisms that collect them without begging, detection outcomes as ground truth, and retiring products on purpose.
+pillar: threat-intel
+contentType: deep-dive
+maturity: practitioner
+relatedTo:
+  - threat-intel/intelligence-lifecycle
+  - threat-intel/intelligence-requirements
+  - detection-eng/detection-lifecycle
+  - detection-eng/program-metrics
+updated: 2026-08-14
+sidebar:
+  hidden: true
+---
+
+[The parent page](/threat-intel/intelligence-lifecycle/) argues that feedback is the phase
+separating programs from report factories. This page is the mechanics, and the mechanics
+matter because of one property: **feedback almost never arrives on its own.** Consumers
+who acted on a report see no reason to say so; consumers who ignored it have even less.
+A team that waits for feedback will conclude from silence whatever it prefers to believe.
+The phase has to be instrumented.
+
+## Four signals, ranked by strength
+
+1. **Actions observed.** A [backlog entry](/detection-eng/detection-lifecycle/) citing the
+   report, a risk register update, a patch window moved, a decision memo quoting the
+   assessment. Strongest because it is revealed preference — nobody performs a Jira ticket
+   to be polite.
+2. **Explicit statements.** The consumer says what they did or decided. Strong, with one
+   systematic bias: politeness. "Useful, thanks" is noise; the calibrating question is
+   *what did you do differently?* — and "nothing, but keep sending it" is a real answer
+   that should be recorded as the negative signal it is.
+3. **Usage telemetry.** Opens, clicks, portal views. Weak: it measures circulation, and a
+   skim is indistinguishable from a decision. Useful mainly at the extremes — a product
+   nobody even opens is answering a question nobody asked.
+4. **Silence.** The default, and worth exactly nothing in either direction — yet it is
+   what most recurring products run on for years. Treat unmeasured products as unread
+   until evidence says otherwise.
+
+## Mechanisms: make the asking cheap
+
+Each mechanism exists to convert silence into one of the stronger signals at near-zero
+cost to the consumer:
+
+- **Attach the question to delivery.** One line at the foot of the product: *did this
+  change anything — one sentence back.* Response rates are low; the responses are gold.
+- **Take a standing agenda slot** in the consumer team's own review meeting — five minutes
+  in *their* ritual outperforms a survey in yours every time.
+- **Close RFIs with the requester.** An [RFI](/threat-intel/intelligence-requirements/)
+  is finished when the requester confirms the question is answered — which captures the
+  action while it is still fresh. Repeat requesters are the clearest loyalty signal a
+  program gets.
+- **Tag products with the requirement they serve.** The tag tells the consumer why they
+  received the thing, and it routes whatever feedback returns onto the requirement —
+  where the [quarterly review](/threat-intel/intelligence-requirements/) will actually
+  use it.
+
+## Detection outcomes are feedback with the politeness removed
+
+For tactical products, the truthful consumer is the detection. Intelligence that became
+[rules](/detection-eng/detection-lifecycle/) generates outcome data with no social filter:
+true-positive yield says the intelligence described something real in your environment; a
+[false-positive stream](/detection-eng/detection-quality/) traced to intel-derived content
+says the source that supplied it deserves scrutiny. Wiring rule outcomes back to the feed,
+report, or community that spawned the rule turns the SOC's daily grind into a continuous
+quality score on collection — feedback nobody had to be asked for.
+
+## The product portfolio: pilot, cadence, review, retire
+
+Recurring products deserve the same lifecycle discipline as
+[requirements](/threat-intel/intelligence-requirements/), because they rot the same way —
+the consumer changes roles, the decision disappears, the format fossilizes:
+
+- **Pilot** with a named consumer and a stated question before anything becomes "weekly."
+- **Cadence** is a choice to revisit — a weekly nobody acts on may be a monthly, or a
+  requirement-triggered alert.
+- **Review** each product on the requirements cadence, against the signals above rather
+  than recollection.
+- **Retire** without ceremony. A retired product is capacity returned to questions someone
+  is asking. The quiet test works: pause a suspect product and count the days before
+  anyone notices. A month of nobody asking *is* the review.
+
+Zombie products carry a cost beyond the hours they consume: they train consumers that
+material from the intel team is skippable, and that expectation transfers to the products
+that matter.
+
+## The boundary with program metrics
+
+This page is the phase run per product and per consumer.
+[Program metrics](/threat-intel/running-a-cti-program/) aggregate these signals to defend
+the program's existence and budget — the same numbers at portfolio altitude, the mirror of
+[how detection engineering reports itself](/detection-eng/program-metrics/). The division
+of labour: feedback decides *what to fix*; metrics prove *what it was worth*. And
+feedback's terminal output flows to direction — every signal collected here is an input to
+the next [requirements review](/threat-intel/intelligence-requirements/), which is what
+"closing the loop" means concretely.
+
+## Where this connects
+
+The signals feed [the requirements review](/threat-intel/intelligence-requirements/) and
+aggregate into [program metrics](/threat-intel/running-a-cti-program/). Detection outcomes
+arrive via [the detection lifecycle](/detection-eng/detection-lifecycle/) and
+[detection quality](/detection-eng/detection-quality/), making the SOC the one consumer
+whose feedback is automatic. The phase this page instruments is the last arc of
+[the loop](/threat-intel/intelligence-lifecycle/), and the reason the loop deserves the
+name.

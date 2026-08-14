@@ -87,13 +87,19 @@ modes and the FAIR/loss-exceedance note; the three scoring systems each earn a r
 - Pyramid of Pain and why behavioural conclusions outlive indicators
 
 ### 1.8 The Intelligence Lifecycle
+Grown a third level. The hub keeps the six phases, the report-factory argument, the
+critiques and the working-week mapping; the three parts of the loop no other subsection
+owns each earn a page.
 - The classic cycle: direction → collection → processing → analysis → dissemination → feedback
-- Feedback as the phase that separates mature programs from report factories
-- F3EAD (find, fix, finish, exploit, analyze, disseminate) as the ops-tempo variant, and when
-  each model fits
 - Honest critiques of the cycle — where the neat loop breaks against real analyst workflow
 - Mapping the abstraction onto a working team's actual week
 - The mirror-image loop in §7.2 (detection lifecycle) — same shape, different artifact
+- **1.8.1 F3EAD** — the targeting cycle translated to defense phase by phase, exploit as
+  the phase defenders waste, wiring the fast loop to the slow one, when it's the wrong model
+- **1.8.2 Processing & Enrichment** — the canonical store, dedup as provenance accounting,
+  enrichment joins, indicator decay, automation and the hallucination line (ties to §6.5/§6.3)
+- **1.8.3 Feedback & Product Health** — the four signals ranked, collection mechanisms,
+  detection outcomes as unfiltered feedback, the product portfolio and retiring on purpose
 
 ### 1.9 Intelligence Requirements
 - Requirements as questions, not topics: the PIR hierarchy and what makes a requirement answerable
@@ -659,12 +665,13 @@ pipeline** (§4.5 × §6.5) and **Encryption that proves nothing** (§8.4 key ma
   children, which sit beside it and are hidden from the sidebar. The sidebar therefore never
   grows past pillar -> subsection no matter how much lands underneath, and third-level
   articles are found through the hub, search, the graph and backlinks instead. Mechanics in
-  `AGENTS.md`. Five subsections have grown a third level so far, across a spectrum of split
+  `AGENTS.md`. Six subsections have grown a third level so far, across a spectrum of split
   width: `appsec/api-cloud-native` split off a single sibling article
   (`kubernetes-workload-security`); `threat-intel/risk-prioritization` split into three
-  (the CVSS / EPSS+KEV / SSVC scoring systems); `pentest/tools-commands` into five phase
-  pages; `appsec/insecure-coding` into seven vulnerability families; and
-  `grc/common-frameworks` into nine, one per framework. In every case the hub is reduced to
+  (the CVSS / EPSS+KEV / SSVC scoring systems); `threat-intel/intelligence-lifecycle` into
+  three (F3EAD, processing, feedback — the parts of the loop no other subsection owns);
+  `pentest/tools-commands` into five phase pages; `appsec/insecure-coding` into seven
+  vulnerability families; and `grc/common-frameworks` into nine, one per framework. In every case the hub is reduced to
   durable framing plus an index and the detail moves down, and the sidebar stays at
   pillar -> subsection.
   A fourth level is not planned — if a third-level article needs children, that is evidence

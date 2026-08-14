@@ -22,6 +22,12 @@
 ## 1. Threat Intelligence
 `/threat-intel`
 
+Two layers. §1.1–1.7 are analyst craft — the skills that make an individual piece of
+intelligence good. §1.8–1.11 are the process and program layer — the machinery that decides
+what gets worked on, for whom, and where it flows. The §1/§7 boundary (see Open Questions)
+holds throughout: §1 owns deciding and communicating what matters; §7 owns operationalizing
+it as detections.
+
 ### 1.1 Report Writing
 - Intelligence report formats (tactical, operational, strategic)
 - BLUF structure and executive summaries
@@ -79,6 +85,47 @@ modes and the FAIR/loss-exceedance note; the three scoring systems each earn a r
   defensive work rarely needs past the first
 - Actor naming across vendors: aliases, not a shared namespace
 - Pyramid of Pain and why behavioural conclusions outlive indicators
+
+### 1.8 The Intelligence Lifecycle
+- The classic cycle: direction → collection → processing → analysis → dissemination → feedback
+- Feedback as the phase that separates mature programs from report factories
+- F3EAD (find, fix, finish, exploit, analyze, disseminate) as the ops-tempo variant, and when
+  each model fits
+- Honest critiques of the cycle — where the neat loop breaks against real analyst workflow
+- Mapping the abstraction onto a working team's actual week
+- The mirror-image loop in §7.2 (detection lifecycle) — same shape, different artifact
+
+### 1.9 Intelligence Requirements
+- Requirements as questions, not topics: the PIR hierarchy and what makes a requirement answerable
+- Decomposing a requirement into essential elements of information (EEIs)
+- Standing vs. ad hoc requirements; the RFI workflow and its lifecycle
+- Collection planning: mapping requirements to sources and exposing coverage gaps — this
+  subsection decides *what* to collect; §1.6 is the craft of collecting it
+- Review cadence, requirement retirement, and tagging output by the requirement it serves
+- Requirements as the honest basis for program metrics: produced-against-requirement vs.
+  produced-because-interesting
+- Intake ties: §7.2 detection backlog, §4.6 risk register, §9.1 incident lessons
+
+### 1.10 Sharing & Community
+- TLP 2.0: what each label actually permits, and the common misreadings
+- The ecosystem: ISACs/ISAOs, national CERTs, vendor trust groups, informal peer circles
+- Sanitization and tearlines — sharing the behaviour without burning the source (ties to §1.7:
+  behavioural conclusions travel better than indicators anyway)
+- STIX/TAXII and MISP as sharing transport (format mechanics in §1.6)
+- The free-rider problem: what contributing back actually buys
+- Legal and contractual constraints on what can leave the building (ties to §4, §9.5)
+
+### 1.11 Running a CTI Program
+- Consumers first: mapping stakeholders (SOC, IR, vuln management, GRC, executives) and what
+  each actually needs from intelligence
+- Tactical / operational / strategic as products for different consumers, not team silos;
+  geopolitical and sector threat landscape as the strategic tier's raw material
+- Team shapes by scale: the one-analyst function vs. the dedicated team, and where CTI reports
+  in the org chart
+- Maturity assessment (CTI-CMM) and sequencing what to build first
+- Vendor and feed procurement: evaluating against your own requirements (§1.9) rather than
+  the vendor's demo scenario
+- Program metrics beyond report counts (ties to §7.7)
 
 ---
 

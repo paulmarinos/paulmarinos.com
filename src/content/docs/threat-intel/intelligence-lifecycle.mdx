@@ -1,0 +1,130 @@
+---
+title: The Intelligence Lifecycle
+description: The direction → collection → processing → analysis → dissemination → feedback loop, F3EAD as its operations-tempo sibling, and an honest account of where the model breaks against real analyst workflow.
+pillar: threat-intel
+contentType: deep-dive
+maturity: foundational
+frameworks: [Intelligence Cycle, F3EAD]
+relatedTo:
+  - threat-intel/collection-sourcing
+  - threat-intel/analytic-methods
+  - threat-intel/report-writing
+  - detection-eng/detection-lifecycle
+  - dfir/incident-response
+updated: 2026-08-14
+sidebar:
+  order: 8
+---
+
+Every other page in this pillar covers a stage of work: collecting, analysing, writing,
+briefing. This page is the loop that connects them — the intelligence cycle — and an honest
+account of how it behaves once a real team tries to run it.
+
+The model earns its place by forcing one claim: intelligence is production, with a customer
+at both ends. The loop starts with someone's question, ends with an answer delivered to that
+person, and continues only when they say whether it helped. Every failure mode this pillar
+warns about — reports nobody reads, analysis without a "so what" — is a phase of this loop
+quietly missing.
+
+## The six phases
+
+- **Direction.** Deciding what needs to be known, and for whom. The output is a set of
+  requirements with a named consumer attached. This is the phase most often skipped
+  entirely, and everything downstream inherits the omission.
+- **Collection.** Gathering against those requirements — feeds, OSINT, internal telemetry.
+  The craft lives in [Collection & Sourcing](/threat-intel/collection-sourcing/); the
+  lifecycle's contribution is the word *against*. Collection without a requirement is
+  hoarding.
+- **Processing.** Turning raw material into something analysable: parsing, normalising,
+  deduplicating, translating, extracting. Unglamorous and mostly engineering, which is why
+  it is chronically under-resourced relative to how much analyst time it silently consumes.
+- **Analysis.** The step where observations become a judgement — the whole subject of
+  [Analytic Methods](/threat-intel/analytic-methods/).
+- **Dissemination.** The judgement, in a form its consumer can act on:
+  [reporting](/threat-intel/report-writing/) and
+  [briefing](/threat-intel/effective-communication/).
+- **Feedback.** Whether it answered the question, what the consumer did, and what the
+  requirement should become next.
+
+## Feedback separates programs from report factories
+
+A report factory runs the first five phases on a calendar and measures itself by output:
+reports shipped, indicators pushed, briefings held. The loop never closes, so production
+drifts toward whatever is easiest to produce — and the weekly digest that nobody reads can
+run for years on pure momentum, because no mechanism exists for its irrelevance to register.
+
+The feedback phase is one question asked with a straight face: *what did you do differently
+because of this?* It is uncomfortable precisely because it is diagnostic. A consumer who
+cannot name an action, a decision, or a changed prior is telling you the product serves no
+requirement — and that finding should flow back to direction and change what gets made.
+This is also the honest basis for program metrics: work produced against a requirement
+counts differently from work produced because it was interesting.
+
+## F3EAD, the loop at operations tempo
+
+Targeting doctrine runs a different cycle: **find, fix, finish, exploit, analyze,
+disseminate**. Where the classic cycle runs on requirements and a production calendar,
+F3EAD runs on contact — each engagement generates the material for the next.
+
+Translated to defense, find/fix/finish is the incident response arc: detect, scope,
+[contain](/dfir/incident-response/). The interesting phase is **exploit**, because it names
+something defenders systematically waste. A finished incident is collection — ground truth
+about your own environment, your actual adversary, and your controls under load, richer
+than anything a feed will ever deliver. Mining those artefacts, analysing them, and
+disseminating the results into detections and requirements is the difference between an
+incident that cost you and an incident that taught you.
+
+The two loops fit different teams and compose. Standing production against strategic
+requirements wants the classic cycle; a team embedded with a SOC runs closer to F3EAD's
+tempo. A mature program runs both and wires them together: what F3EAD's exploit phase
+surfaces becomes an update to the standing requirements the slower loop runs on.
+
+## Where the neat loop breaks
+
+The cycle is a genuinely useful model carrying some honest caveats:
+
+- **The phases run concurrently.** An analyst mid-analysis goes back and collects. A team
+  is in all six phases at once across a dozen products. Anyone auditing a team for clean
+  sequential phase transitions is measuring the diagram rather than the work.
+- **The model assumes an institution.** It was drawn for an apparatus with separated roles —
+  tasking authorities, dedicated collectors, all-source analysts. A two-person CTI team *is*
+  the whole diagram, and imposing ceremony at the phase boundaries adds cost without adding
+  rigour.
+- **Most programs run the loop backwards.** Collection arrives first — the feeds were
+  bought, the alerts flow — and "requirements" get reverse-engineered to justify what is
+  already coming in. Supply-driven intelligence answers the questions the vendor's
+  visibility can answer, which overlap only by luck with the questions your organization
+  needs answered.
+
+Read as a workflow to enforce, the cycle produces process theatre. Read as a diagnostic
+checklist, it earns its keep: when intelligence is being produced and nothing is changing,
+"which phase is missing?" almost always has a specific answer — usually direction or
+feedback, the two phases where the customer lives.
+
+## The loop in a working week
+
+The abstraction maps onto a calendar more directly than it first appears, because the loop
+is fractal — it runs at several cadences at once:
+
+- Morning triage is collection and processing against standing requirements.
+- An ad hoc question from IR runs the entire loop in miniature, inside a day.
+- The weekly product is a dissemination cadence, and the two minutes spent asking its
+  readers what they used is the feedback phase.
+- The incident retrospective is F3EAD's exploit phase wearing blameless-postmortem clothes.
+- The quarterly requirements review is direction, done deliberately.
+
+The test is concrete: point to where direction and feedback happen in your team's actual
+calendar. If no meeting, ritual, or document does either job, those phases are aspirational —
+and the loop is an assembly line with nobody ordering and nobody receiving.
+
+## Where this connects
+
+The [detection lifecycle](/detection-eng/detection-lifecycle/) is this loop's mirror image —
+idea intake through deployment to retirement, the same shape with a rule as the artefact —
+and this loop's dissemination phase is that one's front door. Within the pillar,
+[collection](/threat-intel/collection-sourcing/) is the second phase as a craft,
+[analytic methods](/threat-intel/analytic-methods/) the fourth, and
+[reporting](/threat-intel/report-writing/) with
+[communication](/threat-intel/effective-communication/) the fifth.
+[Incident response](/dfir/incident-response/) is F3EAD's find-fix-finish arc, and its
+retrospectives are the exploit phase this page argues defenders waste.

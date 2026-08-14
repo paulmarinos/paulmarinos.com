@@ -22,3 +22,6 @@ pnpm-debug.log*
 
 # Personal review notes — kept local, not published
 for-your-review.md
+
+# External reference material (copyrighted works) — never commit to this public repo
+sources/

@@ -1,0 +1,135 @@
+---
+title: The Shared Responsibility Model
+description: Where the provider's job ends and yours begins across IaaS, PaaS, FaaS and SaaS — the three providers' framings, the gray zones where the line blurs, and the model as a working tool for audits and incident scoping.
+pillar: cloud-infra
+contentType: deep-dive
+maturity: foundational
+cloud: [aws, azure, gcp, multi]
+relatedTo:
+  - cloud-infra/workload-container
+  - grc/compliance-mapping
+  - dfir/incident-response
+  - dfir/digital-forensics
+updated: 2026-08-14
+sidebar:
+  order: 7
+---
+
+Every control question in this pillar reduces to the same first question: *whose job is
+this?* The shared responsibility model is the answer, and the rest of the pillar assumes it
+silently — landing zones, segmentation, key management and posture are all names for work
+on *your* side of a line this page makes explicit. AWS states the line most cleanly:
+the provider owns security *of* the cloud, the customer owns security *in* it. Everything
+interesting is in where that line sits for a given service, and in the ways people
+misread it.
+
+## The line moves with the service model
+
+Responsibility transfers to the provider one layer at a time as you move up the service
+spectrum:
+
+- **IaaS.** The provider owns facilities, hardware and the hypervisor. Everything above —
+  guest OS and its patching, network configuration, workloads, identity, data — is yours.
+  The line is low and unambiguous, which is why IaaS arguments are rare.
+- **PaaS.** The provider takes the OS and runtime. You keep the application, its
+  configuration, its identities and its data. Most managed services live here, and so do
+  most arguments, because "managed" describes the runtime rather than the outcome.
+- **FaaS / serverless.** The provider takes everything up to the function boundary. What
+  remains is exactly the part attackers use: your code, its dependencies, the event
+  sources that invoke it, and the role it runs as.
+- **SaaS.** The provider runs the application entirely. You keep data, entitlements and
+  configuration — which sounds like little until you count the breach reports that begin
+  with a sharing setting or an over-scoped OAuth grant.
+
+Read the gradient from the other end and it becomes the pillar's premise: **four things
+never transfer at any service model** — your data and its classification, your identities
+and entitlements, your configuration, and your decisions about what may leave. There is
+no service tier at which those become the provider's problem.
+
+## Three providers, three framings
+
+The models agree on substance and differ in articulation, which matters mostly when you
+map controls across clouds. AWS publishes the canonical of/in split, refined per service.
+Azure frames responsibility as per-service-tier matrices — more granular on paper, and
+worth reading when a service straddles tiers. Google positions the idea as **shared
+fate**: substantively, secure-by-default configurations, opinionated blueprints, and the
+provider accepting a stake in customer outcomes. The posture is genuine and the defaults
+are genuinely better; the line itself, and who answers for a breach on your side of it,
+sits exactly where it does elsewhere. For SaaS vendors there is no standard framing at
+all — the responsibility matrix is whatever the contract and trust page say, and reading
+them is part of [adopting the service](/cloud-infra/workload-container/).
+
+## Where the line blurs
+
+Three gray zones account for most real-world confusion:
+
+- **Managed services with ambiguous maintenance.** Managed Kubernetes is the canonical
+  example: the provider patches the control plane, node patching depends on which node
+  type you chose, and your container images were never anyone's responsibility except
+  yours. Every managed service has a version of this seam, and it is documented — the
+  failure is in adopting the service without locating it.
+- **Cross-tenant isolation failures.** Research teams keep finding them in managed
+  databases, build services and AI platforms: below-the-line failures where the provider's
+  isolation broke and *your* data carried the impact. Your controls here are all
+  secondary — encryption under your own keys, monitoring for impossible access,
+  contractual attestations — which is worth internalizing as the residual risk of the
+  model itself rather than pretending the line makes it zero.
+- **Responsibility versus accountability.** The line assigns operational duty; it never
+  moves accountability. A regulator, a customer or a court holds you answerable for your
+  data's fate regardless of whose layer failed — the same logic
+  [data-protection law applies to controllers](/grc/regulations-region/) who outsource
+  processing. The provider can do your patching; nobody can do your accountability.
+
+The rule that resolves all three: the line moves only by documented service contract,
+never by assumption, and "I assumed the provider handled it" appears in incident reports
+with a frequency that justifies the bluntness.
+
+## Misconfiguration is the customer-side constant
+
+The empirical record is lopsided. Year after year, public cloud breach post-mortems land
+overwhelmingly above the line: exposed storage, over-permissive identities, leaked keys,
+disabled logging — configuration, every time. Gartner's much-quoted projection that 99%
+of cloud security failures would be the customer's fault has aged into an observation.
+Provider-side failures are real and headline-grabbing precisely because they are rare.
+
+The planning consequence: for almost every organization, worrying about the provider's
+half is misallocated attention. Your exposure concentrates in your own half — and the
+rest of this pillar is that half, organized:
+[structure](/cloud-infra/architecture-landing-zones/),
+[network](/cloud-infra/network-segmentation/),
+[workloads](/cloud-infra/workload-container/),
+[keys](/cloud-infra/cryptography-key-management/),
+[drift](/cloud-infra/posture-iac/), and
+[recovery](/cloud-infra/resilience-recovery/).
+
+## The model as a working tool
+
+Treated as a diagram in a slide deck, the model is trivia. It earns its keep in three
+recurring jobs:
+
+- **Audit control mapping.** Every control in a framework has an owner under the model:
+  inherited from the provider, yours, or split. The provider's SOC 2 and ISO certificates
+  are evidence for *their* half only — [compliance mapping](/grc/compliance-mapping/) is
+  where inherited controls get claimed correctly, and claiming the provider's attestation
+  for a control on your side is the audit finding that writes itself.
+- **Incident scoping.** The first question in cloud IR is which side of the line the
+  failure sits on, because it determines everything operational: your
+  [containment options](/dfir/incident-response/), your escalation path into the
+  provider, and your forensic reach —
+  [below the line you will never get the disk](/dfir/digital-forensics/), so the
+  evidence that exists is the evidence you arranged to collect in advance.
+- **Service adoption.** Before any new managed service ships, someone locates the line
+  for it: the service's own responsibility documentation, the seams, and the controls
+  that remain yours. A service with no responsibility matrix to read is itself a
+  finding.
+
+## Where this connects
+
+The model's audit half lands in [compliance mapping](/grc/compliance-mapping/), where
+inherited controls either get claimed honestly or become findings. Its incident half
+shapes [cloud IR](/dfir/incident-response/) and explains why
+[cloud forensics](/dfir/digital-forensics/) is a readiness problem — what you can
+investigate below the line is what you arranged in advance. Per-service, the line is
+applied every time [a managed service's posture](/cloud-infra/workload-container/) is
+assessed, and the identity plane that never transfers is the entire subject of
+[IAM](/iam/).

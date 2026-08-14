@@ -444,6 +444,8 @@ throughout: command → what it does → what the output means → what to do ne
 - Enrichment: asset, identity, geo, threat intel joins
 - Pipeline tooling (Cribl, Vector, Fluent Bit) and cost control
 - Log coverage gap analysis — knowing what you can't see
+- Data-plane logs are off by default on every provider (CloudTrail data events, Azure
+  storage logs, GCP Data Access logs) — the standing coverage gap that surprises during IR
 
 ### 7.4 Detection Quality & Testing
 - Precision, recall, and why alert volume is a bad metric
@@ -526,6 +528,29 @@ both could apply, the test is whether the subject is the workload or the substra
 - DDoS and edge protection
 - Multi-region failover and its security implications
 
+### 8.7 The Shared Responsibility Model
+The foundational framing the rest of the pillar assumes. Foundational-maturity anchor page.
+- The line by service model: IaaS, PaaS, FaaS, SaaS — what the provider takes at each step,
+  and what never transfers (configuration, identity, data, egress)
+- Provider framings compared: AWS's model, Azure's service-tier version, GCP's "shared fate"
+- Where the model breaks: managed-service gray zones, cross-tenant vulnerabilities, and the
+  honest critique that the line moves only by contract, never by assumption
+- Misconfiguration as the customer-side constant — why nearly every cloud breach lands
+  above the line
+- The model as a working tool: control-by-control ownership mapping for audits (ties to §4.4)
+  and for incident scoping (ties to §9.1)
+
+### 8.8 SaaS Security
+- The posture problem: hundreds of admin consoles, no common control plane, insecure-by-
+  default settings that nobody owns
+- SSPM and the four control planes: identity, configuration, data exposure, telemetry
+- OAuth app governance — the §2.2 consent-grant attack surface, managed as posture rather
+  than incident
+- Shadow SaaS and tenant sprawl discovery
+- SaaS audit-log quality variance, and how detection inherits it (ties to §7.3)
+- Boundaries: §2 owns the identity plane itself, §10.5 owns data egress; this subsection
+  owns the SaaS platform posture program
+
 ---
 
 ## 9. Incident Response & Digital Forensics
@@ -545,6 +570,8 @@ reconstruction of a known incident.
 - Triage workflows, severity declaration, and incident command
 - Identity-centric containment — usually the fastest lever (ties to §2)
 - Cloud IR: snapshotting, credential revocation, blast radius scoping (ties to §8)
+- Forensic readiness: the logging, retention and access decisions made *before* an incident
+  that determine what an investigation can ever recover (ties to §7.3)
 - Communications during an incident: stakeholders, counsel, customers, regulators
 - Postmortems and blameless retrospectives
 

@@ -1,0 +1,127 @@
+---
+title: SaaS Security
+description: Hundreds of admin consoles and no common control plane — SSPM's actual job, OAuth app governance as posture, shadow tenant discovery, and the audit-log variance that detection inherits.
+pillar: cloud-infra
+contentType: deep-dive
+maturity: practitioner
+relatedTo:
+  - cloud-infra/shared-responsibility
+  - cloud-infra/posture-iac
+  - iam/azure-identity
+  - iam/governance
+  - data-privacy/dlp-egress
+  - detection-eng/data-pipeline
+updated: 2026-08-14
+sidebar:
+  order: 8
+---
+
+[The responsibility gradient](/cloud-infra/shared-responsibility/) ends at SaaS with what
+sounds like a small remainder: data, entitlements, configuration. This page is that
+remainder multiplied by the size of a real estate — hundreds of applications in a typical
+mid-size organization, each one a bespoke admin console with its own security model, its
+own RBAC vocabulary, its own defaults, and its own idea of what a log is. The three IaaS
+control planes took years to learn; SaaS hands you one per vendor.
+
+Boundaries first, because this subsection sits between two others: [§2](/iam/) owns the
+identity plane itself — federation, SCIM, conditional access —
+and [§10.5](/data-privacy/dlp-egress/) owns what data leaves. This page owns the
+**platform posture program**: keeping each tenant's configuration, grants and telemetry
+in a known-good state.
+
+## The posture problem
+
+Three properties make SaaS posture structurally harder than IaaS posture:
+
+- **Ownership is scattered by design.** Each application is administered by the team that
+  bought it — the CRM by sales operations, the HR suite by HR, the design tool by design.
+  These administrators are competent professionals with no security mandate, making
+  tenant-level security decisions as a side effect of their day jobs.
+- **Defaults favor adoption.** Vendors tune out-of-box settings for frictionless
+  onboarding: sharing on, external collaboration open, MFA optional. Whatever was true at
+  onboarding is rarely revisited, so the estate's baseline is whatever the growth team of
+  each vendor chose.
+- **The ground moves.** Vendors ship features continuously, and a feature release can
+  change security semantics overnight — a new sharing mechanism, a new AI assistant with
+  tenant-wide read access, a permission model migration. Configuration reviewed last year
+  describes a product that no longer exists.
+
+## What SSPM actually does — and its ceiling
+
+SSPM is [the posture-management move](/cloud-infra/posture-iac/) applied to SaaS:
+continuous configuration assessment across tenants via each vendor's admin APIs, scored
+against baselines. The domains that matter are consistent across products — identity
+hygiene (dormant admins, MFA coverage, lingering external users), configuration against
+baseline, data exposure (public links, org-wide shares), third-party app grants, and
+whether the audit telemetry is even switched on.
+
+The ceiling is structural and worth stating plainly: SSPM sees what vendor APIs expose.
+The major platforms — the office suites, the CRM, the code host — are well covered; the
+long tail of two hundred smaller apps is dark to every tool on the market, because there
+is no API to read. Coverage claims in this category describe the vendor's connector list
+rather than your estate. The same finding-queue caveat applies here as everywhere in
+posture work: a thousand findings across ninety tenants is a
+[prioritization problem](/threat-intel/risk-prioritization/) before it is a remediation
+one.
+
+## OAuth app governance: the consent grant, managed as posture
+
+The [consent-grant attack](/iam/azure-identity/) is usually told as an incident story: a
+user approves a plausible-looking app, and the attacker holds API access to that mailbox
+that survives password resets and laughs at MFA — the token *is* the access. The posture
+telling is more useful, because the attack is only possible in a tenant whose grant
+surface was unmanaged:
+
+- An **inventory of granted applications and scopes**, reviewed on a cadence — dormant
+  grants revoked like the [stale entitlements](/iam/governance/) they are.
+- **User consent restricted** for high-risk scopes, with an admin-consent workflow taking
+  its place; publisher verification required for the rest.
+- **App-to-app trust treated as supply chain.** Stored integration tokens chain tenants
+  to vendors and vendors to each other; token theft at integration providers has
+  repeatedly cascaded into their customers' tenants. Every standing grant is an ingress
+  path whose security you have outsourced — the inventory above is also your blast-radius
+  map for the day one of those vendors is breached.
+
+## Shadow SaaS and tenant sprawl
+
+Two distinct discovery problems hide under "shadow IT." **Unsanctioned apps** are the
+classic case: nobody in security knows the tool exists. **Unmanaged tenants of sanctioned
+apps** are subtler and now more common — the free-tier workspace a team spun up with
+personal accounts, invisible precisely because the *product* is approved.
+
+Discovery sources, in rough order of yield: the IdP's sign-in logs, expense and
+procurement records, [DNS and egress telemetry](/cloud-infra/network-segmentation/), and
+browser-level inventory. None is complete; the union is decent.
+
+What makes discovery worth doing is the onboarding path behind it. An app brought behind
+the IdP inherits [joiner/mover/leaver automation](/iam/governance/), MFA policy and
+sign-in telemetry in one move — which converts shadow IT from a policing problem into a
+service: *we found it, here is SSO, now it's safer and nobody's workflow died.* The
+friction to budget for is the SSO tax — vendors routinely gate SSO and audit logs behind
+enterprise tiers, which makes those line items a procurement criterion rather than an
+afterthought.
+
+## Telemetry variance, and who inherits it
+
+Audit logging across SaaS varies in every dimension that matters: whether admin and data
+events are logged at all, retention, export latency, API access, format stability — and
+whether logs cost extra. [Detection](/detection-eng/data-pipeline/) inherits every bit of
+that variance: the SaaS columns of a log coverage map are where "we assumed it was
+logged" goes to die, the same data-plane-defaults lesson the IaaS providers teach,
+repeated per vendor.
+
+The durable fix is buying it right: audit-log API access, admin-event coverage and
+retention floors belong in procurement requirements, checked before signature — the one
+moment the customer has leverage.
+
+## Where this connects
+
+This is the top of [the responsibility gradient](/cloud-infra/shared-responsibility/),
+where everything left is configuration — run as
+[the same posture program](/cloud-infra/posture-iac/) the rest of the pillar applies to
+infrastructure. The grant surface is [§2.2's consent-grant attack](/iam/azure-identity/)
+seen from the defender's calendar, and app inventory review is
+[entitlement governance](/iam/governance/) wearing a vendor's logo. What the data does
+once shared externally is [§10.5's egress problem](/data-privacy/dlp-egress/), and the
+telemetry each tenant emits — or doesn't — lands in
+[§7.3's coverage map](/detection-eng/data-pipeline/).

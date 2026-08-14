@@ -1,0 +1,82 @@
+---
+title: Zero Trust
+description: NIST SP 800-207 as it is actually written — per-request decisions at policy enforcement points, identity as the perimeter, microsegmentation, the CISA maturity gradient, and why buying it isn't doing it.
+pillar: iam
+contentType: deep-dive
+maturity: practitioner
+frameworks: [NIST SP 800-207, CISA ZTMM]
+relatedTo:
+  - iam/frameworks
+  - iam/azure-identity
+  - cloud-infra/network-segmentation
+updated: 2026-08-14
+sidebar:
+  hidden: true
+---
+
+Strip the vendor language and **NIST SP 800-207** says one thing: network location is not
+evidence of trustworthiness. Every access request gets authenticated, authorized and
+evaluated against current context — regardless of where it comes from — and the
+authorization holds for that request, not for the session, the subnet, or the badge that
+got someone into the building. Everything else in the model is machinery for making that
+one sentence true at scale.
+
+## The machinery
+
+- **Policy Decision Point and Policy Enforcement Point.** Every request path routes
+  through an enforcement point that asks a decision point: *should this be allowed, right
+  now, given this identity, this device, this resource, this context?* The words doing the
+  work are "right now" — the decision is per-request and re-evaluated as context changes,
+  which is what separates the architecture from a login page with extra steps.
+- **Identity as the perimeter.** With no trusted network, the entire authorization burden
+  moves into identity and device posture. In practice that makes
+  [Conditional Access](/iam/azure-identity/) and its equivalents the real PDP of most
+  estates — the place where "user + device + location + risk" becomes an allow, a
+  step-up, or a deny.
+- **Microsegmentation.** The network half of the same principle: if no zone is trusted,
+  no flow is implicit, and [east-west reachability](/cloud-infra/network-segmentation/)
+  becomes something you grant rather than something that exists. Containment stops being
+  an incident-time activity and becomes a property of the design.
+- **Signals feeding the decision.** Device health, patch level, credential strength,
+  behavioural risk — the decision point is only as good as its inputs, which is why zero
+  trust programs quietly become telemetry programs.
+
+## The maturity gradient
+
+The **CISA Zero Trust Maturity Model** is useful precisely because it refuses the binary.
+It grades five pillars — identity, devices, networks, applications, data — from
+traditional through optimal, and its honest implication is that every real organization is
+mid-gradient somewhere. The model turns "are we zero trust?" (unanswerable, and usually
+answered with a purchase order) into "which pillar is furthest behind and what moves it
+one stage?" — a question with a budget line attached.
+
+Sequencing follows from where the leverage is. Identity signals and per-request policy
+come first because they upgrade every other pillar's decisions; device posture second,
+because it is the input identity decisions most often lack; network segmentation runs in
+parallel as the long-lead item; data-level policy is usually last because it depends on
+[classification actually existing](/data-privacy/classification-discovery/).
+
+## How it fails
+
+- **As a purchase.** ZTNA replacing the VPN is a fine project and is one pillar at one
+  stage. Declaring victory there leaves lateral movement, standing privilege and implicit
+  service-to-service trust exactly where they were.
+- **As a rebranding.** The same network, the same standing access, a new dashboard.
+  The test is behavioural: did any request that used to succeed on location alone start
+  failing? If nothing broke, nothing changed.
+- **As a human-only model.** The framework's language assumes subjects that authenticate
+  interactively. The [non-human majority](/iam/non-human-identity/) of the directory —
+  and [autonomous agents](/iam/frameworks/zero-knowledge-trust/) after them — stretch its
+  assumptions hardest, because "verify at request time" presumes the requester's identity
+  and intent are stable things a policy can evaluate.
+
+## Where this connects
+
+This is one leg of [the three-framework comparison](/iam/frameworks/). Its enforcement
+reality is [Conditional Access](/iam/azure-identity/) on the identity side and
+[segmentation architecture](/cloud-infra/network-segmentation/) on the network side; its
+telemetry appetite is fed by the same sources
+[detection engineering ranks richest](/detection-eng/data-pipeline/). Where its
+assumptions run out — the platform that must itself be trusted, the agent whose intent
+isn't evaluable at request time — is where
+[Zero Knowledge Trust](/iam/frameworks/zero-knowledge-trust/) picks up the argument.

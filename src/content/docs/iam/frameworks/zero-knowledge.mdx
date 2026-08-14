@@ -1,0 +1,78 @@
+---
+title: Zero Knowledge
+description: Proving without revealing — ZK proofs in identity terms, PAKE and what OPAQUE fixes, verifiable credentials and selective disclosure, where the cryptography is mature and where the operations aren't.
+pillar: iam
+contentType: deep-dive
+maturity: advanced
+relatedTo:
+  - iam/frameworks
+  - data-privacy/protection-transformation
+  - data-privacy/privacy-engineering
+updated: 2026-08-14
+sidebar:
+  hidden: true
+---
+
+A **zero-knowledge proof** lets one party convince another that a statement is true while
+revealing nothing beyond its truth. The canonical identity examples: prove you know a
+password without sending it, prove you're over 18 without disclosing a birthdate, prove
+membership without naming the member. The idea is decades old in cryptography; what has
+changed is that regulation now punishes *collecting* data, which makes
+verify-without-collecting commercially interesting rather than academically elegant.
+
+## Why identity should care
+
+Every conventional verification is a disclosure. Authenticating sends a secret (or a
+derivative of one) to be checked; proving an attribute hands over the document that
+contains it plus everything else printed there. Each disclosure creates a copy, each copy
+is a liability, and the verifier accumulates a database that
+[privacy engineering](/data-privacy/privacy-engineering/) then spends its budget
+protecting and minimising. ZK techniques attack the root: the verifier learns the verdict
+and stores nothing worth stealing — [data minimization](/data-privacy/protection-transformation/)
+enforced by mathematics instead of policy.
+
+## The identity applications
+
+- **ZK-based authentication.** Proving possession of a credential without transmitting it,
+  leaving nothing to intercept, replay, or phish out of a log. Conceptually this is what
+  well-designed challenge-response always wanted; ZK constructions make the guarantee
+  formal.
+- **PAKE — password-authenticated key exchange.** Two parties derive a mutually
+  authenticated session key from a password without the password crossing the wire.
+  Modern instantiations (OPAQUE is the one to know) also keep the server from ever seeing
+  the password at registration, so a server breach yields no crackable material and a
+  network observer yields nothing at all. This is the quiet, deployable end of the ZK
+  spectrum — it upgrades the oldest credential type we have without asking users to
+  change anything.
+- **Verifiable credentials and selective disclosure.** The W3C Verifiable Credentials
+  model plus BBS-style signatures let a holder present *one attribute* from a signed
+  credential — over-18 from a driving licence, employer from an employment credential —
+  with the issuer's signature still verifying. Mobile driving licences and the EU's
+  digital identity wallet are pushing this from paper to production, which makes it the
+  most likely first mainstream contact for most identity teams.
+
+## Maturity, honestly assessed
+
+The cryptography is not the constraint; operations are. Proof systems are
+well-studied and increasingly fast, but issuance ceremonies, revocation of credentials
+that were designed not to be tracked, key recovery for holders, and verifier ecosystems
+are all young. The pattern to expect is the one PAKE already shows: ZK techniques arrive
+*inside* products and protocols — a password flow here, a wallet presentation there —
+rather than as a "zero knowledge platform" anyone deploys. Watch for the label being
+applied loosely: "zero knowledge" in marketing often means "encrypted at rest with
+client-held keys," which is a related but weaker claim than a proof system.
+
+The strategic reason to build literacy now: the same verify-without-exposing primitive is
+the load-bearing component of
+[Zero Knowledge Trust](/iam/frameworks/zero-knowledge-trust/), where it gets asked to do
+something harder — authorize autonomous agents' access to secrets that no intermediary,
+platform included, is allowed to see.
+
+## Where this connects
+
+This is the second leg of [the three-framework comparison](/iam/frameworks/), and the
+primitive that [Zero Knowledge Trust](/iam/frameworks/zero-knowledge-trust/) builds on.
+Its promise is [minimization](/data-privacy/protection-transformation/) at the protocol
+layer, which is why [privacy engineering](/data-privacy/privacy-engineering/) is its
+natural sponsor inside an organization — the ability to verify an attribute without
+retaining it converts a compliance liability into a design property.

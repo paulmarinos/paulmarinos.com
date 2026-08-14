@@ -1,0 +1,77 @@
+---
+title: Frameworks
+description: Zero Trust as an architecture rather than a product, Zero Knowledge as privacy-preserving proof, and Zero Knowledge Trust — the unsolved problem of identity for autonomous AI agents.
+pillar: iam
+contentType: deep-dive
+maturity: advanced
+frameworks: [NIST SP 800-207, CISA ZTMM]
+relatedTo:
+  - ai-automation
+  - iam/aws-identity
+  - detection-eng
+updated: 2026-08-14
+sidebar:
+  order: 6
+---
+
+Three framings sit under the "zero" banner, they are routinely blurred together, and the
+third one is barely built yet. This is the material the rest of the site points at as the
+newest and most distinctive — where identity stops being about humans and their workloads and
+starts being about autonomous actors that decide and act on their own.
+
+## Zero Trust — an architecture, not a product
+
+Zero Trust is the most oversold term in security, because vendors sell products named after
+it. The actual idea, from **NIST SP 800-207**, is simpler and harder: **never trust based on
+network location; verify every request explicitly, continuously, against identity and
+context.** The honest failure mode is Zero Trust as a purchase — it's an architecture you
+migrate toward along the CISA maturity gradient, and most "Zero Trust" that fails, fails
+because someone bought a product and declared victory. The mechanics — policy decision and
+enforcement points, identity as the perimeter, microsegmentation — are in
+[Zero Trust](/iam/frameworks/zero-trust/).
+
+## Zero Knowledge — proving without revealing
+
+A different idea entirely, and worth separating cleanly. **Zero-knowledge proofs** let one
+party prove a statement is true without revealing anything beyond its truth — prove you know
+a password without sending it, prove you're over 18 without revealing your birthdate. More
+mature in cryptography than in enterprise IAM, but privacy regulation is pulling
+verify-without-collecting toward the mainstream. The identity applications — ZK
+authentication, PAKE, selective disclosure — are in
+[Zero Knowledge](/iam/frameworks/zero-knowledge/).
+
+## Zero Knowledge Trust — identity for autonomous agents
+
+The newest and least-solved material on the site, and the reason the whole
+[agentic identity](/ai-automation/) thread exists. The core problem in one sentence: **an
+autonomous agent is a principal that decides for itself what to do, so granting it
+authority is not like granting a user access or a service account permissions — it's
+delegating judgment.** The framing worth carrying: an agent with tools is a
+[confused-deputy problem](/iam/aws-identity/) with a natural-language interface and its own
+initiative — an IAM question wearing an AI hat.
+
+The five hard questions that follow — scoping, on-behalf-of, lifecycle, revocation, audit —
+and the published framework that goes furthest toward an architecture for them are in
+[Zero Knowledge Trust](/iam/frameworks/zero-knowledge-trust/).
+
+## Comparing the frameworks — where each fails
+
+- **Zero Trust** fails as a *product purchase* and succeeds as a slow architectural migration.
+  The maturity-model framing is what keeps it honest.
+- **Zero Knowledge** is cryptographically strong and operationally immature outside its niches;
+  its enterprise relevance is arriving via privacy regulation rather than security demand.
+- **Zero Knowledge Trust** for agents is the frontier — the models don't fully exist, the
+  standards are forming, and the systems shipping agents today are mostly solving it ad hoc,
+  badly, one integration at a time. That gap is the opportunity.
+
+## Where this connects
+
+This subsection is the hinge between IAM and [AI & Automation](/ai-automation/) — agent
+identity is the same problem as [tool-use authorization and blast radius](/ai-automation/)
+seen from the identity side. Zero Trust enforcement is [Conditional Access](/iam/azure-identity/)
+and the [architecture](/cloud-infra/) that implements it. Zero Knowledge's verify-without-
+collecting is [privacy engineering](/data-privacy/). And auditing what an agent actually
+did is a [detection](/detection-eng/) and [forensics](/dfir/) problem we don't yet
+have the tools for. Those three legs — identity, orchestration, and securing the agent —
+are one problem read from three sides, which is the thread
+[Agentic AI identity](/threads/agentic-ai-identity/).

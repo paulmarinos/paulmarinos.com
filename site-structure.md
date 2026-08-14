@@ -180,10 +180,19 @@ owns each earn a page.
 - Machine-to-machine auth and mTLS
 
 ### 2.6 Frameworks
-- **Zero Trust:** NIST SP 800-207, policy decision/enforcement points, microsegmentation, maturity models (CISA ZTMM)
-- **Zero Knowledge:** ZK proofs, ZK-based authentication, password-authenticated key exchange, privacy-preserving verification
-- **Zero Knowledge Trust — agentic AI identity:** identity for non-human/agent actors, delegated authority and scoping, credential lifecycle for autonomous agents, on-behalf-of flows, revocation and containment, audit trails for agent actions
+Grown a third level. The hub keeps the three-framings framing and the where-each-fails
+comparison; each framing earns a page.
 - Comparing frameworks: where each fails in practice
+- **2.6.1 Zero Trust** — NIST SP 800-207 machinery (PDP/PEP, identity as perimeter,
+  microsegmentation), the CISA ZTMM gradient and sequencing, the three failure modes
+  (purchase, rebranding, human-only assumptions)
+- **2.6.2 Zero Knowledge** — ZK proofs in identity terms, PAKE/OPAQUE, verifiable
+  credentials and selective disclosure, maturity honestly assessed (crypto ready,
+  operations young)
+- **2.6.3 Zero Knowledge Trust** — the five hard questions of delegated judgment, the
+  trust paradox, VettID's ZKT framework presented with attribution (CC BY 4.0 corpus at
+  github.com/vettid/zero-knowledge-trust) plus our independent assessment, and the
+  standards substrate (RFC 8693, SPIFFE, MCP authorization, confidential computing)
 
 ### 2.7 Governance of Identity
 - Joiner/mover/leaver automation
@@ -715,12 +724,13 @@ pipeline** (§4.5 × §6.5) and **Encryption that proves nothing** (§8.4 key ma
   children, which sit beside it and are hidden from the sidebar. The sidebar therefore never
   grows past pillar -> subsection no matter how much lands underneath, and third-level
   articles are found through the hub, search, the graph and backlinks instead. Mechanics in
-  `AGENTS.md`. Seven subsections have grown a third level so far, across a spectrum of split
+  `AGENTS.md`. Eight subsections have grown a third level so far, across a spectrum of split
   width: `appsec/api-cloud-native` and `dfir/digital-forensics` each split off a single
   sibling article (`kubernetes-workload-security`, `cloud-forensics`);
   `threat-intel/risk-prioritization` split into three
   (the CVSS / EPSS+KEV / SSVC scoring systems); `threat-intel/intelligence-lifecycle` into
   three (F3EAD, processing, feedback — the parts of the loop no other subsection owns);
+  `iam/frameworks` into three (Zero Trust, Zero Knowledge, Zero Knowledge Trust);
   `pentest/tools-commands` into five phase pages; `appsec/insecure-coding` into seven
   vulnerability families; and `grc/common-frameworks` into nine, one per framework. In every case the hub is reduced to
   durable framing plus an index and the detail moves down, and the sidebar stays at

@@ -1,0 +1,136 @@
+---
+title: Zero Knowledge Trust
+description: Identity for autonomous agents — the five hard questions of delegated judgment, the trust paradox in today's verification infrastructure, and VettID's Zero-Knowledge Trust framework as the furthest-developed architecture aimed at both.
+pillar: iam
+contentType: deep-dive
+maturity: advanced
+relatedTo:
+  - iam/frameworks
+  - iam/non-human-identity
+  - ai-automation/agent-orchestration
+  - ai-automation/securing-ai
+  - cloud-infra/cryptography-key-management
+updated: 2026-08-14
+sidebar:
+  hidden: true
+---
+
+As AI systems gain the ability to act — call tools, spend money, modify systems, invoke
+other agents — they become a class of actor no existing identity model was designed for.
+The core problem in one sentence: **an autonomous agent is a principal that decides for
+itself what to do, so granting it authority is not like granting a user access or a
+service account permissions — it's delegating judgment.** Every hard question in this
+space follows from that sentence.
+
+## The five hard questions
+
+- **Delegated authority and scoping.** "Book my travel" requires spending authority,
+  bounded — this trip, this budget, these vendors. Encoding *what I meant* rather than
+  *what I said* as an enforceable scope is unsolved in the general case, and it is the
+  whole game.
+- **On-behalf-of flows.** The agent acts *as* the user while being distinctly itself.
+  When it books the flight, the audit trail must capture both the authorizing human and
+  the interpreting agent, or accountability collapses into "the AI did it."
+- **Credential lifecycle at machine speed.** Agents spawn sub-agents and terminate in
+  seconds — [the NHI lifecycle problem](/iam/non-human-identity/) compressed by three
+  orders of magnitude.
+- **Revocation and containment.** A misbehaving agent must be stoppable *mid-action*,
+  and it may already have delegated onward. Revocation has to outrun a tree of
+  delegations that acts at machine speed.
+- **Audit of intent.** Reconstructing what an agent was *trying to do*, against what it
+  was authorized to attempt, is a [forensics](/dfir/investigation-method/) problem with
+  barely any tooling.
+
+The framing that ties them together: an agent with tools is a
+[confused deputy](/iam/aws-identity/) with a natural-language interface and its own
+initiative, and [prompt injection](/ai-automation/securing-ai/) is the mechanism for
+hijacking that initiative. The security question is what the agent is authorized to *do*,
+how tightly that is scoped, and whether it can be pulled back.
+
+## The trust paradox
+
+Today's answer to those questions runs everything through verification infrastructure —
+identity providers, secrets managers, policy engines. That infrastructure shares a
+property that predates agents but that agents turn from an accepted trade-off into a
+structural weakness: **the systems that verify trust must themselves be trusted.** The
+policy engine inspects the token; the secrets manager holds the plaintext or the keys to
+it. The gatekeepers concentrate exactly the material they exist to protect, which makes
+them the highest-value targets in the estate — and agents multiply both the secrets
+flowing through them and the pace at which authorization decisions are made against them.
+Meanwhile the [zero-trust](/iam/frameworks/zero-trust/) assumption that the authenticated
+entity is the acting entity breaks cleanly: an agent authenticated this morning acts this
+afternoon, under different conditions, on its own initiative.
+
+## The Zero-Knowledge Trust framework
+
+The furthest-developed architecture aimed at this problem is **Zero-Knowledge Trust**, a
+framework published as an open corpus (CC BY 4.0) by
+[VettID](https://github.com/vettid/zero-knowledge-trust). Its thesis is that the two
+"zero" models this subsection separates should fuse: zero-trust verification and
+zero-knowledge cryptography combined so that authorization and privacy become one
+operation. The corpus states it in a line: *"Verify everything. Expose nothing. Trust no
+one — not even the platform."*
+
+The framework's load-bearing claims, in our words:
+
+- **No component ever holds plaintext secrets** — encryption happens on the owner's
+  device, and the platform operates on ciphertext only, making the gatekeeper worthless
+  as a target rather than hardened as one.
+- **Authorization by proof rather than inspection.** An agent proves it is authorized to
+  use a credential without any intermediary seeing the credential — the
+  [zero-knowledge primitive](/iam/frameworks/zero-knowledge/) doing access control's job.
+- **Trust re-derived per operation.** Instead of maintaining session trust and patching
+  the gaps with monitoring, every secret use is an independent cryptographic event —
+  scoped, verified and logged at the moment of use. This is the claim that speaks most
+  directly to the agent-breaks-the-session problem above.
+- **Sovereignty and explicit delegation.** The secret's owner holds sole decryption
+  authority; delegation to agents is scoped, time-bound and revocable by design. The
+  corpus extends this to end-user AI apps under the name LEASH — the app uses a
+  credential it never sees, on the user's terms.
+- **A hardware root.** The strongest tier anchors operations in TPMs, secure enclaves and
+  [HSMs](/cloud-infra/cryptography-key-management/), with encrypted cloud vaults and
+  attested local keystores as the pragmatic middle and edge tiers.
+
+## Our assessment
+
+What is genuinely strong: the diagnosis. The trust paradox is real, the
+identity-execution split is exactly how agents break session-based models, and
+per-operation re-derivation is the correct shape of answer. The direction also converges
+with where practice is already heading from the other end —
+[§2.8's elimination path](/iam/non-human-identity/) (short-lived, attested, secretless)
+is the same instinct applied with today's standards, and ZKT reads as that instinct
+followed to its architectural conclusion: the best credential custodian is no custodian.
+The corpus also does something rare for a framework document — it publishes its own
+adversarial analysis alongside the thesis — which is the right spirit and worth
+imitating.
+
+What remains open, honestly: proofs verify *authorization*, but someone must still
+author the scope being proven — the "what I meant" problem survives the cryptography
+untouched, moved rather than solved. Sole-owner decryption authority makes key loss and
+recovery a first-class failure mode that enterprise deployments will need answers for.
+And the operational ecosystem — issuance, attestation at fleet scale, performance under
+machine-speed delegation trees — is young in the same way
+[zero knowledge's](/iam/frameworks/zero-knowledge/) generally is. None of these are
+refutations; they are the distance between an architecture and a deployed practice.
+
+## The standards substrate
+
+Whatever architecture wins, the mechanics available today are worth knowing because they
+are what current agent systems actually compose: OAuth token exchange (RFC 8693) and
+on-behalf-of flows for delegation chains, [SPIFFE-style attestation](/iam/non-human-identity/)
+for workload identity, MCP's authorization model for tool access, and
+[confidential computing](/cloud-infra/cryptography-key-management/) for the hardware tier.
+Today's deployments solve agent identity ad hoc from these parts, one integration at a
+time — which is both the gap the ZKT corpus is pointing at and the reason building
+expertise here ahead of the tooling is worth the effort.
+
+## Where this connects
+
+This is the third leg of [the framework comparison](/iam/frameworks/), built on
+[zero knowledge's primitive](/iam/frameworks/zero-knowledge/) and answering
+[zero trust's](/iam/frameworks/zero-trust/) hardest edge case. It is
+[§2.8's non-human identity program](/iam/non-human-identity/) at its most extreme, the
+identity half of [agent orchestration](/ai-automation/agent-orchestration/) and
+[securing AI systems](/ai-automation/securing-ai/), and its hardware tier rests on
+[key management architecture](/cloud-infra/cryptography-key-management/). The three legs
+together are the thread [Agentic AI identity](/threads/agentic-ai-identity/).

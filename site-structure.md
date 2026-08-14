@@ -592,14 +592,19 @@ reconstruction of a known incident.
 - Postmortems and blameless retrospectives
 
 ### 9.2 Digital Forensics
+Grown a third level. The hub keeps the discipline — order of volatility, disk and memory
+forensics, anti-forensics and the absence-of-evidence argument — plus a condensed cloud
+section pointing down; the workload-type acquisition detail moved to the child.
 - Order of volatility and sound acquisition
 - Disk forensics: file systems, deleted data, artefacts of execution
 - Memory forensics (Volatility) — what only RAM will tell you
-- Cloud and SaaS forensics where you never get the disk
 - Endpoint, browser and mobile artefacts
 - Anti-forensics and what absence of evidence is worth
-- Candidate third-level split when this deepens: evidence collection by workload type —
-  cloud VM (memory, snapshots), container, serverless, SaaS
+- **9.2.1 Cloud Forensics** — forensic readiness as the early acquisition phase, then
+  evidence by workload type: VM (snapshots, the memory problem, autoscaling races),
+  container (image / writable layer / node), serverless (no body — logs, change history,
+  artefact diffs), SaaS (vendor-decided evidence, the IdP as cross-SaaS backbone);
+  bounded throughout by the §8.7 responsibility line
 
 ### 9.3 Timeline & Investigation Method
 - Building a super-timeline and pivoting across artefact sources
@@ -710,9 +715,10 @@ pipeline** (§4.5 × §6.5) and **Encryption that proves nothing** (§8.4 key ma
   children, which sit beside it and are hidden from the sidebar. The sidebar therefore never
   grows past pillar -> subsection no matter how much lands underneath, and third-level
   articles are found through the hub, search, the graph and backlinks instead. Mechanics in
-  `AGENTS.md`. Six subsections have grown a third level so far, across a spectrum of split
-  width: `appsec/api-cloud-native` split off a single sibling article
-  (`kubernetes-workload-security`); `threat-intel/risk-prioritization` split into three
+  `AGENTS.md`. Seven subsections have grown a third level so far, across a spectrum of split
+  width: `appsec/api-cloud-native` and `dfir/digital-forensics` each split off a single
+  sibling article (`kubernetes-workload-security`, `cloud-forensics`);
+  `threat-intel/risk-prioritization` split into three
   (the CVSS / EPSS+KEV / SSVC scoring systems); `threat-intel/intelligence-lifecycle` into
   three (F3EAD, processing, feedback — the parts of the loop no other subsection owns);
   `pentest/tools-commands` into five phase pages; `appsec/insecure-coding` into seven

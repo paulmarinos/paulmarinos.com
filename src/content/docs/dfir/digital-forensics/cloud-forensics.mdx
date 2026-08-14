@@ -1,0 +1,130 @@
+---
+title: Cloud Forensics
+description: Evidence collection by workload type — VM snapshots and the memory problem, containers as image diffs, serverless with no body, SaaS at the vendor's mercy — and the readiness work that decides all of it in advance.
+pillar: dfir
+contentType: deep-dive
+maturity: advanced
+cloud: [aws, azure, gcp, multi]
+relatedTo:
+  - dfir/digital-forensics
+  - dfir/incident-response
+  - dfir/evidence-legal
+  - cloud-infra/shared-responsibility
+  - cloud-infra/saas-security
+  - detection-eng/data-pipeline
+updated: 2026-08-14
+sidebar:
+  hidden: true
+---
+
+On-premise forensics rests on one assumption: there is a host, and you can seize it. Cloud
+replaces that single assumption with four different evidence models, one per workload
+type. The discipline itself carries over — [order of volatility](/dfir/digital-forensics/),
+corroboration, defensible handling — but what "disk" and "memory" even mean changes at
+each tier, and [the responsibility line](/cloud-infra/shared-responsibility/) fixes a hard
+outer boundary: below it, no amount of process gets you the provider's hypervisor. Your
+forensic reach is your side of the line, prepared in advance.
+
+## Readiness is the acquisition phase that runs early
+
+Because most cloud evidence either exists ahead of time or never exists, the first
+"collection" happens months before any incident:
+
+- **Logging that defaults off, turned on.** Data-plane events — object reads, database
+  queries, secret accesses — are unlogged by default on every provider. If the incident
+  question is "what did they take?", this is the log that answers it, and enabling it
+  retroactively recovers nothing.
+- **Retention outliving detection.** Dwell times regularly exceed default log retention;
+  the [pipeline decisions](/detection-eng/data-pipeline/) about what ships to long-term
+  storage are forensic-scope decisions wearing a cost hat.
+- **A pre-provisioned responder path.** An IR role with cross-account read and snapshot
+  rights, created in calm conditions — because requesting admin access during an incident
+  is slow, loud, and itself a change to the environment under investigation.
+- **An evidence account.** A locked-down destination with object immutability, where
+  snapshots and exports land with hashes and acquisition metadata attached —
+  [chain of custody](/dfir/evidence-legal/) that survives hostile review, built once.
+
+## Virtual machines: nearest to classical forensics
+
+The disk half translates cleanly: **snapshot the volumes through the API**, hash the
+result, record who/when/what — imaging without ever touching the guest, and repeatable
+across accounts from the responder role.
+
+Memory is where the translation breaks. No provider exposes an API for guest RAM on
+ordinary IaaS, so memory capture requires an agent inside the guest — installed *before*
+the incident, or installed during it (which modifies the evidence and may alert the
+adversary; sometimes that trade is right, but make it a decision). The
+[capture-before-isolating rule](/dfir/digital-forensics/) applies with a cloud twist:
+"isolate" must mean a quarantine security group or detachment from the load balancer.
+Stopping the instance destroys memory, and terminating it destroys everything — which
+autoscaling will happily do on its own schedule, so the first minutes of VM response
+include: protect the instance from termination, suspend scale-in on its group, and
+snapshot before anything else negotiates.
+
+## Containers: the host is a process
+
+A container is a process tree wearing a filesystem overlay, so "seize the host" decomposes
+into three separate artefacts:
+
+- **The image**, pulled from the registry: the *intended* state, content-addressed and
+  immutable.
+- **The writable layer**: the diff between running container and image — which is to say,
+  everything the workload (or the attacker) changed. Export it before the orchestrator
+  evicts the pod, because rescheduling destroys it without any adversary involvement.
+- **The node**: memory of containerised processes lives in node RAM, so memory work is VM
+  memory work on the node — with the same agent-in-advance requirement.
+
+The diff deserves its reputation as the triage shortcut: compare the running filesystem
+against the image and the attacker's changes enumerate themselves. In Kubernetes,
+ephemeral debug containers give live access without restarting the pod, and the API
+server's audit log is the cluster's identity trail — on managed control planes,
+[you get the slice of it the provider exposes](/cloud-infra/shared-responsibility/), a
+line worth locating before the incident rather than during it.
+
+## Serverless: forensics with no body
+
+A function leaves no disk to image and no memory to dump, and its execution environment
+is recycled continuously. The entire evidence set is indirect:
+
+- **Invocation and data-plane logs** — the only record that execution happened at all.
+- **The control plane's change history** — in function compromises, *code modification is
+  the persistence mechanism*: an altered function body, a poisoned layer or dependency, a
+  new trigger. The deployment audit trail is where that persistence shows.
+- **The deployed artefact**, pulled and diffed against source control — the serverless
+  analogue of the container image diff.
+- **The identity trail** — what the function's role actually did, which is the
+  [primary-artefact principle](/dfir/digital-forensics/) at its purest, because here
+  identity records are very nearly the *only* artefact.
+
+Serverless is where unreadiness is unforgiving: with data-plane logging off, the honest
+finding is that no evidence exists either way — the
+[absence-of-evidence discipline](/dfir/digital-forensics/) applied to an entire workload
+class.
+
+## SaaS: the vendor decides what you can know
+
+Your acquisition capability in SaaS was negotiated at purchase:
+[audit-log depth, retention and API access vary per vendor and per licensing tier](/cloud-infra/saas-security/),
+and no incident-time effort changes the tier you bought. Within what exists, the pull
+list is consistent: the tenant's admin audit trail, OAuth grant and app-authorization
+history, sharing and export events — and the IdP's sign-in and token logs, which are
+frequently richer than the SaaS product's own and have the advantage of being *yours*,
+uniform across every federated app. The IdP is the cross-SaaS forensic backbone; treat
+its logs accordingly.
+
+Beyond the API sits the vendor relationship: deeper logs exist at most providers and
+surface through support and trust teams, on timelines measured in days and under terms
+[the contract set long ago](/dfir/evidence-legal/). For incidents that may sit on the
+vendor's side of the line, the questions to put in writing early are what they will
+attest, what they will preserve, and when they will notify.
+
+## Where this connects
+
+The parent page owns [the discipline this applies](/dfir/digital-forensics/) — order of
+volatility, corroboration, what absence of evidence is worth.
+[Containment and preservation compete](/dfir/incident-response/) here more sharply than
+anywhere on-premise, since isolation and termination are one API call apart. Reach is
+bounded by [the shared responsibility line](/cloud-infra/shared-responsibility/), SaaS
+evidence by [what procurement bought](/cloud-infra/saas-security/), and everything else
+by [the pipeline built beforehand](/detection-eng/data-pipeline/) — with
+[custody and contract](/dfir/evidence-legal/) deciding what any of it proves later.

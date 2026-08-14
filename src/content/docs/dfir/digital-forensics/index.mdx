@@ -66,17 +66,14 @@ stops being defensible.
 ## Cloud and SaaS forensics
 
 The largest practical shift in the discipline, because the assumptions underneath disk
-forensics often don't hold.
-
-- **There may be no host.** Serverless and managed services expose no disk. The evidence is
-  control plane logs and whatever the service records — and if
-  [that wasn't configured in advance](/cloud-infra/), it does not exist retroactively.
-- **Snapshot before anything terminates.** Autoscaling destroys instances on its own
-  schedule, so evidence disappears without anyone deciding to destroy it.
-- **Identity is the primary artefact.** Sign-in logs, token issuance, role assumption chains
-  and consent grants carry the story that process lists carry on-premise.
-- **SaaS gives you what the vendor logs, not what you'd like.** Audit log depth and
-  retention vary enormously, and are often a licensing tier rather than a technical limit.
+forensics often don't hold: there may be no host at all, autoscaling destroys evidence on
+its own schedule, and identity records — sign-in logs, token issuance, role assumption
+chains — carry the story that process lists carry on-premise. The evidence model changes
+with the workload type, and each tier keeps different remains: a VM still yields
+snapshots and (with preparation) memory, a container leaves an image diff, serverless
+leaves only logs and artefacts, and SaaS leaves whatever the vendor decided to record.
+The acquisition treatment, workload by workload, is in
+[Cloud Forensics](/dfir/digital-forensics/cloud-forensics/).
 
 The uncomfortable consequence: cloud forensic capability is decided months earlier by
 [pipeline and architecture choices](/detection-eng/data-pipeline/). By incident time,

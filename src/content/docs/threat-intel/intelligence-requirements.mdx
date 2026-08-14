@@ -1,0 +1,139 @@
+---
+title: Intelligence Requirements
+description: Requirements as answerable questions — the PIR hierarchy, EEI decomposition, the RFI workflow, collection planning as gap analysis, and tagging output so the program can measure itself.
+pillar: threat-intel
+contentType: deep-dive
+maturity: practitioner
+frameworks: [JP 2-0, ICD 204]
+relatedTo:
+  - threat-intel/intelligence-lifecycle
+  - threat-intel/collection-sourcing
+  - detection-eng/detection-lifecycle
+  - grc/risk-management
+  - dfir/incident-response
+updated: 2026-08-14
+sidebar:
+  order: 9
+---
+
+Direction is [the lifecycle's](/threat-intel/intelligence-lifecycle/) most-skipped phase.
+This page is what doing it deliberately looks like: a small set of written questions, each
+owned by a named consumer and tied to a decision, that collection and analysis exist to
+answer. Everything else here — decomposition, RFIs, collection plans, review — is machinery
+for keeping those questions honest.
+
+## A requirement is a question someone will act on
+
+Most teams that think they have requirements have topics: "ransomware," "APT activity in
+our sector," "the threat landscape." A topic can never be answered, is never done, and
+justifies collecting anything — which is why topic-shaped requirements and
+[collection-driven programs](/threat-intel/intelligence-lifecycle/) are the same failure
+seen from two angles.
+
+A workable requirement has three parts: a specific question, a named consumer, and the
+decision the answer informs. Compare:
+
+- *"Track ransomware."* A topic. Ten analysts could work it for a year and disagree about
+  whether it was addressed.
+- *"Which initial-access techniques in current use against our sector do our detections
+  fail to cover?"* A question, consumed by detection engineering, informing the
+  [backlog](/detection-eng/detection-lifecycle/). You would recognise the answer if you saw
+  it, and you can say when it needs re-asking.
+
+**Priority intelligence requirements (PIRs)** sit at the top of the hierarchy: the handful
+of questions leadership genuinely needs answered, each traceable to a decision someone with
+authority will make. The count matters. Single digits is a set of priorities; thirty is a
+topic taxonomy wearing a ranking, and it will prioritise nothing.
+
+## Decomposition: essential elements of information
+
+A PIR is too large to collect against directly. **EEIs** break it into individually
+collectable facts. For a PIR like *"are we exposed to the extortion campaigns currently
+targeting our sector?"*, the EEIs might be:
+
+- Which vulnerabilities and initial-access techniques are these campaigns using?
+- Do we run the affected products, and where?
+- Is exploitation confirmed in the wild, or still proof-of-concept?
+- Which of our business units sit in the targeted geographies or verticals?
+
+Decomposition is the step where a question becomes a collection task: each EEI names an
+observable, and an observable implies the sources that could produce it. A PIR that resists
+decomposition — where nobody can say what facts would answer it — was a topic in disguise,
+and it is cheaper to discover that here than after a quarter of collection.
+
+## Standing requirements and the RFI workflow
+
+Standing requirements run continuously and are reviewed on a cadence. Everything else
+arrives as a **request for information** — the ad hoc question from IR, from an executive
+reading the news, from an auditor. The RFI workflow is short but every step earns its
+place:
+
+1. **Intake** through a form that forces the question, the decision it feeds, the deadline,
+   and the requester. Half the value is that writing the question down improves it.
+2. **Triage** against existing requirements. An RFI that maps onto a standing requirement
+   reuses work already done; the same RFI arriving three times is a standing requirement
+   announcing itself.
+3. **Execution** — the whole intelligence lifecycle run in miniature, often inside a day.
+4. **Delivery and the log.** The RFI log is the most underrated artefact in the program:
+   empirical evidence of what the organization actually asks, and the best single input to
+   the next requirements review.
+
+## Collection planning is gap analysis
+
+The collection plan maps each EEI to the source that could observe it — a feed, an OSINT
+process, [internal telemetry](/threat-intel/collection-sourcing/), a sharing relationship.
+The mapping itself is a table; the *product* is the gap list — the EEIs nothing currently
+covers. That list is what should drive feed procurement and telemetry asks, which inverts
+the usual dynamic: you evaluate a vendor against your gaps, on your scenarios, instead of
+against the vendor's demo.
+
+The boundary with [Collection & Sourcing](/threat-intel/collection-sourcing/) runs exactly
+here: this page decides *what* to collect and from *where*; that page is the craft of
+collecting it well.
+
+Coverage honesty is part of the plan. Some EEIs are unanswerable at your visibility no
+matter what you buy. Say so in writing, and renegotiate the parent PIR with its consumer —
+a requirement silently unmet is a promise the program is quietly breaking.
+
+## Where new requirements come from
+
+Direction has its own supply chain, and three intake paths do most of the work:
+
+- **The detection backlog.** Coverage gaps surfaced in
+  [the detection lifecycle](/detection-eng/detection-lifecycle/) are questions about
+  adversary behaviour phrased as missing rules.
+- **The risk register.** A [top-rated risk](/grc/risk-management/) implies a standing
+  requirement to watch the threat side of that risk — and a register whose top risks have
+  no corresponding requirement is scoring likelihood on vibes.
+- **Incident lessons.** Every [retrospective](/dfir/incident-response/) ends with questions
+  the team wishes it could have answered sooner. That is F3EAD's exploit phase feeding the
+  slower loop, and it is the highest-signal intake of the three.
+
+## Review, retirement, and tagging
+
+Requirements rot. The decision they informed gets made, the consumer changes roles, the
+campaign ends. A quarterly review asks three questions of each requirement: was anything
+produced against it, did the consumer use what was produced, and does the underlying
+decision still exist. Retire freely — a retired requirement is the process working, and a
+requirements set that only ever grows is a topic list reassembling itself.
+
+The discipline that makes the review cheap is **tagging every product with the requirement
+it serves**. Consumers see why they received the thing; the review gets data instead of
+recollection — production per requirement, requirements with zero production, and
+production tagged to nothing. That last category is worth watching rather than punishing:
+untagged work is a discovery queue, and a theme recurring in it is a candidate requirement
+the set does not yet contain. This tagging is also what makes
+produced-against-requirement versus produced-because-interesting a measurable split rather
+than a slogan.
+
+## Where this connects
+
+This page is the direction phase of
+[the intelligence lifecycle](/threat-intel/intelligence-lifecycle/) done deliberately, and
+the feedback phase is what keeps its requirement set current. The collection plan hands off
+to [Collection & Sourcing](/threat-intel/collection-sourcing/) at the what/how boundary.
+Requirements flow in from
+[the detection backlog](/detection-eng/detection-lifecycle/),
+[the risk register](/grc/risk-management/), and
+[incident retrospectives](/dfir/incident-response/) — and answered PIRs flow back out to
+the same consumers.

@@ -698,7 +698,7 @@ graph. This resolves the old open question about where threads live: neither pil
 an eleventh pillar, but a sidebar-invisible shared home. They are the graph's densest connector
 nodes by design — each spans five to eight pillars.
 
-Nine written (the set featured on the homepage):
+Ten written (the set featured on the homepage):
 
 - **[One finding, five lenses](/threads/one-finding-five-lenses/).** IAM misconfig through pentest, AppSec, GRC, detection and intel — reported five ways. (Merges the original "pentest finding → …" and "IAM misconfig as shared root cause" entries.)
 - **[The purple team loop](/threads/purple-team-loop/).** §5.4/§5.5 emulation → §7.4 validation → §7.2 backlog → §1.4 prioritization.
@@ -709,10 +709,15 @@ Nine written (the set featured on the homepage):
 - **[Deletion nobody can prove](/threads/deletion-nobody-can-prove/).** §10.3 defensible deletion vs. §4 audit evidence vs. §9.2 forensics.
 - **[The telemetry gap](/threads/the-telemetry-gap/).** §7.3 log coverage as the shared prerequisite for detection, IR, hunting and audit.
 - **[Communication as a technical skill](/threads/communication-as-a-technical-skill/).** §1.5 applied to §5.6 reports and §4.x audit narratives.
+- **[The contract is the control](/threads/the-contract-is-the-control/).** For anything you don't operate, the leverage lives at signature time — §9.2.1 evidence tiers, §8.8 telemetry floors and the SSO tax, §8.7 responsibility acceptance, §1.11 feed procurement, §4.6 third-party risk done as clauses rather than questionnaires.
 
-Not yet written (candidates from the original list): **Automation of the compliance-to-evidence
-pipeline** (§4.5 × §6.5) and **Encryption that proves nothing** (§8.4 key management vs. §4.x
-"encrypted at rest" as an audit answer).
+Not yet written (candidates): **Automation of the compliance-to-evidence pipeline**
+(§4.5 × §6.5); **Encryption that proves nothing** (§8.4 key management vs. §4.x
+"encrypted at rest" as an audit answer); **One line, five consequences** (the §8.7
+responsibility line read through §4.4 control inheritance, §9.2.1 forensic reach, §8.8's
+SaaS remainder, and §10's controller/processor split); **One incident, fully exploited**
+(the learning sequel to Alert to answer: §9.1 retro → §1.8.1 exploit → §1.9 requirements
+→ §7.2 detections → §1.10 tearline → §8 architecture fix).
 
 ---
 

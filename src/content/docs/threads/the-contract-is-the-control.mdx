@@ -1,0 +1,91 @@
+---
+title: The Contract Is the Control
+description: For everything you don't operate — SaaS, feeds, managed services — the moment of maximum security leverage is signature time. Five disciplines keep discovering this independently; this is the discovery made once, in one place.
+pillar: grc
+contentType: deep-dive
+maturity: practitioner
+relatedTo:
+  - grc/risk-management
+  - cloud-infra/saas-security
+  - cloud-infra/shared-responsibility
+  - dfir/digital-forensics/cloud-forensics
+  - threat-intel/running-a-cti-program
+updated: 2026-08-14
+sidebar:
+  hidden: true
+---
+
+For anything your organization operates, security work compounds over time: patch, tune,
+segment, review. For anything you *buy* — SaaS, intelligence feeds, managed services — the
+curve runs backwards. The controls that will matter in three years are fixed in the weeks
+before signature, and every discipline on this site has independently discovered its own
+version of that fact, usually during an incident, which is the one time it can no longer
+be acted on. This thread is those discoveries lined up: one purchase, read by five teams
+who each wish they had been in the room.
+
+## The evidence you bought
+
+[Cloud forensics](/dfir/digital-forensics/cloud-forensics/) states it flattest: in SaaS,
+your acquisition capability was negotiated at purchase. Audit-log depth, retention, API
+access — each is a licensing tier, and no incident-time effort changes the tier you
+bought. The investigation that stalls on "the vendor doesn't expose that log at our plan
+level" was lost before the vendor was even breached. The same clause decides
+[what the vendor will preserve, attest and disclose](/dfir/evidence-legal/) when the
+incident sits on their side.
+
+## The telemetry you bought
+
+One tier down from evidence sits everyday visibility.
+[SaaS security](/cloud-infra/saas-security/) makes audit-log API access, admin-event
+coverage and retention floors procurement requirements, because
+[detection inherits](/detection-eng/data-pipeline/) whatever variance the contract
+allowed — the coverage map's SaaS columns are a record of past purchasing decisions. The
+SSO tax is the same lesson at the front door: when single sign-on is an enterprise-tier
+feature, whether the app joins the [identity perimeter](/iam/frameworks/zero-trust/) at
+all is a line item.
+
+## The line you accepted
+
+[The shared responsibility model](/cloud-infra/shared-responsibility/) moves only by
+documented service contract, never by assumption — which means every managed-service
+adoption is the acceptance of a responsibility split, read or unread. The maintenance
+seams, the cross-tenant residual risk, the compensations available to you: all fixed the
+day the service was adopted. A service with no responsibility matrix to read is itself a
+finding, and the time to raise it is before the workload exists.
+
+## The intelligence you bought
+
+[A CTI program's procurement](/threat-intel/running-a-cti-program/) runs the same
+inversion from the buyer's side: evaluate the feed against
+[your own gap list](/threat-intel/intelligence-requirements/) and your past incidents
+rather than the vendor's demo scenario, measure overlap against what already arrives
+free, and price the exit. A feed that is 80% syndication was mispriced at signature, and
+no amount of downstream analysis recovers the difference.
+
+## The risk you registered
+
+[Third-party risk](/grc/risk-management/) is where all of this formally lives, and where
+it most often degrades into questionnaire theatre — a hundred attestation checkboxes,
+none of which secure the terms the other four disciplines actually need. The
+questionnaire asks whether the vendor has a SOC 2; the contract should be securing log
+access and retention, breach notification clocks, evidence preservation and cooperation,
+[deletion and export on exit](/data-privacy/lifecycle-retention/), and the right to the
+vendor's responsibility matrix in writing. Those clauses are the difference between a
+risk that was assessed and a risk that was *treated* — and each one is nearly free at
+signature and nearly unobtainable after.
+
+## The pattern
+
+Security engages with vendors at incident time, renewal time, or audit time — and the
+leverage lives at none of them. It lives once, at signature, with whoever owns the
+procurement checklist. The fix is organizational rather than technical: a standing
+security-and-counsel review for anything that will hold your data, your identities or
+your evidence, with the five demands above as the floor. Every discipline on this site
+can tell you what belongs on that list; the thread exists because nobody's list is
+complete alone.
+
+The neighbouring threads are the same lesson at different altitudes:
+[the telemetry gap](/threads/the-telemetry-gap/) is what unbought logging looks like from
+the SOC, and [deletion nobody can prove](/threads/deletion-nobody-can-prove/) is what an
+exit clause that never existed looks like in an investigation. Buy-time is where all
+three are cheapest to fix.

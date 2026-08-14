@@ -190,6 +190,22 @@ owns each earn a page.
 - Entitlement review at scale
 - Identity threat detection (ITDR)
 
+### 2.8 Non-Human Identity
+The cross-provider program for the identities that outnumber humans. §2.1–2.3 own each
+provider's mechanics, §2.5 owns federation and secrets tooling, §2.6 owns agentic identity
+frameworks; this subsection owns the estate-wide problem — the machine mirror of §2.7.
+- What counts as an NHI: service accounts, roles, API keys, tokens, certificates, pipeline
+  identities, agents — and why they are exempt from everything built for humans (no JML,
+  no MFA, no owner)
+- Sprawl and ownership: discovery and inventory across providers, SaaS tenants and CI
+- Over-permissioning at machine scale; where CIEM, secrets management and ITDR each fit
+  (one question per category, deliberately)
+- The elimination path: short-lived credentials, OIDC workload identity federation
+  (the §3.4 CI/CD case generalized), SPIFFE/SPIRE, brokered access
+- Lifecycle: issuance, rotation, attestation, revocation — JML for machines
+- The agent wrinkle: autonomous consumers of NHIs at machine speed (ties to §2.6, §6.4)
+- Reference: OWASP Non-Human Identity Top 10
+
 ---
 
 ## 3. Application Security
@@ -582,6 +598,8 @@ reconstruction of a known incident.
 - Cloud and SaaS forensics where you never get the disk
 - Endpoint, browser and mobile artefacts
 - Anti-forensics and what absence of evidence is worth
+- Candidate third-level split when this deepens: evidence collection by workload type —
+  cloud VM (memory, snapshots), container, serverless, SaaS
 
 ### 9.3 Timeline & Investigation Method
 - Building a super-timeline and pivoting across artefact sources

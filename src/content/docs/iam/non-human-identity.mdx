@@ -1,0 +1,138 @@
+---
+title: Non-Human Identity
+description: The identities that outnumber humans and are exempt from everything built for them — sprawl and ownership, what CIEM, secrets management and ITDR each actually answer, the secretless elimination path, and lifecycle as JML for machines.
+pillar: iam
+contentType: deep-dive
+maturity: practitioner
+frameworks: [OWASP NHI Top 10, SPIFFE]
+relatedTo:
+  - iam/governance
+  - iam/frameworks
+  - appsec/cicd-security
+  - ai-automation/agent-orchestration
+  - cloud-infra/saas-security
+updated: 2026-08-14
+sidebar:
+  order: 8
+---
+
+Count the identities in any real estate and machines outnumber people by an order of
+magnitude or more: service accounts, roles, API keys, OAuth grants, tokens, certificates,
+pipeline identities, cluster service accounts, and now agents. Everything the industry
+built for identity assurance was built for the *minority* — and built on an assumption
+machines break: an employment relationship. Joiner/mover/leaver runs off an HR feed;
+machines have no HR record. MFA assumes someone holding a second factor. Entitlement
+review assumes a manager who remembers why. Every one of those controls silently exempts
+the majority of the directory.
+
+That exemption is this page's subject. The per-provider mechanics live in
+[§2.1](/iam/aws-identity/)–[§2.3](/iam/gcp-identity/), federation and secrets tooling in
+[§2.5](/iam/multi-cloud-federation/), and agentic frameworks in
+[§2.6](/iam/frameworks/); this subsection is the estate-wide program — the machine mirror
+of [§2.7's human governance](/iam/governance/).
+
+## Five defaults, one root cause
+
+Left to the defaults, a non-human identity is born in a sprint to unblock a feature,
+owned by whoever wrote the ticket, permissioned with whatever made the demo work,
+credentialed with something long-lived pasted somewhere convenient, and never retired —
+because no process notices a machine that stops mattering. Sprawl, orphanhood,
+over-permission, standing secrets, and immortality look like five problems; they are one:
+**nothing in the identity lifecycle fires for an entity that was never hired and will
+never resign.** Breach write-ups have made this pattern familiar enough that OWASP now
+maintains a Non-Human Identity Top 10 cataloguing the variants.
+
+## The inventory problem comes first
+
+An NHI program starts with a number nobody currently knows: how many exist. Discovery has
+to sweep every issuing surface, because each speaks its own dialect — three cloud
+providers with different native objects, the on-prem directory's service accounts,
+Kubernetes service accounts per cluster, CI systems minting pipeline identities, and
+every SaaS tenant's [OAuth grant list](/cloud-infra/saas-security/), which is an NHI
+inventory wearing a vendor's logo.
+
+The metadata that matters most and exists least is **ownership**. An identity with no
+owner cannot be reviewed, right-sized or retired — every downstream decision blocks on a
+question nobody can answer. The cheap fix is structural: owner and expiry become
+conditions of issuance, enforced in the IaC module or template that creates the identity,
+and orphan detection runs off the leaver process — when an employee
+[offboards](/iam/governance/), the query "what did they own?" has to include machines.
+
+## Three tool categories, one question each
+
+The market sells three distinct answers, routinely mistaken for each other:
+
+| Category | The question it answers | The question it doesn't |
+|---|---|---|
+| **CIEM** | Is this identity over-permissioned, measured against what it actually uses? | Who owns it, and should it exist? |
+| **Secrets management** | Where does the credential live, and does it rotate? | Whether a credential should exist at all |
+| **ITDR** | Is this identity being abused right now? | Anything before the abuse starts |
+
+All three are useful; none is a program, and buying all three still leaves lifecycle and
+ownership — the actual root cause — untouched. The categories are also converging as
+platform suites absorb them, so evaluate against the question you need answered rather
+than the acronym on the datasheet.
+
+## The elimination path
+
+The strongest position in this space is that the best machine credential is one that
+does not exist. In rough order of leverage:
+
+- **Short-lived by default.** Every provider now has a native mechanism — STS roles,
+  managed identities, service account impersonation — that replaces a stored key with a
+  platform-issued token measured in minutes. The per-provider pages cover the mechanics;
+  the program decision is making these the default and treating every exported long-lived
+  key as a finding with a deadline.
+- **OIDC workload identity federation.** The
+  [CI-to-cloud pattern](/appsec/cicd-security/) generalized: an external workload proves
+  its identity with a token attested by its own platform and exchanges it for short-lived
+  cloud credentials. No stored secret exists to leak, which retires the entire
+  credential-theft class for that path.
+- **SPIFFE/SPIRE** for the platform-neutral case: workload identity issued on
+  attestation of what the workload *is* and where it runs, solving the
+  bottom-turtle problem — the credential you'd otherwise need in order to fetch the
+  first credential.
+- **Brokered dynamic credentials** where federation can't reach: a vault minting
+  per-use database or API credentials with TTLs, so even the legacy tail stops
+  accumulating standing secrets.
+
+Sequence the work by credential class, worst first: exported cloud keys, then long-lived
+API tokens in CI variables, then certificates nobody can locate, and the managed
+identities last — they were already the least dangerous.
+
+## Lifecycle: JML for machines
+
+The end state is the human lifecycle rebuilt on machine-shaped triggers:
+
+- **Joiner** — issuance through a paved path that stamps owner, purpose and expiry; an
+  identity created outside the path is itself a detection.
+- **Mover** — review driven by usage data (last-used APIs, unused permissions) on a
+  cadence, because no manager remembers what a service account is for; CIEM's delta is
+  the review's evidence.
+- **Leaver** — an NHI dies when its workload dies. Deploys that delete a service should
+  delete its identity; a credential that outlives its workload is the machine version of
+  the unrevoked leaver account, and orphan sweeps are the compensating control for all
+  the deletions that didn't happen.
+
+## The agent wrinkle
+
+Agents change the consumption side of the equation. A traditional NHI does one thing with
+one permission set; an [orchestrated agent](/ai-automation/agent-orchestration/) decides
+at runtime which tools to invoke, which makes its effective blast radius the *union* of
+everything its credentials can reach — and delegation chains (user to agent to tool to
+API) stretch the static-grant model past what it was designed to express. The direction
+of travel is the same as everywhere on this page, compressed: short-lived, task-scoped,
+attested, auditable — with the delegation and on-behalf-of semantics that
+[§2.6's agentic identity material](/iam/frameworks/) treats as its own subject. Agents
+are, in that sense, the forcing function that makes the rest of this page urgent.
+
+## Where this connects
+
+This is [§2.7's governance](/iam/governance/) applied to the identities with no HR
+record, and [§2.6's agentic frameworks](/iam/frameworks/) supply the delegation semantics
+the agent wrinkle needs. The elimination path's flagship example is
+[OIDC from CI to cloud](/appsec/cicd-security/), its SaaS-side inventory is
+[the OAuth grant surface](/cloud-infra/saas-security/), and its consumers increasingly
+are [orchestrated agents](/ai-automation/agent-orchestration/). Abuse detection for these
+identities is [ITDR](/iam/governance/) fed by the identity telemetry
+[§7.3 ranks](/detection-eng/data-pipeline/) among its richest sources.

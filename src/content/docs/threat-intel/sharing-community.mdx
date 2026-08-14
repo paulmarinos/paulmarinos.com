@@ -1,0 +1,139 @@
+---
+title: Sharing & Community
+description: TLP 2.0 as it is actually meant to be read, the ISAC/CERT/trust-group ecosystem, tearlines and sanitization, and what contributing back genuinely buys a program.
+pillar: threat-intel
+contentType: deep-dive
+maturity: practitioner
+frameworks: [TLP 2.0, STIX/TAXII, MISP]
+relatedTo:
+  - threat-intel/collection-sourcing
+  - threat-intel/intelligence-requirements
+  - threat-intel/analytic-methods
+  - dfir/evidence-legal
+  - grc/regulations-region
+updated: 2026-08-14
+sidebar:
+  order: 10
+---
+
+Threat intelligence is one of the few security disciplines where handing your work to
+strangers — including direct competitors — is normal practice. The logic is structural:
+adversaries reuse infrastructure, tooling and technique across victims, while each
+defender's visibility is a narrow sample. Pooling samples is the only way any single
+organization sees the campaign instead of its own slice of it. Sharing is also a practice
+with rules, and most of the friction in it comes from people improvising the rules
+mid-incident.
+
+## TLP 2.0, as written
+
+The Traffic Light Protocol (FIRST's TLP 2.0) is the lingua franca for handling
+expectations. What each label actually permits:
+
+- **TLP:RED** — for the eyes and ears of the individual recipients only. Presence in the
+  meeting is the distribution list.
+- **TLP:AMBER** — recipients may share within their organization *and with its clients*,
+  on a need-to-know basis.
+- **TLP:AMBER+STRICT** — the same, with the client half removed. Organization only.
+- **TLP:GREEN** — may circulate within the surrounding community: peers, partner
+  organizations, the sharing group it arrived through. Public channels are out of bounds.
+- **TLP:CLEAR** — no restriction. (2.0 renamed WHITE to CLEAR.)
+
+The common misreadings are worth naming because each one burns a source eventually.
+AMBER gets treated as "internal only" when it permits client disclosure by default — the
++STRICT variant exists precisely because the default surprises people. GREEN gets posted
+to a public blog because "the community" was read as "the internet." And TLP gets treated
+as a control, when it is a *promise*: it has no enforcement mechanism, it overrides
+neither contract nor law, and its entire value is the shared understanding that people who
+break the promise stop receiving things. Marking everything AMBER by reflex erodes that
+understanding as surely as leaking does.
+
+## The ecosystem
+
+The communities worth knowing, in roughly descending order of formality:
+
+- **ISACs and ISAOs** — sector-organized sharing bodies with membership agreements, staff,
+  and infrastructure. Quality varies enormously by sector; the good ones are the fastest
+  route to "is anyone else seeing this?"
+- **National CERTs/CSIRTs** — the government coordination layer: advisories out, incident
+  reports in, and in some jurisdictions a legal reporting channel with deadlines attached.
+- **Vendor and product trust groups** — communities organized around a platform or a
+  vendor's customer base, useful because everyone in them shares an attack surface.
+- **Informal peer circles** — the vetted chat groups where the fastest and most candid
+  material moves, hours or days ahead of anything official. Trust is personal, admission
+  is by vouch, and the operating currency is reciprocity.
+
+Choosing where to invest is a [requirements](/threat-intel/intelligence-requirements/)
+question like any other collection decision: a community is a source, and the gap list
+says which gaps it would need to cover to be worth the membership fee and the meeting
+hours.
+
+## Tearlines and sanitization
+
+A tearline is the discipline of writing the shareable version *inside* the report — a
+section below the line that stands alone at a lower handling level. Reports structured
+this way are releasable by construction; reports sanitized after the fact by deleting
+paragraphs are how identifying details survive into the "clean" copy.
+
+Sanitization has two protection targets. The first is you, the victim: strip what
+identifies the environment, the business impact, the timeline details only an insider
+would know. The second is the source: aggregate, generalize, and delay so that what you
+share cannot be traced back to the access that produced it.
+
+The good news is that the most shareable layer is also the most valuable one.
+[Behavioural conclusions travel better than indicators](/threat-intel/analytic-methods/) —
+the technique, the sequence, the detection logic — and none of it names your incident. The
+Pyramid of Pain argument and the sanitization argument point at the same output.
+
+## Transport is the easy part
+
+STIX/TAXII and MISP move structured indicators between machines; the
+[mechanics live with the other format material](/threat-intel/collection-sourcing/).
+Automating that exchange is worth doing and is also the smallest part of the practice.
+The highest-value sharing in most communities moves as prose, screenshots and
+conversation, because the things worth sharing early — "we think this campaign pivots on
+X, has anyone seen Y?" — have no STIX object. Build the pipes, and measure the program by
+the conversations.
+
+## What contributing buys
+
+Every sharing community runs on a minority of contributors and a silent majority of
+consumers, and the consumers systematically underestimate what they are leaving on the
+table. Contribution buys four concrete things:
+
+- **The early phone call.** Reciprocity is tracked informally but it is tracked. The
+  organizations that share are the ones others warn first.
+- **Admission to the faster rooms.** The informal circles recruit from people whose
+  contributions they have seen. Consuming silently is invisible.
+- **Free peer review.** Sharing analysis exposes it to people with different visibility,
+  which is the cheapest error-correction a small team can get.
+- **Internal discipline.** Producing a releasable version forces the tearline and
+  sanitization habits that improve every report, shared or otherwise.
+
+## Legal constraints: settle them before the incident
+
+What can leave the building is a question with contractual and statutory edges. Customer
+contracts and NDAs may cover exactly the details an ISAC report would contain. Indicators
+routinely embed personal data — IP addresses, email addresses, usernames — which puts
+sharing inside [privacy law's scope](/grc/regulations-region/) in most jurisdictions.
+Material from an active incident may be evidence, with
+[privilege and chain-of-custody implications](/dfir/evidence-legal/) that counsel will
+care about after the fact. Some jurisdictions offer liability protections for voluntary
+sharing; their conditions are specific and worth knowing in advance.
+
+The practical control is a sharing policy agreed with counsel *before* it is needed: what
+categories of material may go where, at what TLP, sanitized how, approved by whom. During
+an incident that policy turns sharing into execution. Without it, every disclosure is a
+negotiation held at the worst possible time, and the default answer under pressure is
+silence — which, compounded across every member, is how sharing communities die.
+
+## Where this connects
+
+Sharing relationships are a collection source, so they appear in
+[the collection plan](/threat-intel/intelligence-requirements/) and hand material to
+[Collection & Sourcing](/threat-intel/collection-sourcing/) like any feed — STIX/TAXII
+and MISP mechanics live there. What travels best is the behavioural layer that
+[Analytic Methods](/threat-intel/analytic-methods/) argues is the durable output anyway.
+The constraints on what leaves the building are
+[privacy-law](/grc/regulations-region/) and
+[evidence-handling](/dfir/evidence-legal/) questions, which is why the sharing policy
+belongs to counsel as much as to the intel team.

@@ -1,0 +1,143 @@
+---
+title: Running a CTI Program
+description: Consumers as the program's charter, the tactical/operational/strategic tiers as product lines, team shapes by scale, CTI-CMM and build order, procurement against your own gaps, and metrics that survive contact with the lifecycle.
+pillar: threat-intel
+contentType: deep-dive
+maturity: practitioner
+frameworks: [CTI-CMM]
+relatedTo:
+  - threat-intel/intelligence-requirements
+  - threat-intel/intelligence-lifecycle
+  - threat-intel/sharing-community
+  - detection-eng/program-metrics
+  - grc/risk-management
+updated: 2026-08-14
+sidebar:
+  order: 11
+---
+
+The rest of this pillar covers the parts: the [loop](/threat-intel/intelligence-lifecycle/),
+the [questions](/threat-intel/intelligence-requirements/), the craft, the
+[community](/threat-intel/sharing-community/). This page is assembling them into a function
+— and the assembly order matters, because most failed CTI programs were built backwards,
+starting from a platform purchase and working outwards toward the question of who any of it
+was for.
+
+## Consumers are the charter
+
+A program exists to serve named consumers, and everything else — team shape, feeds,
+product lines — derives from that list. The recurring cast and what each actually needs:
+
+- **Detection engineering and the SOC** want behavioural detail and detection
+  opportunities: technique-level reporting that converts to
+  [backlog entries](/detection-eng/detection-lifecycle/), and indicators that arrive with
+  enough context to tune against.
+- **Incident response** wants speed: actor context mid-incident and RFI turnaround
+  measured in hours, because the answer's value decays with the incident clock.
+- **Vulnerability management** wants exploitation evidence — the
+  [is-it-being-used signal](/threat-intel/risk-prioritization/epss-kev/) that separates
+  the queue from the wall.
+- **Risk and GRC** want the threat side of the
+  [risk register](/grc/risk-management/): is the likelihood column resting on observation
+  or on vibes.
+- **Executives** want the strategic landscape at
+  [decision altitude](/threat-intel/effective-communication/): what changed, what it means
+  for us, what you recommend.
+
+Writing this map down is the closest thing the program has to a charter, and
+[requirements](/threat-intel/intelligence-requirements/) are what formalize it — each PIR
+is a row in this table with a question attached.
+
+## Tactical, operational, strategic: product lines, with a consumer each
+
+The classic three tiers describe questions and their decision cadences. **Tactical** is
+technique-and-indicator material on an hours-to-days clock, consumed by the SOC.
+**Operational** is campaign-and-actor material on a weeks clock, consumed by IR, hunting
+and detection engineering. **Strategic** is landscape material on a quarters clock —
+geopolitical shifts, sector targeting trends, the adversary economics behind them —
+consumed by leadership making investment and exposure decisions.
+
+Two readings of the tiers produce dysfunction. Read as an org chart, they staff three
+silos that duplicate collection and contradict each other. Read as a maturity ladder,
+they produce the belief that strategic work is what tactical teams graduate into —
+so nobody does it, or worse, tactical output gets adjectives added and shipped upward as
+strategy. The workable reading: one team, three product lines, each with a named consumer
+and its own cadence. A single analyst can produce all three tiers in the same week; the
+tier is a property of the question.
+
+## Team shapes by scale
+
+**The one-analyst function** — the most common shape by far — survives on ruthless scope:
+a single-digit PIR set, [communities](/threat-intel/sharing-community/) doing the breadth
+work that a team of one cannot, and products limited to enrichment plus a short recurring
+note. The failure mode is trying to run a miniature of a large program and delivering all
+of it badly.
+
+**The small dedicated team** differentiates by consumer rather than tier: one analyst
+close to detection engineering, one close to IR and hunt, one owning the strategic product
+— with collection and requirements shared.
+
+**Where CTI reports** shapes the program more than headcount does. Under security
+operations, the loop to detection and IR is short and the tactical product thrives, at the
+cost of the strategic tier being perpetually preempted and intel drifting into
+alert-enrichment. Under the CISO's staff or the risk function, the strategic product and
+the [register](/grc/risk-management/) get served, at the cost of distance from operations.
+Both placements work; the reporting line decides which consumers get served *by default*,
+and the requirements review is where the neglected side gets deliberately protected.
+
+## Maturity and build order
+
+CTI-CMM — a community-built capability maturity model for CTI programs — is useful the
+same way [the lifecycle is](/threat-intel/intelligence-lifecycle/): as a diagnostic
+vocabulary for what is missing, rather than a ladder to climb for its own sake. Assess,
+find the domain that is weakest relative to what your consumers need, and invest there.
+
+For sequencing, the reliable rule is that build order mirrors the lifecycle: direction
+before collection. [Requirements and a feedback habit](/threat-intel/intelligence-requirements/)
+cost nothing and change everything downstream. Exploiting internal telemetry comes next —
+it is already paid for and it describes your actual environment. Community memberships
+widen the aperture cheaply. Paid feeds and platforms come last, bought against known gaps.
+The commonly observed order is the exact reverse, which is how programs end up with a
+platform, four feeds, and no answer to "who is this for."
+
+## Procurement: evaluate against your gaps
+
+The vendor's demo scenario always looks good, because the vendor chose it. A defensible
+evaluation runs the other direction, starting from the
+[collection plan's gap list](/threat-intel/intelligence-requirements/):
+
+- Replay past incidents: would this source have told us anything earlier or better?
+- Score coverage of *your* sector, stack and geography, on your EEIs.
+- Measure overlap against what already arrives free — community sharing, CERT advisories,
+  vendor blogs — because a feed that is 80% overlap is priced at 100%.
+- Price the exit: how much workflow will grow around this product, and what does leaving
+  cost in two years?
+
+## Metrics that survive the lifecycle
+
+Report counts and indicator volumes measure activity, and optimizing them builds the
+[report factory](/threat-intel/intelligence-lifecycle/). The metrics that track value all
+descend from requirements and feedback:
+
+- Production tagged to requirements, and requirements with zero production — the two
+  halves of "are we working on what we said mattered."
+- Consumer actions: decisions informed, detections opened, register entries updated.
+- RFI turnaround, and repeat requesters — the clearest revealed-preference signal a
+  program gets.
+- Detection ideas accepted into the backlog, measured on the same terms
+  [detection engineering measures itself](/detection-eng/program-metrics/).
+- Time-to-awareness against public disclosure for campaigns relevant to your sector.
+
+None of these are hard to collect once tagging and feedback exist, which is the quiet
+argument for building those first.
+
+## Where this connects
+
+The charter formalizes into [requirements](/threat-intel/intelligence-requirements/), the
+program diagnoses itself against [the lifecycle](/threat-intel/intelligence-lifecycle/),
+and [community](/threat-intel/sharing-community/) is the breadth multiplier that makes
+small teams viable. The metrics conversation is the mirror of
+[§7's program metrics](/detection-eng/program-metrics/) — two disciplines measuring the
+same pipeline from opposite ends — and the strategic product line lands in the
+[risk register](/grc/risk-management/) and the
+[boardroom briefing](/threat-intel/effective-communication/).

@@ -1,0 +1,111 @@
+---
+title: PKI & Certificate Lifecycle
+description: Internal CA design, ACME and issuance automation, why revocation mostly doesn't work and short lifetimes are the honest substitute, and the expired certificate as an availability incident.
+pillar: cloud-infra
+contentType: deep-dive
+maturity: practitioner
+cloud: [aws, azure, gcp, multi]
+relatedTo:
+  - cloud-infra/cryptography-key-management
+  - iam/non-human-identity
+  - appsec/cicd-security
+  - cloud-infra/workload-container
+updated: 2026-08-18
+sidebar:
+  hidden: true
+---
+
+A certificate is a credential — a signed claim that a key belongs to a name — and it should be
+managed like one. That framing does more work than any tooling decision, because it makes the
+failure modes recognizable: certificates sprawl like credentials (issued freely, tracked
+nowhere), expire like credentials nobody rotated, and get compromised like credentials nobody
+can revoke. [Non-human identity](/iam/non-human-identity/) treats keys and tokens as a
+lifecycle problem; this page is the same argument for the credential class that happens to
+carry an expiry date in its own body.
+
+## Internal CA design
+
+The design questions for a private PKI are hierarchy and blast radius, and they rhyme with
+[key hierarchies](/cloud-infra/cryptography-key-management/) deliberately:
+
+- **The root stays offline.** A root CA signs intermediates and nothing else, rarely, from
+  hardware. Everything operational happens at **issuing CAs**, which can be rotated or revoked
+  without re-establishing trust from scratch. A root that issues leaf certificates directly is
+  the account-wide KMS key of PKI: one compromise, total re-trust.
+- **Issuing CAs partition by blast radius.** Separate intermediates per environment or per
+  trust domain mean a compromised CA burns one segment, not the estate — the same reasoning as
+  account layout and [network segmentation](/cloud-infra/network-segmentation/), applied to
+  trust.
+- **Managed private CAs** (AWS Private CA, Azure and GCP equivalents, or Vault's PKI engine)
+  take the key-protection and signing mechanics off your hands. What they don't take is
+  **trust distribution** — deciding which workloads trust which CA, and getting that bundle
+  onto every endpoint and out of it again when a CA retires. That part is architecture, and
+  it's the part that hurts.
+
+## Issuance is an automation problem
+
+Manual certificate issuance does not survive contact with scale, and the industry has stopped
+pretending otherwise. Public certificate lifetimes have been repeatedly shortened by
+CA/Browser Forum ballot — the trajectory points to lifetimes measured in weeks, not years —
+and the explicit intent is to make manual renewal impossible so that automation becomes
+mandatory. The direction of travel matters more than the current number: **any process that
+assumes a human renews a certificate is already deprecated.**
+
+The automation stack is mature:
+
+- **ACME** turned issuance into a protocol — prove control of a name, get a certificate — and
+  it works as well against internal CAs as it does against public ones.
+- **cert-manager** does the same job inside Kubernetes, and a [service
+  mesh](/cloud-infra/network-segmentation/) pushes it further: workload certificates issued
+  per-pod, lifetimes in hours, rotation nobody sees. At that point the certificate has become
+  what it always should have been — a short-lived, automatically issued workload credential,
+  the same shape [federation](/iam/multi-cloud-federation/) gives you for API access.
+- The residue is the **legacy tail**: appliances, third-party integrations, and that one
+  load balancer that only takes a manually uploaded PFX. The tail is where outages live, so
+  the honest program tracks it explicitly rather than declaring victory on the automated 90%.
+
+## Revocation mostly doesn't work
+
+The uncomfortable truth of PKI operations: **revocation is the part of the design that never
+delivered.** CRLs grow unboundedly and cache stale; OCSP adds a privacy leak and an
+availability dependency, and clients "fail open" when the responder is down because the
+alternative is breaking the internet. If a certificate's private key leaks, the mechanisms
+that theoretically un-trust it are best-effort at every layer that matters.
+
+The practical consequences:
+
+- **Short lifetimes are the real revocation.** A certificate that expires in 24 hours has a
+  24-hour compromise window regardless of whether revocation works. This — not renewal
+  hygiene — is the deep reason the industry keeps shortening lifetimes.
+- **Revocation you control still matters internally.** Mesh and private-CA setups can enforce
+  revocation at the point of connection, which public PKI cannot. That's an argument for
+  keeping internal trust internal rather than riding public certificates for east-west
+  traffic.
+- **Compromise response requires an inventory.** Revoking a certificate does nothing about
+  the systems still trusting a cached copy, and reissuing requires knowing everywhere the old
+  one lives. Which is the next section.
+
+## The expired-cert outage is a security failure
+
+Every practitioner has watched an expired certificate take down production, and the standard
+telling files it under operations. It belongs here, because the root cause is a
+key-management gap: **nothing knew the certificate existed, so nothing renewed it.** The same
+missing inventory that turns expiry into an outage turns compromise into an unanswerable
+question — "what do we need to reissue?" and "what will break on Tuesday?" fail on the
+identical blind spot.
+
+So the control is one program, not two: discovery (scanning, CT log monitoring for your own
+domains, CA issuance records) feeding an inventory, expiry monitoring as an alerting signal
+with the same seriousness as a [detection](/detection-eng/data-pipeline/), and automated
+renewal as the remediation. Availability pays for the program; security inherits it.
+
+## Where this connects
+
+Certificates are [the other machine credential class](/iam/non-human-identity/) — same
+sprawl, same lifecycle discipline, same short-lived-beats-managed conclusion. Signing is the
+same primitive pointed at artifacts: [CI/CD provenance and Sigstore](/appsec/cicd-security/)
+are certificate lifecycle for code, and [admission
+control](/cloud-infra/workload-container/) is what consumes those signatures at deploy time.
+The CA hierarchy itself is a [key hierarchy](/cloud-infra/cryptography-key-management/) with
+names attached, and [service mesh mTLS](/cloud-infra/network-segmentation/) is this page's
+automation argument deployed at workload scale.

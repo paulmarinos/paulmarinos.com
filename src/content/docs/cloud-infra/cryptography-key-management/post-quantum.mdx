@@ -1,0 +1,102 @@
+---
+title: Post-Quantum Migration
+description: Harvest-now-decrypt-later as the threat that makes PQC a today problem, the NIST standards and hybrid deployment, and why the migration is an inventory and agility problem before it's a cryptography problem.
+pillar: cloud-infra
+contentType: deep-dive
+maturity: advanced
+cloud: [multi]
+frameworks: [NIST PQC]
+relatedTo:
+  - cloud-infra/cryptography-key-management
+  - grc/risk-management
+  - data-privacy/lifecycle-retention
+  - appsec/cicd-security
+updated: 2026-08-18
+sidebar:
+  hidden: true
+---
+
+The post-quantum conversation usually starts with the wrong question — "when will a
+cryptographically relevant quantum computer exist?" — and stalls there, because nobody knows.
+The right question is **when does captured data start being at risk**, and that answer is
+already in the past. **Harvest now, decrypt later**: an adversary records encrypted traffic
+today and decrypts it when the capability arrives. For any data whose confidentiality must
+outlive that uncertain date — health records, legal matters, state secrets, long-lived
+credentials — the exposure began at capture time. The migration deadline isn't the quantum
+computer's arrival; it's the arrival *minus your data's confidentiality lifetime*, which for
+some data classes puts it behind you.
+
+## What breaks, and what doesn't
+
+Quantum computers running Shor's algorithm break the **asymmetric** primitives — RSA and
+elliptic-curve — that underpin key exchange, signatures, and PKI. Symmetric cryptography and
+hashing survive with larger parameters; AES-256 is fine. That asymmetry shapes the whole
+migration: the work concentrates in **key establishment and signatures**, which is to say in
+TLS handshakes, certificate chains, code signing, and every protocol that starts with an
+asymmetric exchange before settling into symmetric bulk encryption.
+
+## The standards, and the hybrid bridge
+
+NIST finalized its first PQC standards in 2024: **ML-KEM** (FIPS 203, key encapsulation),
+**ML-DSA** (FIPS 204, signatures), and **SLH-DSA** (FIPS 205, hash-based signatures as a
+conservative fallback). The set is still moving — verify current standards and government
+timelines rather than trusting any fixed list, since additional algorithms and transition
+deadlines continue to land.
+
+Deployment practice settled on **hybrid** key exchange: a classical algorithm and a
+post-quantum one combined, so the connection is secure unless *both* fail. Major browsers and
+cloud providers already negotiate hybrid TLS by default, which carries two lessons. First,
+harvest-now-decrypt-later on public TLS is being closed for you, provider by provider — the
+tail you own moves only when you move it. Second, the migration is demonstrably survivable:
+it happened mid-flight, in the open, without users noticing, wherever the systems involved
+could change algorithms without re-architecting. Which is the actual subject of this page.
+
+## Crypto agility is the real deliverable
+
+Picking the winning algorithm is not the goal — the algorithms will change again, and one of
+the standardized finalists' predecessors was broken during the competition itself. The
+durable property is **the ability to swap algorithms without re-architecting**: crypto
+behind an interface rather than inlined, key and certificate formats that admit new types,
+protocol versions negotiable rather than hardcoded, and parameter sizes not assumed (PQC keys
+and signatures are substantially larger, which is what actually breaks fixed-size database
+columns, UDP packet budgets, and constrained-device firmware).
+
+Systems with agility migrate as an operational task. Systems without it migrate as a
+re-architecture, and that gap — not algorithm choice — is where migration programs succeed or
+die. Agility is also the property that outlasts this transition: it's the same design that
+would have made the MD5, SHA-1, and TLS 1.0 deprecations cheap.
+
+## Inventory first — the migration is a discovery problem
+
+Most organizations cannot answer "where do we use RSA?" — and no migration can be scoped,
+sequenced, or evidenced without that answer. The emerging discipline is the **cryptographic
+bill of materials**: an inventory of algorithms, key sizes, protocols, libraries, and
+certificates across the estate, built from code scanning, TLS endpoint scanning, certificate
+inventories, and dependency manifests. It is exactly the shape of work
+[GRC](/grc/risk-management/) already knows — a control inventory with owners and evidence —
+and regulators have noticed the same thing, with PQC-readiness questions already appearing in
+government procurement and financial-sector guidance. Treating the inventory as an audit
+deliverable rather than an engineering side quest is how the migration gets funded.
+
+Sequencing then falls out of the threat model rather than convenience:
+
+1. **Key establishment protecting long-lifetime data** first — that's the
+   harvest-now-decrypt-later exposure, and [data
+   retention](/data-privacy/lifecycle-retention/) is literally an input: data you delete on
+   schedule has a short confidentiality lifetime, which makes deletion a quantum mitigation.
+2. **Long-lived signing roots** next — firmware, code-signing, and CA keys that must still be
+   trusted in the 2030s, where [signing infrastructure](/appsec/cicd-security/) can't be
+   reissued quickly.
+3. **Session signatures last** — a TLS server signature only authenticates the handshake it's
+   in, so it matters only once the capability actually exists.
+
+## Where this connects
+
+The migration runs on this subsection's own machinery — [key hierarchies and
+KMS](/cloud-infra/cryptography-key-management/) are where algorithms actually get swapped,
+and [certificate lifecycle automation](/cloud-infra/cryptography-key-management/pki/) is the
+delivery mechanism for new algorithms at scale. The inventory is a
+[risk-management](/grc/risk-management/) program with a cryptographic subject, sequenced by
+[data lifetime](/data-privacy/lifecycle-retention/) — §10's retention schedule doubles as the
+quantum exposure map. And long-lived [code-signing roots](/appsec/cicd-security/) are the
+quiet urgent case: the signature you ship today has to verify on the day the threat matures.

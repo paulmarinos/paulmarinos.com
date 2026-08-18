@@ -534,11 +534,21 @@ both could apply, the test is whether the subject is the workload or the substra
 - Host hardening and CIS benchmarks
 
 ### 8.4 Cryptography & Key Management
+Grown a third level. The hub keeps what encryption defends against, key hierarchies and
+envelope encryption, and the secrets-architecture boundary with §2.5; PKI and post-quantum
+each earn a page, with condensed sections pointing down.
 - KMS and HSM design, key hierarchies, envelope encryption
 - Encryption at rest and in transit — what each actually defends against, and what it doesn't
 - Secrets architecture vs. secrets management tooling (ties to §2.5)
-- PKI: internal CAs, certificate lifecycle, rotation and revocation
-- Post-quantum: NIST PQC standards, harvest-now-decrypt-later, crypto agility as a design property
+- **8.4.1 PKI & Certificate Lifecycle** — certificates as §2.8's other credential class,
+  internal CA design as trust blast-radius, ACME and shrinking public lifetimes forcing
+  automation, revocation's failure and short lifetimes as the honest substitute, the
+  expired-cert outage as a key-management failure (inventory feeds §7, signing feeds §3.4,
+  admission control in §8.3 consumes it)
+- **8.4.2 Post-Quantum Migration** — harvest-now-decrypt-later and the
+  confidentiality-lifetime deadline, the NIST standards (ML-KEM/ML-DSA/SLH-DSA) and hybrid
+  TLS, crypto agility as the real deliverable, inventory-first migration as a §4 evidence
+  program sequenced by §10.3 data lifetime
 
 ### 8.5 Posture Management & Infrastructure as Code
 - CSPM / CNAPP: what posture tooling genuinely catches, and what it only appears to
@@ -729,10 +739,11 @@ SaaS remainder, and §10's controller/processor split); **One incident, fully ex
   children, which sit beside it and are hidden from the sidebar. The sidebar therefore never
   grows past pillar -> subsection no matter how much lands underneath, and third-level
   articles are found through the hub, search, the graph and backlinks instead. Mechanics in
-  `AGENTS.md`. Eight subsections have grown a third level so far, across a spectrum of split
+  `AGENTS.md`. Nine subsections have grown a third level so far, across a spectrum of split
   width: `appsec/api-cloud-native` and `dfir/digital-forensics` each split off a single
   sibling article (`kubernetes-workload-security`, `cloud-forensics`);
-  `threat-intel/risk-prioritization` split into three
+  `cloud-infra/cryptography-key-management` split into two (PKI & certificate lifecycle,
+  post-quantum migration); `threat-intel/risk-prioritization` split into three
   (the CVSS / EPSS+KEV / SSVC scoring systems); `threat-intel/intelligence-lifecycle` into
   three (F3EAD, processing, feedback — the parts of the loop no other subsection owns);
   `iam/frameworks` into three (Zero Trust, Zero Knowledge, Zero Knowledge Trust);

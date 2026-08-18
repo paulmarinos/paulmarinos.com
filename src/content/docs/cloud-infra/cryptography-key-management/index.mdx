@@ -10,7 +10,7 @@ relatedTo:
   - iam/multi-cloud-federation
   - data-privacy
   - grc
-updated: 2026-08-11
+updated: 2026-08-18
 sidebar:
   order: 4
 ---
@@ -88,31 +88,24 @@ design smell worth engineering away.
 
 ## PKI
 
-Certificate management is where cryptographic good intentions go to die operationally. Internal
-CAs, certificate lifecycle, and — the perennial failure — **rotation and revocation**. The
-expired certificate that takes down production, and the compromised certificate that can't be
-revoked cleanly because nothing tracks what trusts it, are both key-management failures wearing a
-certificate. [Service mesh](/cloud-infra/network-segmentation/) exists in large part to automate this, because
-manual certificate lifecycle does not survive scale.
+Certificate management is where cryptographic good intentions go to die operationally. A
+certificate is a credential with a hard expiry and a trust chain nobody inventoried, and the two
+canonical failures — the expired certificate that takes down production, and the compromised one
+that can't be revoked because nothing tracks what trusts it — are both key-management failures
+wearing a certificate. The full treatment — internal CA design, issuance automation and ACME,
+why revocation mostly doesn't work and short lifetimes are the honest substitute, and the
+expired-cert outage as an availability incident — lives in
+**[PKI & Certificate Lifecycle](/cloud-infra/cryptography-key-management/pki/)**.
 
 ## Post-quantum — a today problem
 
 Post-quantum cryptography sounds like a future concern and isn't, because of one specific threat:
 **harvest now, decrypt later.** An adversary can capture encrypted traffic *today* and decrypt it
-once quantum computers mature. So any data with a **long confidentiality lifetime** — records that
-must stay secret for years or decades — is at risk *now*, even though the decryption capability
-doesn't exist yet. The data captured today is already exposed on that timeline.
-
-The practical posture:
-
-- **NIST has standardized PQC algorithms** — verify the current standards and recommendations
-  rather than trusting a fixed list, as this is moving.
-- **Crypto agility is the real design goal.** The durable answer isn't picking the winning
-  algorithm; it's building systems where the algorithm can be *swapped* without re-architecting.
-  Most systems hardcode crypto assumptions and can't migrate cleanly, and that inflexibility is
-  the actual vulnerability — the specific algorithm matters less than whether you can change it.
-- **Inventory long-lived secrets and long-confidentiality data first** — that's where
-  harvest-now-decrypt-later bites, and where migration effort should go first.
+once quantum computers mature — so any data with a long confidentiality lifetime is at risk now,
+even though the decryption capability doesn't exist yet. What follows from that — the NIST
+standards, hybrid key exchange, why the migration is an inventory-and-agility problem before it's
+a cryptography problem, and how to sequence it — lives in
+**[Post-Quantum Migration](/cloud-infra/cryptography-key-management/post-quantum/)**.
 
 ## Where this connects
 

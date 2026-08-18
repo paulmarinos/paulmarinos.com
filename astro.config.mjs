@@ -127,9 +127,14 @@ export default defineConfig({
 							]),
 						),
 						// Tag each page with its pillar so the graph can be filtered.
-						tagRules: Object.fromEntries(
-							pillars.map(({ dir }) => [dir, [`${dir}/**`, `**/${dir}/**`]]),
-						),
+						// Essays get a tag but no styleRule: the colour slots are
+						// exhausted at ten (see the pillars table), and the default
+						// node colour marks them as deliberately outside the palette —
+						// same treatment as the threads.
+						tagRules: Object.fromEntries([
+							...pillars.map(({ dir }) => [dir, [`${dir}/**`, `**/${dir}/**`]]),
+							['essays', ['essays/**', '**/essays/**']],
+						]),
 					},
 				}),
 				// Fails the build on broken internal links. This is what gives
@@ -157,6 +162,9 @@ export default defineConfig({
 			// "Edit page" button invites fork/PR edit proposals we don't want. Re-add
 			// an `editLink: { baseUrl: '.../edit/main/' }` block to bring it back.
 			lastUpdated: true,
+			// Only the pillar directories: `essays/` and `threads/` are deliberately
+			// absent, surfaced through the homepage, search, the graph and backlinks
+			// instead of the navigation.
 			sidebar: pillars.map(({ label, dir }) => ({
 				label,
 				collapsed: true,

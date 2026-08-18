@@ -16,7 +16,8 @@ export const PILLARS = [
 	'data-privacy',
 ] as const;
 
-// 'landing' is the pillar overview page; everything else is an article.
+// 'landing' is the pillar overview page; 'essay' is personal writing under
+// src/content/docs/essays/, outside the pillars; everything else is an article.
 export const CONTENT_TYPES = [
 	'landing',
 	'deep-dive',
@@ -24,6 +25,7 @@ export const CONTENT_TYPES = [
 	'template',
 	'walkthrough',
 	'glossary',
+	'essay',
 ] as const;
 
 export const MATURITY = ['foundational', 'practitioner', 'advanced'] as const;
@@ -57,6 +59,21 @@ export const collections = {
 			extend: (context) =>
 				taxonomy.merge(ExtendDocsSchema).superRefine((value, ctx) => {
 					if (value.contentType === 'landing') return;
+
+					// Essays sit outside the pillars, so neither the pillar/maturity
+					// requirements nor the cross-link discipline apply. They still date
+					// themselves, and any `relatedTo` they do declare gets referential
+					// integrity from RelatedArticles.astro like everything else.
+					if (value.contentType === 'essay') {
+						if (!value.updated) {
+							ctx.addIssue({
+								code: z.ZodIssueCode.custom,
+								path: ['updated'],
+								message: 'Essays must declare an `updated` date.',
+							});
+						}
+						return;
+					}
 
 					if (!value.pillar) {
 						ctx.addIssue({

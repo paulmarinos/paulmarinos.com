@@ -731,6 +731,31 @@ SaaS remainder, and §10's controller/processor split); **One incident, fully ex
 
 ---
 
+## Essays
+
+Personal writing under `src/content/docs/essays/`: arguments, ideas, and reflections in
+first person, deliberately outside the ten pillars. Structurally a sibling of the threads
+with the opposite voice rule — threads are maximally cross-pillar reference writing with a
+spine pillar; essays are the author's own voice with no pillar at all.
+
+- **Schema:** `contentType: essay` in `src/content.config.ts` — exempt from `pillar`,
+  `maturity`, and the cross-link requirement; `updated` still required. `relatedTo` is
+  optional but validated for existence when present.
+- **Navigation:** absent from the sidebar and mobile nav entirely, like `threads/` — the
+  directory is not in the `pillars` table, so it never becomes a sidebar group. The
+  section is surfaced through the homepage (after the threads), search, the graph and
+  backlinks; individual essays are indexed by `essays/index.mdx`, the same hub pattern as
+  third-level articles.
+- **Graph:** essays are tagged `essays` for filtering but keep the default node colour —
+  the colour slots are exhausted at ten, and the unstyled node marks the section as
+  outside the palette, matching the threads.
+- **Voice:** first person throughout, per the site-level voice rule. The pillar articles
+  stay third person.
+
+None written yet.
+
+---
+
 ## Structural Notes
 
 - **Depth: three levels of content, two levels of navigation.** Pillar -> subsection ->

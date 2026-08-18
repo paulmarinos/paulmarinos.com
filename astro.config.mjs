@@ -89,7 +89,10 @@ export default defineConfig({
 						// pillar, depth 1 shows 18 nodes (94% on screen) against depth 2's
 						// 50 (74%). Readers can still raise it with the graph's depth control.
 						depth: 1,
-						renderArrows: true,
+						// Off by default — the edge itself already says "these connect",
+						// and the arrowheads add clutter at node size. Readers can turn
+						// them back on from the graph's settings menu.
+						renderArrows: false,
 						// The plugin defaults `linkDistance` to 0, so layout is driven
 						// only by repulsion and nodes clump with overlapping labels.
 						linkDistance: 150,

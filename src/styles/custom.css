@@ -396,6 +396,12 @@ html[data-has-sidebar] {
 	margin-top: 1rem;
 }
 
+/* Breathing room above the Early-days note, which otherwise sits tight under
+   the essays paragraph. Scoped to the landing page via the hero flag on :root. */
+[data-has-hero] .sl-markdown-content .starlight-aside {
+	margin-top: 3rem;
+}
+
 /*
  * Collapsible mobile menu sections, to match the desktop sidebar.
  *

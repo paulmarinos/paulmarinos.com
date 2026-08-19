@@ -8,7 +8,7 @@ relatedTo:
   - data-privacy/protection-transformation
   - grc
   - detection-eng/data-pipeline
-updated: 2026-08-11
+updated: 2026-08-19
 sidebar:
   order: 1
 ---
@@ -96,6 +96,21 @@ uncontrolled sensitive data is — and where breaches originate:
   logged the request, the debug dump that caught a token.
 - **Derived data** — analytics, embeddings, ML training sets built from sensitive originals, which
   carry the sensitivity forward in a form nobody classified.
+
+## How it looks in practice
+
+The test of a working program is what the labels *do*. The scheme is three or four tiers
+published with business-language examples, and the labels exist as machine-readable tags —
+storage object tags, Purview sensitivity labels — that access policies and
+[retention rules](/data-privacy/lifecycle-retention/) key off, so classification drives
+controls rather than decorating documents. Discovery runs on a schedule, not as a one-off
+project: Macie, Purview, and Google's Sensitive Data Protection are genuinely good at pattern
+scanning in the stores they've been pointed at, and blind to the stores nobody registered —
+which is why the program's headline metric is coverage (what fraction of known stores is
+scanned, and how the store inventory itself grows) rather than findings counted. Non-production
+environments and object storage get scanned first, because that's where the shadow copies
+live, and each new store class added — SaaS exports, [vector stores](/ai-automation/vector-databases/)
+— is treated as a coverage gap closed rather than a tool feature enabled.
 
 ## Where this connects
 

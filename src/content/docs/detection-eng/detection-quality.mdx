@@ -11,13 +11,13 @@ relatedTo:
   - pentest
   - detection-eng/detection-lifecycle
   - dfir
-updated: 2026-08-11
+updated: 2026-08-19
 sidebar:
   order: 4
 ---
 
-A detection programme can be measured two ways: by how much it catches, or by how much of
-what it produces is worth an analyst's time. Programmes that optimise the first produce
+A detection program can be measured two ways: by how much it catches, or by how much of
+what it produces is worth an analyst's time. Programmes that optimize the first produce
 queues nobody works, which makes the second the only measure that survives contact with a
 SOC.
 
@@ -37,7 +37,7 @@ The operational consequences follow directly:
 
 The number worth tracking per rule is the **true positive rate of alerts** — of the alerts
 this rule produced, what fraction were worth working. Rules below a threshold get tuned or
-retired, and that threshold is a programme decision that should be written down.
+retired, and that threshold is a program decision that should be written down.
 
 ## Testing detections
 
@@ -53,7 +53,7 @@ possible.
 
 **Adversary emulation.** Actually execute the technique and check the rule fires. Atomic Red
 Team for atomic techniques, Caldera or a
-[red team engagement](/pentest/) for chained behaviour. This is the only layer that
+[red team engagement](/pentest/) for chained behavior. This is the only layer that
 tests the whole path — telemetry present, pipeline delivering, rule correct, alert routed.
 
 The layers fail differently, which is why you want all three. A rule can pass unit tests and
@@ -88,7 +88,7 @@ marked green usually means "a rule exists". It rarely distinguishes:
 
 Use at least three states — untested, tested, validated by emulation — and treat sub-
 technique granularity carefully. T1078 (Valid Accounts) is not one detectable thing;
-detecting one sub-technique and colouring the parent green overstates coverage
+detecting one sub-technique and coloring the parent green overstates coverage
 substantially.
 
 :::note[Verify technique IDs against current ATT&CK]
@@ -101,7 +101,7 @@ IDs against the current version rather than trusting a reference, including this
 Three moves, in descending order of preference:
 
 1. **Narrow the logic.** Make the rule more specific about what it's looking for. Preserves
-   detection of the behaviour while cutting the benign match. Best option, most work.
+   detection of the behavior while cutting the benign match. Best option, most work.
 2. **Allowlist specifically.** Exclude a known-benign source, scoped as tightly as possible
    and with an expiry. `NOT process = "backup.exe"` is defensible; `NOT host LIKE "srv-*"`
    is a hole with a wildcard.
@@ -115,6 +115,18 @@ Review them on a schedule, require a reason and an owner, and give them an expir
 The gutting failure is a rule narrowed until it only matches the specific procedure from the
 one incident that prompted it. It survives review, produces no noise, and detects nothing —
 and it looks like coverage.
+
+## How it looks in practice
+
+The assembled version ties each layer to a system that already exists. Fixtures live beside
+the rules and run in the [repo's CI](/detection-eng/detection-as-code/); replay runs against
+the SIEM's historical window before merge; emulation runs on a calendar — Atomic Red Team
+for scheduled atomic checks, a purple-team exercise for chained behavior once or twice a
+year. Per-rule true-positive rates come from analyst dispositions in the case system, which
+means dispositions have to be recorded as structured data rather than free text — often the
+first fix the program actually needs. The Navigator layer regenerates from rule metadata
+with its three states intact, and allowlists carry their owner, reason and expiry in the
+rule file itself, where review can see them.
 
 ## Where this connects
 

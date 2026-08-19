@@ -9,7 +9,7 @@ relatedTo:
   - appsec/secure-coding
   - grc
   - threat-intel/risk-prioritization
-updated: 2026-08-11
+updated: 2026-08-19
 sidebar:
   order: 3
 ---
@@ -18,7 +18,7 @@ The cost of fixing a security flaw rises sharply with how late it's found — a 
 caught in a whiteboard session is a conversation; the same flaw caught in production is an
 incident. Secure SDLC is the practice of moving that discovery earlier. The trap is treating
 it as a set of gates to pass rather than a set of decisions to make, at which point it
-becomes theatre engineering learns to route around.
+becomes theater engineering learns to route around.
 
 ## Threat modeling, and when it's actually worth it
 
@@ -107,6 +107,23 @@ Shifting left is about adding early stages, not deleting late ones. A design fla
 at design and a configuration flaw may only be visible at runtime — you need coverage across
 the lifecycle, and the real skill is matching the check to the stage where it's cheapest and
 most reliable.
+
+## How it looks in practice
+
+A working secure SDLC leaves its artifacts in the tools engineering already uses, and that's
+the test for whether it's real:
+
+- **The worth-it triage runs itself.** The ticket template carries a short risk screen — new
+  trust boundary, auth change, sensitive data — and a yes routes the design to a threat
+  model. Nobody decides per-story whether modeling applies; the template does.
+- **Threat models live beside the code**, as markdown in the repository, updated when the
+  diagram they describe changes — a model in a wiki nobody reopens is a record of a meeting,
+  never a control.
+- **Abuse cases sit in the acceptance criteria** of the same story, so "done" includes the
+  hostile-user behavior and the tests that pin it.
+- **The review gate is a standing half-hour**, cheap enough that teams bring designs early
+  and voluntarily — the version that requires scheduling ceremony is the version that gets
+  routed around.
 
 ## Where this connects
 

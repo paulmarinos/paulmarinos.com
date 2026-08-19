@@ -8,7 +8,7 @@ relatedTo:
   - appsec/insecure-coding
   - pentest/web-app-pentesting
   - iam
-updated: 2026-08-11
+updated: 2026-08-19
 sidebar:
   order: 1
 ---
@@ -55,7 +55,7 @@ which is a language-level control rather than a discipline you have to sustain.
 
 ## Secure defaults and fail-closed
 
-The behaviour when nobody made a decision should be the safe behaviour, because most code
+The behavior when nobody made a decision should be the safe behavior, because most code
 paths are the ones nobody thought about.
 
 - **Deny by default.** An [authorization](/iam/) check that grants access unless a rule
@@ -126,6 +126,19 @@ The paradigms are universal; the footguns are local.
   XML parsers.
 - **Rust** — memory-safe by default, but `unsafe` blocks reintroduce the risks and are where
   review should concentrate.
+
+## How it looks in practice
+
+In a codebase where this has taken hold, the paradigms are ambient in the toolchain rather
+than remembered by individuals. There's a paved road: the framework's contextual escaping
+and the ORM's parameterization are the only rendering and query paths in use, and a small
+blessed wrapper over libsodium is the only crypto import. The footguns are banned
+mechanically — `shell=True`, `yaml.load`, `eval`, string-built SQL exist as merge-blocking
+[Semgrep rules](/appsec/code-scanning/), so the argument happens once when the rule is
+written instead of in every review. And human review effort concentrates exactly where the
+exceptions live: `unsafe` blocks, lint suppressions, and whatever had to leave the paved
+road, because in a healthy codebase the deviations are few enough to actually read. The
+tell of maturity is boring diffs — the secure version is also the path of least resistance.
 
 ## Where this connects
 

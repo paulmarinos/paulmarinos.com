@@ -9,7 +9,7 @@ relatedTo:
   - threat-intel/risk-prioritization
   - grc/regulations-industry
   - dfir/incident-response
-updated: 2026-08-11
+updated: 2026-08-19
 sidebar:
   order: 6
 ---
@@ -112,6 +112,23 @@ A sound exception workflow:
 Accepting risk is legitimate — not every risk can or should be fixed. Accepting it *without
 documentation, ownership, and expiry* is how organizations end up carrying risks nobody remembers
 agreeing to, which is precisely what surfaces, expensively, [during an incident](/dfir/incident-response/).
+
+## How it looks in practice
+
+A working program is visible in its artifacts:
+
+- **The register lives where work happens** — a GRC platform (ServiceNow IRM, Archer, or
+  lighter SaaS) or a disciplined tracker, and its health metric is decision traffic: risks
+  closed, treatments funded, acceptances expiring on schedule.
+- **Quantification is reserved for the few portfolio questions that justify it**, with
+  FAIR-style ranges — Open FAIR, RiskLens-class tooling, or a competent spreadsheet Monte
+  Carlo — feeding the budget argument once or twice a year.
+- **Exceptions run through the ticketing system** with owner and expiry as mandatory fields
+  and automatic reopening at expiry; the count of expired-but-still-open exceptions is the
+  program's most honest metric.
+- **Vendor files pair the questionnaire with the clauses that actually bind** — breach
+  notification clocks, audit rights, flow-down requirements — and provider concentration
+  appears in the register as a risk in its own right.
 
 ## Where this connects
 

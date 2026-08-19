@@ -10,7 +10,7 @@ relatedTo:
   - iam/frameworks
   - pentest/cloud-pentesting
   - cloud-infra
-updated: 2026-08-11
+updated: 2026-08-19
 sidebar:
   order: 1
 ---
@@ -105,6 +105,19 @@ to spot one privesc primitive, make it that one.
 
 The recurring theme: the tools exist and the failure is not turning them on. An unrotated key,
 a wildcard action, an unpinned trust policy — none are subtle, and all are everywhere.
+
+## How it looks in practice
+
+A healthy AWS estate is recognizable mostly by what's absent. Human access runs through
+IAM Identity Center, so the IAM user list is empty and the credential report has nothing
+to flag; workloads assume roles, and the build system federates in over
+[OIDC](/appsec/cicd-security/), so no access key exists anywhere to leak. The SCP baseline
+is short and non-negotiable — root locked out, CloudTrail untouchable, unused regions
+closed — and it was applied at the organization level before the first workload landed.
+Unused-access findings flow into the same queue as vulnerabilities, with the same SLAs,
+rather than into a dashboard nobody owns. The single number worth reporting upward is the
+count of long-lived credentials, and in the estates that have done this work it is zero
+and defended.
 
 ## Where this connects
 

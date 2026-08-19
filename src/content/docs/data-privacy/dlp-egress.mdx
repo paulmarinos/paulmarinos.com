@@ -1,6 +1,6 @@
 ---
 title: Data Loss Prevention & Egress
-description: Why most DLP is theatre, the egress paths that actually matter including AI tooling, and the surveillance-versus-detection tradeoff that insider risk forces.
+description: Why most DLP is theater, the egress paths that actually matter including AI tooling, and the surveillance-versus-detection tradeoff that insider risk forces.
 pillar: data-privacy
 contentType: deep-dive
 maturity: practitioner
@@ -8,18 +8,18 @@ relatedTo:
   - cloud-infra/network-segmentation
   - detection-eng/threat-hunting
   - data-privacy/data-governance-ai
-updated: 2026-08-11
+updated: 2026-08-19
 sidebar:
   order: 5
 ---
 
 Data Loss Prevention is the control class with the widest gap between its promise and its delivery.
 The promise — stop sensitive data from leaving — is exactly what everyone wants. The delivery is
-frequently theatre: a tool generating alerts nobody actions, blocking legitimate work while missing
+frequently theater: a tool generating alerts nobody actions, blocking legitimate work while missing
 real exfiltration, and providing the *appearance* of control that's arguably worse than none,
 because it substitutes for the harder work that would actually help.
 
-## Why most DLP is theatre
+## Why most DLP is theater
 
 The honest assessment, because pretending otherwise wastes real money:
 
@@ -96,6 +96,27 @@ with transparency and limits — not a surveillance apparatus justified by a thr
 rarer than the monitoring it's used to license. Identity-centric signals — a
 [dormant account waking](/iam/governance/), access wildly outside a role — are higher-signal
 and less invasive than watching everyone equally.
+
+## How it looks in practice
+
+A deployment that has accepted the limits above looks different from the brochure version:
+
+- **Blocking is reserved for the unambiguous.** Card numbers and known credential formats to
+  personal email get blocked outright; everything fuzzier alerts into a review queue sized
+  for what reviewers actually clear, on the same
+  [precision economics as detection](/detection-eng/detection-quality/).
+- **The endpoint agent starts in monitor mode** and stays there until its false-positive
+  rate is known — the tuning happens against observed traffic, and enforcement follows
+  evidence.
+- **The AI path is channeled rather than fenced.** An enterprise LLM tenancy with retention
+  off and a logged gateway gives people a sanctioned place to paste, which beats pretending
+  a regex will catch prose leaving for a chatbot.
+- **Network egress does the heavy lifting** —
+  [default-deny at the boundary](/cloud-infra/network-segmentation/egress-dns/) closes the
+  channels DLP would otherwise have to watch.
+- **Insider monitoring keys off [identity signals](/iam/governance/)** — dormant accounts
+  waking, access outside role — with content inspection reserved for the genuinely
+  sensitive stores, and the proportionality decision written down.
 
 ## Where this connects
 

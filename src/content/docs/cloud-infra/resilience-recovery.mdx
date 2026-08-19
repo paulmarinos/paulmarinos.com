@@ -9,7 +9,7 @@ relatedTo:
   - dfir/incident-response
   - grc
   - detection-eng
-updated: 2026-08-11
+updated: 2026-08-19
 sidebar:
   order: 6
 ---
@@ -97,6 +97,23 @@ that are easy to miss:
 The principle: **design resilience against the adversary as well as the outage.** A recovery
 capability that assumes a benign failure — hardware, region outage — and ignores a malicious one
 solves the easy half of the problem and leaves the expensive half open.
+
+## How it looks in practice
+
+- **The backup plane is its own [account](/cloud-infra/architecture-landing-zones/)** under
+  separate credentials, receiving copies production can write once and never alter —
+  object lock or vault lock in compliance mode, where even the backup administrator cannot
+  shorten retention.
+- **Backup policy is code**: AWS Backup plans, Azure Backup policies, or Velero schedules
+  for Kubernetes, applied by tag or by organizational unit so new resources are covered by
+  default rather than by request.
+- **Restores run as scheduled game days** — a real database into a real, isolated
+  environment, with the measured recovery time and point recorded against the business's
+  stated tolerance and any gap filed as a finding.
+- **The backup plane itself is watched.** Deletion attempts, policy changes and retention
+  edits alert at high severity in the [detection pipeline](/detection-eng/data-pipeline/),
+  which turns the attacker's backups-first playbook into one of the strongest signals the
+  estate produces.
 
 ## Where this connects
 

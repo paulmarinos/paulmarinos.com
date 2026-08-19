@@ -11,7 +11,7 @@ relatedTo:
   - iam/governance
   - data-privacy/dlp-egress
   - detection-eng/data-pipeline
-updated: 2026-08-14
+updated: 2026-08-19
 sidebar:
   order: 8
 ---
@@ -113,6 +113,20 @@ repeated per vendor.
 The durable fix is buying it right: audit-log API access, admin-event coverage and
 retention floors belong in procurement requirements, checked before signature — the one
 moment the customer has leverage.
+
+## How it looks in practice
+
+The workable program is tiered, because two hundred tenants cannot get equal attention.
+The crown-jewel platforms — the office suite, the CRM, the code host, the IdP itself —
+sit under SSPM with drift alerts; the next tier gets a quarterly configuration review
+against a written baseline; the long tail is managed at the identity layer alone, behind
+SSO with [joiner/mover/leaver automation](/iam/governance/). Each application keeps its
+business-side administrator, and the program's job is to hand that administrator a
+baseline and a review cadence rather than to take the console away. The OAuth grant
+review runs on the same calendar as access reviews, the procurement checklist — SSO,
+audit-log API, retention floors — is a standing document instead of a per-deal
+negotiation, and new-tenant discovery is a monthly query against IdP sign-in logs and
+expense data rather than an annual audit surprise.
 
 ## Where this connects
 

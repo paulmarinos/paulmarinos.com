@@ -10,7 +10,7 @@ relatedTo:
   - ai-automation/agent-orchestration
   - pentest/specialized-testing
   - appsec/insecure-coding
-updated: 2026-08-11
+updated: 2026-08-19
 sidebar:
   order: 6
 ---
@@ -115,13 +115,24 @@ models, adapters, and datasets you didn't produce, and the trust questions are u
   [execute code on load](/appsec/insecure-coding/deserialization/) — the same deserialization risk, new
   file type.
 - **Poisoned models and datasets.** Training or fine-tuning data can carry backdoors and biases
-  that survive into behaviour, and they're hard to detect by inspection.
+  that survive into behavior, and they're hard to detect by inspection.
 - **Dependency risk.** The ML stack is a deep, fast-moving dependency tree with the
   [same exposure](/appsec/cicd-security/) as any other — plus its own less-mature tooling.
 
 Treat models and their data as [supply-chain artifacts](/appsec/cicd-security/) with
 provenance, integrity, and vetting requirements, not as trusted givens because they came from a
 well-known hub.
+
+## How it looks in practice
+
+The hardened deployment is recognizable less by its filters than by its blast radius.
+Privilege separation is real: the agent that reads untrusted content is a different principal
+from the one that can write, each with allowlisted tools and expiring credentials, so the
+interesting question during an incident — what could the hijacked agent reach — has a short
+answer. Two practices are cheap and widely skipped: models arrive as safetensors from pinned
+sources, never as pickled checkpoints, which closes the code-on-load path; and the current
+OWASP LLM Top 10 revision runs as a standing test plan, exercised through
+[adversarial testing](/pentest/specialized-testing/) whenever the system meaningfully changes.
 
 ## Where this connects
 

@@ -11,7 +11,7 @@ relatedTo:
   - detection-eng/detection-lifecycle
   - grc/risk-management
   - dfir/incident-response
-updated: 2026-08-14
+updated: 2026-08-19
 sidebar:
   order: 9
 ---
@@ -37,13 +37,13 @@ decision the answer informs. Compare:
   whether it was addressed.
 - *"Which initial-access techniques in current use against our sector do our detections
   fail to cover?"* A question, consumed by detection engineering, informing the
-  [backlog](/detection-eng/detection-lifecycle/). You would recognise the answer if you saw
+  [backlog](/detection-eng/detection-lifecycle/). You would recognize the answer if you saw
   it, and you can say when it needs re-asking.
 
 **Priority intelligence requirements (PIRs)** sit at the top of the hierarchy: the handful
 of questions leadership genuinely needs answered, each traceable to a decision someone with
 authority will make. The count matters. Single digits is a set of priorities; thirty is a
-topic taxonomy wearing a ranking, and it will prioritise nothing.
+topic taxonomy wearing a ranking, and it will prioritize nothing.
 
 ## Decomposition: essential elements of information
 
@@ -74,7 +74,7 @@ place:
    reuses work already done; the same RFI arriving three times is a standing requirement
    announcing itself.
 3. **Execution** — the whole intelligence lifecycle run in miniature, often inside a day.
-4. **Delivery and the log.** The RFI log is the most underrated artefact in the program:
+4. **Delivery and the log.** The RFI log is the most underrated artifact in the program:
    empirical evidence of what the organization actually asks, and the best single input to
    the next requirements review.
 
@@ -101,7 +101,7 @@ Direction has its own supply chain, and three intake paths do most of the work:
 
 - **The detection backlog.** Coverage gaps surfaced in
   [the detection lifecycle](/detection-eng/detection-lifecycle/) are questions about
-  adversary behaviour phrased as missing rules.
+  adversary behavior phrased as missing rules.
 - **The risk register.** A [top-rated risk](/grc/risk-management/) implies a standing
   requirement to watch the threat side of that risk — and a register whose top risks have
   no corresponding requirement is scoring likelihood on vibes.
@@ -125,6 +125,18 @@ untagged work is a discovery queue, and a theme recurring in it is a candidate r
 the set does not yet contain. This tagging is also what makes
 produced-against-requirement versus produced-because-interesting a measurable split rather
 than a slogan.
+
+## How it looks in practice
+
+The apparatus this page describes fits in four artifacts, none of which needs a platform.
+A one-page PIR document, versioned and dated, with a named consumer beside each question. A
+collection-plan table — EEIs down the rows, sources across — whose empty cells are the
+standing gap list. An RFI intake form and its log, which any ticketing system already
+hosts. And a requirement tag on every product shipped, which is one field in whatever
+template [report writing](/threat-intel/report-writing/) already uses. The quarterly review
+is then a standing meeting with the PIR document on screen and the production-per-requirement
+numbers pulled from the tags. Teams that reach for tooling first tend to acquire a
+requirements module and leave it empty; the four artifacts above are the module.
 
 ## Where this connects
 

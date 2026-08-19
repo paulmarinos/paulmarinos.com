@@ -11,7 +11,7 @@ relatedTo:
   - threat-intel/analytic-methods
   - dfir/evidence-legal
   - grc/regulations-region
-updated: 2026-08-14
+updated: 2026-08-19
 sidebar:
   order: 10
 ---
@@ -126,12 +126,29 @@ an incident that policy turns sharing into execution. Without it, every disclosu
 negotiation held at the worst possible time, and the default answer under pressure is
 silence — which, compounded across every member, is how sharing communities die.
 
+## How it looks in practice
+
+A program positioned to share well has a short list of things already in place:
+
+- **A named approver.** The counsel-agreed policy designates a role, not a committee, so a
+  release decision during an incident takes minutes.
+- **The tearline built into the report template.** Every product is releasable by
+  construction, and the shareable version costs nothing extra to produce.
+- **Memberships that trace to the gap list.** Each ISAC seat, CERT relationship and trust
+  group covers a named collection gap, and one that stops covering anything is dropped at
+  renewal like [any other feed](/threat-intel/collection-sourcing/).
+- **A quiet machine layer.** MISP syncs with the communities that support it, while the
+  analysts spend their sharing hours in the rooms themselves.
+- **A contribution cadence.** Something releasable goes out on a schedule — a sanitized
+  technique writeup, a sighting confirmation — because reciprocity accumulates in small
+  deposits made long before the big incident draws on them.
+
 ## Where this connects
 
 Sharing relationships are a collection source, so they appear in
 [the collection plan](/threat-intel/intelligence-requirements/) and hand material to
 [Collection & Sourcing](/threat-intel/collection-sourcing/) like any feed — STIX/TAXII
-and MISP mechanics live there. What travels best is the behavioural layer that
+and MISP mechanics live there. What travels best is the behavioral layer that
 [Analytic Methods](/threat-intel/analytic-methods/) argues is the durable output anyway.
 The constraints on what leaves the building are
 [privacy-law](/grc/regulations-region/) and

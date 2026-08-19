@@ -10,7 +10,7 @@ relatedTo:
   - iam/aws-identity
   - pentest/cloud-pentesting
   - cloud-infra
-updated: 2026-08-11
+updated: 2026-08-19
 sidebar:
   order: 2
 ---
@@ -103,6 +103,24 @@ and certificate-services attack surface an attacker lands in — is
   enforcement point, and its design is where a lot of real-world identity security is won.
 - **Workload identity federation** — the [OIDC pattern](/appsec/cicd-security/) for Azure,
   so external workloads authenticate without a stored secret.
+
+## How it looks in practice
+
+The observable state of a tenant that has internalized this page:
+
+- **Global Administrator has zero permanent members.** Every privileged role is
+  PIM-eligible, and the count of *standing* assignments is a tracked metric — the two
+  exceptions are break-glass accounts, excluded from Conditional Access by design and
+  alarmed so loudly that any sign-in pages a human.
+- **Users cannot consent their way into a breach.** User consent is limited to verified
+  publishers and low-risk permissions, with an admin-consent workflow for the rest — the
+  consent-grant path becomes a reviewed request instead of a phishing outcome.
+- **Service principals sit inside [access reviews](/iam/governance/)**, not just people —
+  Graph application permissions get recertified with the same seriousness as admin roles,
+  because that is what they are.
+- **Conditional Access has a named baseline** — phishing-resistant MFA for privileged
+  roles, compliant device for admin portals — and new policies ship in report-only mode
+  first, so the tenant learns what would break before it breaks.
 
 ## Where this connects
 

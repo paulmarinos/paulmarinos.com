@@ -9,7 +9,7 @@ relatedTo:
   - data-privacy/classification-discovery
   - appsec/sdlc
   - grc/regulations-region
-updated: 2026-08-11
+updated: 2026-08-19
 sidebar:
   order: 4
 ---
@@ -90,6 +90,23 @@ use:
 The difference is whether the PIA is a design input or a paperwork output — the same distinction as
 [threat modeling and design review](/appsec/sdlc/), and it fails the same way, for the same
 reason: a gate that only documents is a gate everyone learns to satisfy without engaging.
+
+## How it looks in practice
+
+Where this discipline is real, it rides the machinery engineering already has:
+
+- **Minimization shows up in schema review.** "Why this field, for what purpose" is asked
+  when the column is proposed, in the design doc — the one moment the question is cheap.
+- **LINDDUN runs inside the existing [design review](/appsec/sdlc/)**, on the designs that
+  handle significant personal data, rather than as a parallel privacy process with its own
+  meetings and its own backlog.
+- **Consent is a service.** One consent store with a queryable API and change events that
+  downstream systems subscribe to — marketing checks at send time, analytics at ingest —
+  because a flag checked nowhere is a violation waiting for a complaint.
+- **The DPIA is a design-stage gate with triggers.** New personal-data flows and high-risk
+  processing route to assessment from the intake template, findings land as design changes
+  in the same review cycle, and the [regulatory artifact](/grc/regulations-region/) falls
+  out as a by-product of a decision that actually happened.
 
 ## Where this connects
 

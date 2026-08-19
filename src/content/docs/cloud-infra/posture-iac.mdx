@@ -9,7 +9,7 @@ relatedTo:
   - appsec/api-cloud-native
   - threat-intel/risk-prioritization
   - cloud-infra/architecture-landing-zones
-updated: 2026-08-11
+updated: 2026-08-19
 sidebar:
   order: 5
 ---
@@ -107,6 +107,20 @@ with exactly the structure of vulnerability triage, and the same solution:
 A posture program that dumps its raw output on engineering gets [routed around](/appsec/code-scanning/)
 exactly like an untuned scanner, and for the same reason — findings nobody can prioritize are
 findings nobody acts on.
+
+## How it looks in practice
+
+The program is more visible in where findings go than in which tool found them. The
+provider-native services — Security Hub, Defender for Cloud, Security Command Center — are
+the honest floor, worth exhausting before a CNAPP contract, since they already cover the
+benchmark checks that make up most of any tool's value. Checkov or tfsec runs in CI
+against the same policy set the runtime side enforces, so a finding waived in the pull
+request doesn't resurface as a runtime alert under a different name. Findings land in the
+owning team's queue as tickets carrying a severity the program has re-scored for exposure
+— the tool's rating is an input, and the
+[prioritization](/threat-intel/risk-prioritization/) is the program's own. The exceptions
+registry has owners and expiry dates, auto-remediation stays confined to the unambiguous
+public-exposure cases, and everything else alerts a human.
 
 ## Where this connects
 

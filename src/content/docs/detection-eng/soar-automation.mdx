@@ -8,12 +8,12 @@ relatedTo:
   - ai-automation
   - dfir
   - detection-eng/detection-lifecycle
-updated: 2026-08-11
+updated: 2026-08-19
 sidebar:
   order: 6
 ---
 
-SOAR programmes fail in a recognisable way: a platform is bought, a containment playbook is
+SOAR programs fail in a recognizable way: a platform is bought, a containment playbook is
 built for the impressive demo, it isolates a production host during a false positive, and
 automation is never trusted again.
 
@@ -88,8 +88,8 @@ decision.
 
 ## Agent-assisted triage
 
-LLM-based triage is genuinely promising for the judgement-heavy, high-volume work that
-deterministic automation handles badly — summarising an alert with its context, drafting a
+LLM-based triage is genuinely promising for the judgment-heavy, high-volume work that
+deterministic automation handles badly — summarizing an alert with its context, drafting a
 first-pass assessment, proposing next investigative steps.
 
 The constraints from [AI & Automation](/ai-automation/) apply directly, and two matter
@@ -98,13 +98,29 @@ reads plausibly is not. And authorization: an agent with tools is a principal wi
 permissions, so its blast radius is a scoping decision, not a prompt-engineering one.
 
 The safe shape today is **agent proposes, human disposes** for anything consequential, with
-the agent's reasoning visible rather than summarised. A confident wrong triage decision is
+the agent's reasoning visible rather than summarized. A confident wrong triage decision is
 more expensive than no triage, because it carries the authority of having been checked.
+
+## How it looks in practice
+
+Sequencing shows up in the artifacts long before it shows up in the metrics:
+
+- **Playbooks are code**, versioned and reviewed like
+  [detections](/detection-eng/detection-as-code/) — whether the platform is the SIEM's
+  native automation, Tines, or an open-source engine like Shuffle matters far less than
+  whether its content has history and review.
+- **The first quarter ships enrichment and grouping only.** Trust in automation gets built
+  on actions that cannot be wrong in a way that hurts.
+- **Approval gates live in chat** — the alert, enrichment, proposed action, blast radius
+  and undo rendered into the one message the approver actually reads, with the decision
+  logged to the case.
+- **Every automated action writes to the incident timeline**, so the postmortem can
+  reconstruct what the machine did as easily as what the [responders](/dfir/) did.
 
 ## Where this connects
 
 Automation quality is bounded by [detection quality](/detection-eng/detection-quality/) — automating on
 top of imprecise rules multiplies the error rather than absorbing it. Containment overlaps
 directly with [incident response](/dfir/), where the same actions are taken manually
-under judgement. And the agent-assisted layer is [AI engineering](/ai-automation/)
+under judgment. And the agent-assisted layer is [AI engineering](/ai-automation/)
 pointed at the SOC queue.

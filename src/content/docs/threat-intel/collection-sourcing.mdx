@@ -9,13 +9,13 @@ relatedTo:
   - threat-intel/report-writing
   - detection-eng
   - ai-automation
-updated: 2026-08-11
+updated: 2026-08-19
 sidebar:
   order: 6
 ---
 
 Collection is the least glamorous part of intelligence and the one most often solved by
-purchase. The predictable result is a programme paying for several feeds with heavy
+purchase. The predictable result is a program paying for several feeds with heavy
 overlap, none of which have changed a decision.
 
 Collection should be driven by requirements, not availability. The question is never "what
@@ -52,7 +52,7 @@ Sources worth treating as collection rather than exhaust:
 
 - **Blocked and failed activity** — what was attempted and stopped is a statement about who
   is interested in you.
-- **Incident output** — [investigations](/dfir/) produce indicators and behaviours with
+- **Incident output** — [investigations](/dfir/) produce indicators and behaviors with
   a provenance no vendor can match.
 - **Pentest and red team findings** — reachability facts about your own estate.
 - **Authentication telemetry** — identity is where most intrusions start, so it's where the
@@ -102,7 +102,7 @@ IP three times.
 Enrichment (ASN, geolocation, passive DNS, prior sightings) is what turns an observable
 into something an analyst can judge, and it is the most obvious
 [automation](/ai-automation/) target in the whole pillar: high volume, well-defined,
-and low judgement per item. Keep the judgement — is this relevant to us — with a human.
+and low judgment per item. Keep the judgment — is this relevant to us — with a human.
 
 ## Retirement
 
@@ -111,12 +111,25 @@ false-positive generator and eventually gets ignored wholesale, which quietly re
 value of the good entries too. Set a decay policy by indicator type, and treat a feed with
 no expiry semantics as incomplete.
 
+## How it looks in practice
+
+The stack of a functioning program is smaller than the market suggests. A baseline of free
+sources — CERT advisories, abuse.ch and its siblings, vendor research blogs, whatever the
+[sharing community](/threat-intel/sharing-community/) carries — sets the overlap floor any
+paid feed has to clear. Everything ingests into one hub (MISP for most teams, a commercial
+TIP where budget allows) rather than into the SIEM directly, so dedup, enrichment and
+expiry happen once, upstream, and [detections](/detection-eng/) consume a curated set
+instead of raw feeds. A one-page source register lists every input with its cost, the
+requirement it serves, and its renewal date — which turns renewal into a measurement event
+instead of an auto-renew. And the OSINT workstation is bought, built and networked
+separately from the corporate estate, before the first live investigation needs it.
+
 ## Where this connects
 
 Collection feeds [detection engineering](/detection-eng/) most directly — the
 detection backlog is downstream of what you can observe. What happens to the collected
 material before it becomes a report — clustering, competing hypotheses, and how far the
-evidence actually supports a judgement — is
+evidence actually supports a judgment — is
 [analytic methods](/threat-intel/analytic-methods/). Source grading and confidence
 language from [report writing](/threat-intel/report-writing/) are how collection quality gets carried
 into the product rather than lost at ingest. And [forensics](/dfir/) is the highest-

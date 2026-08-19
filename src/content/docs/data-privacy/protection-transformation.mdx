@@ -9,7 +9,7 @@ relatedTo:
   - data-privacy/classification-discovery
   - cloud-infra/cryptography-key-management
   - ai-automation/vector-databases
-updated: 2026-08-11
+updated: 2026-08-19
 sidebar:
   order: 2
 ---
@@ -101,6 +101,23 @@ trusting the enclave vendor and its attestation), and a maturing rather than tur
 genuinely closes the encryption-in-use gap for specific high-value cases; it isn't yet a default,
 and pairs with [key management](/cloud-infra/cryptography-key-management/) as the runtime
 complement to at-rest and in-transit.
+
+## How it looks in practice
+
+The techniques sort themselves by where they run. The tokenization vault sits in its own
+account with its own [access control](/iam/governance/), touched by a handful of services —
+the isolation is the security, and a vault reachable from everywhere has already failed.
+Masking runs as a pipeline stage on the way into non-production, so refreshed test databases
+arrive already safe and the shadow-copy problem shrinks at the source. Format-preserving
+encryption appears only where a legacy format constraint forces it, documented as the
+deliberate trade it is. Anonymization claims get treated as testable assertions: before
+"anonymized" data is shared or exempted from [regulatory scope](/grc/regulations-region/),
+someone runs the re-identification analysis on quasi-identifiers, and the sign-off records
+what was tested. Differential privacy stays confined to the aggregate analytics it fits,
+implemented with the mature libraries rather than hand-rolled noise. The tell of a healthy
+program is that each dataset's transformation is chosen from its
+[classification](/data-privacy/classification-discovery/) and use, with the reversible
+options reserved for the few flows that genuinely need the original back.
 
 ## Where this connects
 

@@ -8,14 +8,14 @@ relatedTo:
   - threat-intel/data-visualization
   - grc
   - detection-eng/detection-quality
-updated: 2026-08-11
+updated: 2026-08-19
 sidebar:
   order: 7
 ---
 
-Detection programmes are measured because they cost money, and the measures chosen tend to
+Detection programs are measured because they cost money, and the measures chosen tend to
 be the ones that are easy to compute rather than the ones that describe whether the
-programme works. That has a specific cost: teams optimise what is reported.
+program works. That has a specific cost: teams optimize what is reported.
 
 ## Why MTTD and MTTR mislead
 
@@ -29,7 +29,7 @@ medians and percentiles, as with any skewed
 [security distribution](/threat-intel/statistics/).
 
 **They only include incidents you detected.** The undetected intrusion contributes nothing
-to MTTD. A programme that misses everything subtle has an excellent MTTD, computed over the
+to MTTD. A program that misses everything subtle has an excellent MTTD, computed over the
 loud incidents it caught. This is survivorship bias determining a headline number.
 
 **The clock start is ambiguous.** Detection time from first malicious action, from first
@@ -41,27 +41,27 @@ numbers get better.
 
 None of that makes them useless. Tracked as distributions, with a documented clock and
 alongside a measure of what you *missed*, they are informative. Reported as two means on a
-slide, they are theatre.
+slide, they are theater.
 
 ## Coverage versus capability
 
-The distinction most programmes elide.
+The distinction most programs elide.
 
 **Coverage** is a claim about existence: rules exist for these techniques. It is cheap to
 improve and easy to overstate — a rule that fires only where an agent is deployed, or has
-never been tested, still colours a Navigator cell green.
+never been tested, still colors a Navigator cell green.
 
 **Capability** is a claim about outcome: when this technique is executed here, we detect it,
 in time, and an analyst can act. It is expensive to establish, because it requires
 [emulation](/detection-eng/detection-quality/), and it is the only one that predicts incident outcomes.
 
-Report them separately, and never let coverage stand in for capability. The honest artefact
+Report them separately, and never let coverage stand in for capability. The honest artifact
 has three states — untested, tested, validated by emulation — and the interesting number is
 the ratio between them.
 
 ## Measures worth reporting
 
-A small set, chosen because they resist gaming and describe the programme rather than its
+A small set, chosen because they resist gaming and describe the program rather than its
 paperwork:
 
 | Measure | What it tells you |
@@ -74,7 +74,7 @@ paperwork:
 | **Coverage gaps by log tier** | What you structurally cannot see |
 
 Two properties make this set work. Each maps to an action — a bad number tells you what to
-do. And several get *worse* when the programme is neglected, which is what makes them
+do. And several get *worse* when the program is neglected, which is what makes them
 honest: a metric that only improves is a metric being managed rather than measured.
 
 ## Reporting to different audiences
@@ -102,6 +102,17 @@ from operational reality.
 
 The functional difference is usually whether detection engineers are
 on the analyst rotation, not the org chart. Engineers who work the queue they create build different rules.
+
+## How it looks in practice
+
+The distinguishing feature of a workable metrics program is that nobody assembles it by
+hand. Each measure in the table above is a query against a system of record — rule metadata
+in the [detection repo](/detection-eng/detection-as-code/), dispositions in the case
+system, liveness from [pipeline health](/detection-eng/data-pipeline/) — generated on a
+schedule into a report whose layout doesn't change between quarters. Hand-built slides
+drift toward what looks good; regenerated ones can only be improved by improving the
+program. The same queries export their results as evidence for [GRC's](/grc/) monitoring
+controls, which is the produce-once principle made concrete.
 
 ## Where this connects
 

@@ -9,7 +9,7 @@ relatedTo:
   - iam/frameworks
   - iam/azure-identity
   - cloud-infra/network-segmentation
-updated: 2026-08-14
+updated: 2026-08-19
 sidebar:
   hidden: true
 ---
@@ -38,7 +38,7 @@ one sentence true at scale.
   becomes something you grant rather than something that exists. Containment stops being
   an incident-time activity and becomes a property of the design.
 - **Signals feeding the decision.** Device health, patch level, credential strength,
-  behavioural risk — the decision point is only as good as its inputs, which is why zero
+  behavioral risk — the decision point is only as good as its inputs, which is why zero
   trust programs quietly become telemetry programs.
 
 ## The maturity gradient
@@ -62,13 +62,27 @@ parallel as the long-lead item; data-level policy is usually last because it dep
   stage. Declaring victory there leaves lateral movement, standing privilege and implicit
   service-to-service trust exactly where they were.
 - **As a rebranding.** The same network, the same standing access, a new dashboard.
-  The test is behavioural: did any request that used to succeed on location alone start
+  The test is behavioral: did any request that used to succeed on location alone start
   failing? If nothing broke, nothing changed.
 - **As a human-only model.** The framework's language assumes subjects that authenticate
   interactively. The [non-human majority](/iam/non-human-identity/) of the directory —
   and [autonomous agents](/iam/frameworks/zero-knowledge-trust/) after them — stretch its
   assumptions hardest, because "verify at request time" presumes the requester's identity
   and intent are stable things a policy can evaluate.
+
+## How it looks in practice
+
+A credible mid-gradient program is concrete in ways a slide deck never is:
+phishing-resistant MFA (FIDO2, passkeys) enforced before anything else, because every
+later decision leans on the identity signal; device compliance feeding
+[Conditional Access](/iam/azure-identity/), with admin access gated on it first; ZTNA
+replacing the VPN application by application, starting with what contractors and
+third parties touch, since those users never belonged on the network at all. New
+environments get built east-west default-deny from day one while the legacy estate is
+segmented opportunistically — retrofitting is the expensive direction. And progress has an
+instrument: policies run in report-only mode before enforcement, so "what would fail under
+the new rule" is a report the program reads weekly, and the behavioral test — requests
+that once succeeded on location alone now failing — is measured rather than asserted.
 
 ## Where this connects
 

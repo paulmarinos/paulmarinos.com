@@ -8,7 +8,7 @@ relatedTo:
   - ai-automation/vector-databases
   - ai-automation/verification
   - threat-intel/collection-sourcing
-updated: 2026-08-11
+updated: 2026-08-19
 sidebar:
   order: 1
 ---
@@ -115,6 +115,18 @@ programs most often skip the hard part. Measure retrieval separately from genera
 right chunks come back — because an answer can be wrong for retrieval reasons or generation
 reasons, and conflating them makes the system unimprovable. That measurement discipline is
 [verification and evaluation](/ai-automation/verification/).
+
+## How it looks in practice
+
+A production system that has survived the failures above usually converges on the same shape:
+hybrid retrieval over a [pgvector or dedicated index](/ai-automation/vector-databases/) with a
+cross-encoder reranker on top, chunking that follows document structure instead of a fixed
+token window, and prompts that make "the sources don't answer this" an expected output rather
+than a failure. Behind it sits the part users never see — a golden set of query-and-source
+pairs, with [retrieval scored separately from generation](/ai-automation/verification/) on
+every change to the chunker, the embedding model, or the prompt. Teams that run this way can
+say which stage broke after a bad answer; teams that skip it re-tune the whole pipeline on
+vibes.
 
 ## Where this connects
 

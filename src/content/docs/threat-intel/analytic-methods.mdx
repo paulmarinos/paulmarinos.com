@@ -9,14 +9,14 @@ relatedTo:
   - threat-intel/collection-sourcing
   - pentest/mitre-attack
   - dfir/investigation-method
-updated: 2026-08-13
+updated: 2026-08-19
 sidebar:
   order: 7
 ---
 
 This pillar covers where observations come from, the arithmetic that keeps them honest, and
 the formats they leave in. This page is the part in between: how a set of observations
-becomes a judgement, and how much of a judgement the evidence actually supports.
+becomes a judgment, and how much of a judgment the evidence actually supports.
 
 It is the step most often skipped, because it is the one with no tooling and no deliverable.
 The result is reporting that describes what was seen and then asserts what it means, with
@@ -31,13 +31,13 @@ nothing connecting the two.
   Its value is the **pivoting**, not the diagram: any known vertex is a route to
   discovering another, and a chain of pivots is how tracking sustains itself over months.
   This is the model that actually supports clustering.
-- **ATT&CK** — a taxonomy of observed behaviour. Covered in
+- **ATT&CK** — a taxonomy of observed behavior. Covered in
   [MITRE ATT&CK](/pentest/mitre-attack/).
 
 The common error is treating ATT&CK as an analytic framework. It is a shared vocabulary,
 which is enormously valuable and a different thing. It tells you what to *call* what you
 observed; it does not tell you what to conclude from it. A report that maps twelve techniques
-and draws no inference has described an intrusion, not analysed one.
+and draws no inference has described an intrusion, not analyzed one.
 
 ## Structured analytic techniques
 
@@ -52,9 +52,9 @@ it. The techniques exist to make that expensive:
 - **Key assumptions check.** Write down what is being taken as given, then ask what changes
   if each is wrong. Assumptions inherited unexamined from an earlier report are the ones that
   bite, because they were load-bearing there and are invisible here.
-- **Devil's advocacy.** Worth the cost only on high-consequence judgements.
+- **Devil's advocacy.** Worth the cost only on high-consequence judgments.
 
-Match the technique to the decision. A daily triage note does not need ACH. A judgement that
+Match the technique to the decision. A daily triage note does not need ACH. A judgment that
 prompts customer notification or a public statement does.
 
 ## Clustering: what makes two intrusions the same thing
@@ -63,7 +63,7 @@ Clustering is the operational core, and attribution is downstream of it. Evidenc
 roughly descending order of how much weight they can carry:
 
 1. Shared non-public infrastructure under common control
-2. Malware with shared code, build artefacts, or unique configuration values
+2. Malware with shared code, build artifacts, or unique configuration values
 3. Distinctive tradecraft — the *sequence* and operational habits, not individual techniques
 4. Targeting and timing overlap
 5. Shared commodity tooling — the weakest, and the most consistently overweighted
@@ -87,7 +87,7 @@ evidence, and the last two generally require collection a private defender does 
 
 The honest position: past "same cluster," attribution rarely changes a defensive decision.
 Whether the operator is a criminal crew or a state service, the patch, the detection and the
-control are identical. Its genuine uses are narrow — prioritisation when an actor's targeting
+control are identical. Its genuine uses are narrow — prioritization when an actor's targeting
 pattern says you are plausibly next, legal and policy response, and executive communication.
 
 It is also where the most confident-sounding and least falsifiable claims in the industry
@@ -111,9 +111,25 @@ reporting as though it were an entity you observed directly.
 
 The Pyramid of Pain ranks indicators by what it costs the adversary when you burn them.
 Hashes and addresses are changed trivially; tooling and tradecraft are not. That ordering is
-why behavioural analysis outlives indicator collection, and why the durable output of
+why behavioral analysis outlives indicator collection, and why the durable output of
 analysis is a detection idea rather than a list — the handoff into
 [the detection backlog](/detection-eng/detection-lifecycle/).
+
+## How it looks in practice
+
+The discipline shows up as a small amount of standing infrastructure around the analysts:
+
+- **An internal cluster registry** — the team's own names, defined by its own evidence,
+  with vendor names attached as aliases carrying their own confidence. The registry is the
+  difference between tracking activity and tracking press coverage.
+- **ACH run in a worksheet**, reserved for the judgments that trigger notification or a
+  public statement. A simple matrix template makes the evidence-against-hypothesis scoring
+  visible, reviewable, and inheritable by the next analyst on the case.
+- **A key-assumptions section in the report template**, which costs a paragraph and
+  catches the inherited load-bearing assumption before it ships.
+- **One confidence vocabulary** — ICD 203's estimative ladder or a house equivalent — used
+  across every product, so "moderate confidence" means the same thing in
+  [an attribution judgment as in any other report](/threat-intel/report-writing/).
 
 ## Where this connects
 
@@ -122,5 +138,5 @@ upstream of [reporting](/threat-intel/report-writing/), and it fails in the ways
 [statistics](/threat-intel/statistics/) predicts — base rates and sampling bias, wearing
 analytic clothes. [ATT&CK](/pentest/mitre-attack/) supplies the vocabulary the analysis is
 written in. [Investigation method](/dfir/investigation-method/) is the same discipline under
-time pressure, with evidentiary obligations attached, and behavioural conclusions land as
+time pressure, with evidentiary obligations attached, and behavioral conclusions land as
 [detection ideas](/detection-eng/detection-lifecycle/) rather than indicators.

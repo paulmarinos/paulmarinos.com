@@ -11,12 +11,12 @@ relatedTo:
   - iam
   - cloud-infra
   - detection-eng/soar-automation
-updated: 2026-08-11
+updated: 2026-08-19
 sidebar:
   order: 1
 ---
 
-Incident response is the one security discipline practised under time pressure, with
+Incident response is the one security discipline practiced under time pressure, with
 incomplete information, in front of people who want an answer now. Everything that is
 merely inconvenient on a normal day — unclear ownership, missing telemetry, an undocumented
 system — becomes expensive simultaneously.
@@ -39,12 +39,12 @@ disconnect a production system at 3am without a meeting.
 ## Severity declaration
 
 Severity is the most consequential early decision, because it determines who wakes up and
-how much disruption is authorised. Declare against defined, observable criteria rather than
+how much disruption is authorized. Declare against defined, observable criteria rather than
 a feeling about badness:
 
 | Level | Criteria | Response |
 |---|---|---|
-| **Critical** | Confirmed compromise of production data, privileged identity, or a system whose loss stops the business | Full team, exec notified, disruption pre-authorised |
+| **Critical** | Confirmed compromise of production data, privileged identity, or a system whose loss stops the business | Full team, exec notified, disruption pre-authorized |
 | **High** | Confirmed compromise, contained blast radius | Core team, business hours plus on-call |
 | **Medium** | Suspected compromise, or confirmed on a low-value asset | Standard queue, defined SLA |
 | **Low** | Policy violation, unsuccessful attempt worth recording | Ticket |
@@ -85,7 +85,7 @@ Sequencing that matters:
   rebuilding — see [order of volatility](/dfir/digital-forensics/). Rebuilding a host is how
   the evidence of how they got in gets deleted.
 - **Watch for tripwires.** Aggressive containment tells a capable intruder they are seen.
-  Sometimes that's fine; sometimes it triggers destruction. That's a judgement call and
+  Sometimes that's fine; sometimes it triggers destruction. That's a judgment call and
   should be made deliberately, not by accident.
 
 Automated containment is [SOAR territory](/detection-eng/soar-automation/), and the
@@ -133,6 +133,24 @@ Actions without owners and dates are how the same incident recurs with a differe
 The highest-value output goes back to [detection engineering](/detection-eng/detection-lifecycle/)
 as backlog items — an incident is the highest-provenance detection idea available, because
 you know exactly what was visible and what wasn't.
+
+## How it looks in practice
+
+Preparation, done properly, has a shelf you can point at:
+
+- **Playbooks per scenario** — ransomware, business email compromise, credential leak,
+  control-plane compromise — each exercised in a tabletop within the last year, because a
+  playbook that has never been run is a hypothesis.
+- **Break-glass access that works**: responder accounts outside the SSO dependency chain,
+  tested quarterly, hardware tokens in a known place. A plan that assumes the IdP is
+  healthy fails on the day the IdP is the incident.
+- **Pre-authorized actions in writing** — who may isolate production, revoke an
+  executive's sessions, or activate the [external retainer](/dfir/evidence-legal/)
+  without convening a meeting.
+- **The severity matrix wired into the alerting tool**, so declaring is selecting a level
+  rather than opening a debate.
+- **A war-room bootstrap** — the bridge, the channel, the timeline document — created
+  from a template in the first five minutes instead of improvised under load.
 
 ## Where this connects
 

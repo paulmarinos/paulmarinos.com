@@ -9,7 +9,7 @@ relatedTo:
   - iam/aws-identity
   - cloud-infra/posture-iac
   - pentest/cloud-pentesting
-updated: 2026-08-11
+updated: 2026-08-19
 sidebar:
   order: 1
 ---
@@ -97,6 +97,21 @@ outside the template. Drift detection ([posture management](/cloud-infra/posture
 notice, and re-baselining — periodically bringing accounts back to the intended foundation — is
 how you stop the slow decay from secure-by-default to whatever-accumulated. Without it, the
 landing zone describes how the environment looked on day one and nothing since.
+
+## How it looks in practice
+
+You can read a mature estate from its org tree. A security OU holds a log-archive
+account — org-wide CloudTrail and config history, object-locked, writable by the pipeline
+and readable by almost no one — and an audit account where the
+[responder roles](/dfir/incident-response/) and tooling live; workload OUs split by
+environment, and a sandbox OU gives experiments somewhere to be dangerous that isn't
+production. New accounts arrive through vending — Control Tower's Account Factory, an
+Azure landing-zone accelerator, or a Terraform module doing the same job — so the baseline
+is applied by machinery rather than by memory. The SCP set stays small, versioned, and
+reviewed like code: region denies, CloudTrail protection, root lockdown, and a documented
+break-glass path, because a guardrail nobody can lift in an emergency gets quietly
+weakened instead. Drift surfaces in [posture tooling](/cloud-infra/posture-iac/) scoped
+per OU, which is what makes the tree more than an org chart.
 
 ## Where this connects
 

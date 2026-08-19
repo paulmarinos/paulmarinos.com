@@ -10,7 +10,7 @@ relatedTo:
   - data-privacy/classification-discovery
   - grc/regulations-region
   - cloud-infra/resilience-recovery
-updated: 2026-08-11
+updated: 2026-08-19
 sidebar:
   order: 3
 ---
@@ -102,6 +102,23 @@ country or region, which pushes directly into infrastructure:
 Residency is where this pillar and [cloud architecture](/cloud-infra/architecture-landing-zones/)
 fully merge: the legal question "where is this data allowed to be" is answered by the technical
 question "where did we build the system to put it."
+
+## How it looks in practice
+
+The schedule earns its keep the day it becomes code. Retention lives as enforced
+configuration — object-storage lifecycle policies, database TTLs, log-pipeline retention,
+partitions dropped by age — so disposal happens because a system ran, and the policy document
+matches what the systems actually do. Erasure requests flow through an orchestrator that
+walks the [data map](/data-privacy/classification-discovery/), fans deletion out to each
+system's owner-registered endpoint, and records per-system completion — the audit trail is
+the defensibility. Two overrides are explicit rather than improvised: [legal
+hold](/dfir/evidence-legal/) suspends the schedule for named scopes with the suspension
+itself logged, and backups are documented as aging out on their cycle, with the erasure
+record noting the date the last copy expires. Residency is pinned where it's cheapest to
+enforce — [landing-zone](/cloud-infra/architecture-landing-zones/) guardrails denying
+out-of-region resources, replication targets checked against the same rule — so the
+[regulatory constraint](/grc/regulations-region/) holds by construction instead of by
+review.
 
 ## Where this connects
 

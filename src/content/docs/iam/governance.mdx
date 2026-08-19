@@ -8,7 +8,7 @@ relatedTo:
   - iam/multi-cloud-federation
   - grc
   - detection-eng/threat-hunting
-updated: 2026-08-11
+updated: 2026-08-19
 sidebar:
   order: 7
 ---
@@ -77,7 +77,7 @@ its own detection discipline — and it sits at the seam between this pillar and
 
 ITDR overlaps [threat hunting](/detection-eng/threat-hunting/) heavily: identity is the
 richest hunting ground, for the same reason it's the richest detection surface — most
-intrusions transit it, and the behavioural signals (a service account behaving interactively,
+intrusions transit it, and the behavioral signals (a service account behaving interactively,
 a human account behaving programmatically) are exactly what rules struggle with and analysts
 catch.
 
@@ -89,6 +89,19 @@ an opportunity, not just an obligation: the identity governance you build for se
 the [evidence](/grc/) an auditor needs, generated as a byproduct rather than assembled
 before each audit. Identity is where a lot of "compliance as code" actually pays off, because
 the access data is already structured and already being collected.
+
+## How it looks in practice
+
+The working version is an IGA platform — Entra ID Governance, SailPoint, Saviynt — wired
+to the HR system as the single source of truth, with [SCIM](/iam/multi-cloud-federation/)
+carrying the changes downstream. The tell of a good deployment is the mover wiring:
+a team change triggers an access *reset* against the new role's baseline, not merely new
+grants on top of old ones, which is the only mechanism that actually reverses privilege
+creep. Recertification campaigns are scoped by risk, show last-used data next to every
+entitlement, and their revocations are verified closed rather than assumed. Dormant
+accounts disable themselves on a timer. And the program reports one number above all
+others — time from termination to full deprovisioning — because it is the metric that
+compresses joiner/mover/leaver, coverage and automation into a single honest figure.
 
 ## Where this connects
 

@@ -10,7 +10,7 @@ relatedTo:
   - appsec/api-cloud-native
   - pentest/cloud-pentesting
   - cloud-infra/network-segmentation
-updated: 2026-08-11
+updated: 2026-08-19
 sidebar:
   order: 3
 ---
@@ -37,7 +37,7 @@ decides whether to trust it. Two controls sit at that boundary:
 
 ## Kubernetes hardening
 
-Kubernetes is an environment inside the environment, and its defaults favour convenience over
+Kubernetes is an environment inside the environment, and its defaults favor convenience over
 containment. The hardening that matters, roughly in order of how often it's missing:
 
 - **Pod Security Standards.** Kubernetes' built-in mechanism to stop pods running privileged,
@@ -65,7 +65,7 @@ Beyond configuration, runtime security watches workloads *executing* — a conta
 spawning a shell, making unexpected outbound connections, or writing to paths it never touches.
 This is [detection](/detection-eng/) pointed at the workload layer, and its signal is
 strong for the same reason [process lineage](/dfir/digital-forensics/) is strong in
-forensics: containers have narrow, predictable behaviour, so deviation is meaningful.
+forensics: containers have narrow, predictable behavior, so deviation is meaningful.
 
 Isolation is the harder-edged version of the same concern: how strong is the boundary between a
 container and its host, and between tenants? Standard container isolation is a shared kernel,
@@ -100,10 +100,28 @@ on a real cadence, and disable what you don't use. Less mature than it sounds in
 because [drift](/cloud-infra/posture-iac/) erodes a hardened baseline the same way it erodes everything
 else — a host hardened at build time and never re-checked is hardened in the past tense.
 
+## How it looks in practice
+
+- **Admission policy rolls out in audit mode first** — Kyverno or Gatekeeper reporting
+  violations for a few weeks before anything is refused, because enforcing against a
+  running estate without that data costs the platform team the goodwill the control
+  depends on. Exceptions carry an owner and an expiry.
+- **Pod Security Standards run at `restricted` on new namespaces from day one**; legacy
+  namespaces get a migration deadline rather than a permanent waiver.
+- **A default-deny network policy ships in the namespace template**, so
+  [segmentation](/cloud-infra/network-segmentation/) is the starting state and every
+  allowed flow is a deliberate addition.
+- **Runtime detection is an agent** — Falco, or the EDR vendor's container sensor — whose
+  events land in the [detection pipeline](/detection-eng/data-pipeline/) alongside
+  everything else, with a handful of tuned rules over the vendor's full catalog.
+- **Node baselines are checked on a cadence** with kube-bench against the
+  [CIS benchmarks](/grc/common-frameworks/cis-controls/) — the re-check the host-hardening
+  section above calls for, made routine.
+
 ## Where this connects
 
 The image is [AppSec](/appsec/api-cloud-native/); the runtime is here, and admission control
 is where they meet. Kubernetes network policy is [segmentation](/cloud-infra/network-segmentation/) inside
 the cluster, pod escape and token abuse are what [cloud pentesting](/pentest/cloud-pentesting/)
-targets, and runtime behaviour feeds [detection](/detection-eng/). Every workload's identity
+targets, and runtime behavior feeds [detection](/detection-eng/). Every workload's identity
 blast radius is an [IAM](/iam/aws-identity/) question the platform can't fix for you.

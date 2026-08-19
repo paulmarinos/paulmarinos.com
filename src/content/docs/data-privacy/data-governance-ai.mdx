@@ -9,7 +9,7 @@ relatedTo:
   - ai-automation/vector-databases
   - ai-automation/securing-ai
   - data-privacy/lifecycle-retention
-updated: 2026-08-11
+updated: 2026-08-19
 sidebar:
   order: 6
 ---
@@ -101,6 +101,26 @@ There's no clean solution today, which makes it a genuine open problem — and, 
 [agentic identity](/iam/frameworks/), one worth understanding precisely because the tooling
 doesn't exist yet. The organizations training on personal data are mostly hoping the erasure
 request doesn't come, which is not a strategy.
+
+## How it looks in practice
+
+Given that deletion-in-the-weights has no clean answer, mature governance concentrates on
+the moments where the problem can still be prevented. Datasets pass an intake gate before
+training: provenance, license, and lawful basis recorded per source, special categories
+flagged, and the erasure question asked *then* — data subject to deletion obligations stays
+out of training sets, or the exposure is accepted in writing by someone entitled to accept
+it. The inference side is treated as ordinary data infrastructure:
+
+- **[Vector stores](/ai-automation/vector-databases/) and prompt logs are registered in the
+  data map**, classified from their source data, with retention set — the same handling a
+  database gets, because that's what they are.
+- **External model use runs through an enterprise tenancy** with provider retention
+  disabled and a logged gateway, so prompts are a governed
+  [egress path](/data-privacy/dlp-egress/) rather than an invisible one.
+
+The paper trail this produces — per-model data provenance, per-store classification — is
+exactly what the [EU AI Act's](/grc/regulations-region/) documentation requirements ask
+for, which makes the governance and the compliance a single body of work.
 
 ## Where this connects
 

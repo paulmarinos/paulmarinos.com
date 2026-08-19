@@ -11,7 +11,7 @@ relatedTo:
   - cloud-infra
   - grc
   - threat-intel/statistics
-updated: 2026-08-11
+updated: 2026-08-19
 sidebar:
   order: 3
 ---
@@ -31,7 +31,7 @@ Not all telemetry is equal, and the ranking is fairly stable across environments
 | Tier | Detective value | Notes |
 |---|---|---|
 | **Identity** | Highest | Most intrusions transit identity. Sign-ins, token issuance, MFA events, privilege changes |
-| **Endpoint** | High | Process execution and parent-child lineage is the richest behavioural signal available |
+| **Endpoint** | High | Process execution and parent-child lineage is the richest behavioral signal available |
 | **Cloud control plane** | High | CloudTrail, Azure Activity — where privilege escalation and persistence actually happen |
 | **Application** | Medium, underused | Highest business context, least instrumented. [AppSec](/appsec/) can fix this |
 | **Network** | Medium, falling | Encryption has eroded content inspection; flow and DNS still carry weight |
@@ -98,7 +98,7 @@ of questions.
 
 The rule that prevents most damage: **any pipeline change that drops a field must be
 reviewed against the detections that reference it.** With the repo
-[organised by data source](/detection-eng/detection-as-code/), that's a grep.
+[organized by data source](/detection-eng/detection-as-code/), that's a grep.
 
 :::caution[Sampling and base rates]
 Sampling interacts badly with rare events. If an attack signal appears in one event per
@@ -119,10 +119,24 @@ Two distinctions that must stay visible:
 - **Collected** vs. **queryable** vs. **retained long enough**. A source can pass one and
   fail the others.
 
-This artefact serves more than detection. It is the same evidence [GRC](/grc/) needs
+This artifact serves more than detection. It is the same evidence [GRC](/grc/) needs
 for logging and monitoring controls, and the thing [forensics](/dfir/) discovers the
 hard way when an investigation hits a wall. Producing it once, deliberately, is cheaper
 than three teams discovering it separately.
+
+## How it looks in practice
+
+The healthy version of this exists in writing:
+
+- **The pipeline itself is configuration under version control** — a Cribl or Vector change
+  that drops a field goes through the same review as the
+  [detections that reference it](/detection-eng/detection-as-code/), so the grep happens in
+  CI before the field disappears rather than in the postmortem after.
+- **One schema, chosen and documented** — OCSF on a green field, ECS or ASIM where the
+  existing stack already decides — with the raw event retained beside the normalized copy.
+- **The coverage matrix is a maintained artifact** with an owner and a review cadence,
+  keeping collected, queryable and retained-long-enough as separate columns — and it's the
+  same document [GRC](/grc/) cites for its monitoring controls, produced once.
 
 ## Where this connects
 

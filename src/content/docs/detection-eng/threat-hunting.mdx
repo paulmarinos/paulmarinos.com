@@ -11,13 +11,13 @@ relatedTo:
   - dfir
   - iam
   - threat-intel/collection-sourcing
-updated: 2026-08-11
+updated: 2026-08-19
 sidebar:
   order: 5
 ---
 
 Hunting is the discipline of looking for what your detections would miss. That framing
-matters, because a hunt programme that finds things your rules would have caught anyway is
+matters, because a hunt program that finds things your rules would have caught anyway is
 measuring its own redundancy.
 
 It also sits on a boundary worth being precise about. Hunting is discovery in an
@@ -35,14 +35,14 @@ converts cleanly into detections.
 process names, look at the rare tail, examine what only happened once. Better at finding
 the genuinely unexpected, much worse at producing a defensible report when it finds nothing.
 
-Most mature programmes run mostly hypothesis-driven with periodic baseline sweeps. The
+Most mature programs run mostly hypothesis-driven with periodic baseline sweeps. The
 common failure is calling unstructured log browsing "hunting" — enjoyable, occasionally
 lucky, and impossible to evaluate or repeat.
 
 ## A hunt that produces value either way
 
 The test of methodology is whether a hunt that finds nothing still leaves something behind.
-A structured hunt should produce four artefacts regardless of outcome:
+A structured hunt should produce four artifacts regardless of outcome:
 
 1. **The hypothesis**, written before looking, specific enough to be wrong.
 2. **The data assessment** — what you queried, over what window, and *what you couldn't
@@ -55,7 +55,7 @@ A structured hunt should produce four artefacts regardless of outcome:
 4. **The disposition** — a new detection, a coverage gap ticket, a tuning change, or an
    explicit "nothing to do, revisit if intel changes".
 
-Hunts that end without disposition are the reason hunt programmes get cut. The work
+Hunts that end without disposition are the reason hunt programs get cut. The work
 happened; nothing downstream changed.
 
 ## Where to hunt
@@ -71,7 +71,7 @@ used legitimately-shaped — which makes it exactly the kind of thing hunting ex
 **Cloud control plane** is second: enumeration bursts, role assumption chains, changes to
 logging configuration, and new principals created outside the pipeline.
 
-Both are places where the signal is behavioural and contextual rather than atomic — which
+Both are places where the signal is behavioral and contextual rather than atomic — which
 is precisely where rules struggle and analysts do well.
 
 ## Turning hunts into detections
@@ -80,7 +80,7 @@ The conversion is the point, and it needs a filter. Not every finding should bec
 if the pattern is rare enough that a rule would produce constant false positives, the honest
 output is a recurring hunt rather than a detection.
 
-A finding is a good detection candidate when the behaviour is describable in logic, the
+A finding is a good detection candidate when the behavior is describable in logic, the
 telemetry supporting it is reliably available, and a defined response exists. When those
 hold, the finding enters [the lifecycle](/detection-eng/detection-lifecycle/) as a normal backlog item
 with an unusually strong provenance: you already know the signal exists in your data,
@@ -89,7 +89,7 @@ because you just found it there.
 When they don't hold, write it up as a repeatable hunt with its queries saved. A documented
 hunt someone can re-run quarterly is worth more than a rule that gets disabled in a month.
 
-## Measuring a hunt programme
+## Measuring a hunt program
 
 Findings-per-hunt is the wrong metric — it rewards hunting where you already look. Better
 signals:
@@ -97,12 +97,26 @@ signals:
 - **Detections created** from hunt output.
 - **Coverage gaps identified** — arguably the largest durable value.
 - **Time to answer a question.** "Are we affected by X?" arriving from leadership is the
-  test hunt programmes actually get graded on, and the answer speed depends on data
+  test hunt programs actually get graded on, and the answer speed depends on data
   accessibility built beforehand.
 - **Techniques ruled out**, with the caveats stated honestly.
 
-A hunt programme that has found no intrusions may be working perfectly. One that cannot
+A hunt program that has found no intrusions may be working perfectly. One that cannot
 answer "are we affected by this" within a day is not, regardless of what it has found.
+
+## How it looks in practice
+
+The program's maturity shows in its residue. Hunts start from a one-page template —
+hypothesis, data assessment, findings, disposition — and finish as saved artifacts: queries
+and notebooks committed to a repo where the next analyst can re-run them, rather than
+screenshots in a wiki. A cadence mixes the two modes, recurring hypothesis hunts on
+identity and the control plane with a periodic baseline sweep, and every disposition lands
+somewhere that outlives the hunt — a backlog item in
+[the lifecycle](/detection-eng/detection-lifecycle/), a coverage ticket against
+[the pipeline](/detection-eng/data-pipeline/), or a scheduled re-run. Frameworks like
+Splunk's PEAK formalize exactly this shape; adopting one wholesale matters less than the
+template and the discipline of disposition. The strongest operational tell is speed on
+demand: the program that has rehearsed "are we affected by X?" answers it in hours.
 
 ## Where this connects
 

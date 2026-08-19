@@ -9,7 +9,7 @@ relatedTo:
   - threat-intel/risk-prioritization
   - dfir
   - pentest
-updated: 2026-08-11
+updated: 2026-08-19
 sidebar:
   order: 2
 ---
@@ -81,7 +81,7 @@ Three classes of failure, all of which need to be detected automatically:
   change. Alert on rate-of-change, not absolute count.
 - **Data source outage.** The upstream tier died. This should page, because it blinds every
   rule in that directory at once — which is why
-  [the repo is organised by data source](/detection-eng/detection-as-code/).
+  [the repo is organized by data source](/detection-eng/detection-as-code/).
 
 The meta-point: you need detections for your detections. Rule health is telemetry like any
 other.
@@ -110,6 +110,19 @@ a true positive would look like. If nobody can, retire it.
 Make retirement routine and reviewable — a quarterly pass over rules with no true positives
 and no owner, retired by default unless someone objects. Rules deleted in a reviewed commit
 are recoverable, which is what makes deletion safe enough to actually do.
+
+## How it looks in practice
+
+A working lifecycle is visible in the tooling rather than in a process document. Intake
+lands as issues in the [detection repo](/detection-eng/detection-as-code/), with the four
+data-availability questions as required fields so bad ideas die cheaply at triage. Rule
+health runs as scheduled queries — volume per rule, rate-of-change, per-source liveness —
+paging on a data-source outage and ticketing on drift. Retirement is a standing quarterly
+review with a default: rules with no true positives and no defender go out in a reviewed
+commit. And the backlog carries intake source as metadata, so the mix of incident-driven
+against vendor-pack-driven stays measurable and the
+[prioritization weighting](/threat-intel/risk-prioritization/) lives written down where the
+next engineer can find it.
 
 ## Where this connects
 

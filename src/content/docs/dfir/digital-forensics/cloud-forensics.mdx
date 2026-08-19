@@ -12,7 +12,7 @@ relatedTo:
   - cloud-infra/shared-responsibility
   - cloud-infra/saas-security
   - detection-eng/data-pipeline
-updated: 2026-08-14
+updated: 2026-08-19
 sidebar:
   hidden: true
 ---
@@ -64,7 +64,7 @@ snapshot before anything else negotiates.
 ## Containers: the host is a process
 
 A container is a process tree wearing a filesystem overlay, so "seize the host" decomposes
-into three separate artefacts:
+into three separate artifacts:
 
 - **The image**, pulled from the registry: the *intended* state, content-addressed and
   immutable.
@@ -90,11 +90,11 @@ is recycled continuously. The entire evidence set is indirect:
 - **The control plane's change history** — in function compromises, *code modification is
   the persistence mechanism*: an altered function body, a poisoned layer or dependency, a
   new trigger. The deployment audit trail is where that persistence shows.
-- **The deployed artefact**, pulled and diffed against source control — the serverless
+- **The deployed artifact**, pulled and diffed against source control — the serverless
   analogue of the container image diff.
 - **The identity trail** — what the function's role actually did, which is the
-  [primary-artefact principle](/dfir/digital-forensics/) at its purest, because here
-  identity records are very nearly the *only* artefact.
+  [primary-artifact principle](/dfir/digital-forensics/) at its purest, because here
+  identity records are very nearly the *only* artifact.
 
 Serverless is where unreadiness is unforgiving: with data-plane logging off, the honest
 finding is that no evidence exists either way — the
@@ -117,6 +117,18 @@ surface through support and trust teams, on timelines measured in days and under
 [the contract set long ago](/dfir/evidence-legal/). For incidents that may sit on the
 vendor's side of the line, the questions to put in writing early are what they will
 attest, what they will preserve, and when they will notify.
+
+## How it looks in practice
+
+The readiness section is the inventory; what marks a practiced team is that acquisition
+itself runs as code. One trigger — a Step Functions or Logic Apps pipeline, or equivalent
+runbook automation — applies the quarantine security group, protects the instance from
+termination, snapshots the volumes, hashes the results and lands them in the evidence
+account with acquisition metadata attached, in minutes and identically every time. Memory
+reach exists because the agent — EDR with capture support, or Velociraptor — was baked
+into the golden image months earlier. And the per-workload pull lists on this page live
+as runbooks exercised in game days alongside [response](/dfir/incident-response/): a
+pipeline whose first run is against real evidence is being tested in production.
 
 ## Where this connects
 

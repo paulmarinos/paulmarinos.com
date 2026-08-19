@@ -11,7 +11,7 @@ relatedTo:
   - iam
   - cloud-infra
   - detection-eng
-updated: 2026-08-11
+updated: 2026-08-19
 sidebar:
   order: 4
 ---
@@ -104,6 +104,18 @@ pipeline it claims, without tampering in between.
 Provenance is only as good as its verification: signing artifacts and never checking the
 signatures at deploy is ceremony. The value is in the gate that refuses an unsigned or
 unverifiable artifact.
+
+## How it looks in practice
+
+In a hardened pipeline the CI secret store holds no cloud keys — every deploy job assumes
+its role through OIDC, and the trust policies name a specific repository and branch,
+reviewed like the [IAM policies](/iam/non-human-identity/) they are. Third-party actions are pinned to SHAs, with Renovate or Dependabot moving the
+pins so the security doesn't decay into staleness. The platform controls live at the
+organization level — branch protection, push protection, runner isolation set once as
+policy — rather than re-argued per repository. And the rollout order tends to be the same
+everywhere: OIDC first because it's the largest risk removed for the least effort, platform
+settings second, and provenance last — with Sigstore signing and the deploy-time
+verification gate arriving *together*, since either one alone changes nothing.
 
 ## Where this connects
 

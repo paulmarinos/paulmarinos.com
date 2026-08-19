@@ -1,0 +1,132 @@
+---
+title: Ontologies & Knowledge Graphs
+description: Mapping a business's entities, vocabulary, and processes — taxonomy vs. ontology vs. knowledge graph, RDF and property graphs, the semantic layer that grounds agents, and security's own ontologies from ATT&CK to OCSF.
+pillar: ai-automation
+contentType: deep-dive
+maturity: practitioner
+relatedTo:
+  - ai-automation/rag
+  - detection-eng/data-pipeline
+  - grc/compliance-mapping
+  - threat-intel/analytic-methods
+updated: 2026-08-19
+sidebar:
+  order: 8
+---
+
+Ask three systems in the same company what a "customer" is and you'll get three answers: a
+row in the CRM, a billing account, a tenant ID. Every integration between them quietly
+re-derives the mapping, every dashboard aggregates across definitions that don't quite
+agree, and every AI system trained or grounded on that data inherits the confusion at scale.
+An **ontology** is the fix stated formally: an explicit model of the business's entities,
+the relationships between them, and the vocabulary used to name them — agreed once, referenced
+everywhere. The topic is having a moment because agents forced the issue: a human analyst
+papers over vocabulary drift without noticing, while an agent [querying tools](/ai-automation/agent-orchestration/)
+across three systems needs the mapping to exist somewhere machine-readable, or it joins the
+wrong entities with perfect confidence.
+
+## Taxonomy, ontology, knowledge graph — what each adds
+
+The terms get used interchangeably and shouldn't be:
+
+- A **taxonomy** is a hierarchy of categories — a tree that answers "what kind of thing is
+  this." Cheap, useful, and limited to *is-a* relationships.
+- An **ontology** adds typed relationships and rules: entities have defined properties,
+  relationships have semantics (*a Service runs-on a Host; a Host belongs-to an
+  Environment*), and constraints can be stated (*every Service has exactly one owner*). It's
+  the schema for meaning.
+- A **knowledge graph** is an ontology *populated* — the actual instances and their actual
+  relationships, queryable. The ontology says what kinds of things exist; the graph says
+  which things exist and how they currently connect.
+
+The order matters in practice: teams that build the graph without agreeing the ontology get
+a big, well-indexed pile of the same ambiguity they started with.
+
+## Modeling the business
+
+The work is more organizational than technical, which is why it stalls. The core entities of
+most businesses fit on a page — customers, products, services, systems, teams, obligations —
+and the difficulty is entirely in the edges and the naming: whether "account" and "tenant"
+are the same entity, which system is authoritative for each, and who arbitrates when two
+departments' definitions conflict. The useful scoping rule is to model **to the questions**,
+not to completeness: an ontology built to answer "which services touch personal data, and
+who owns them" earns its keep immediately; an attempt to model the whole enterprise first is
+how these projects die. Vocabulary is half the value — a controlled glossary with agreed
+definitions, boring as it sounds, is the deliverable most consumers actually use.
+
+## Standards and stores
+
+Two traditions, different centers of gravity:
+
+- **RDF/OWL/SKOS** — the W3C semantic-web stack: formal, standards-based, strong on
+  interchange and inference, queried with SPARQL. Where it earns its keep is regulated and
+  cross-organizational settings where the formality *is* the point.
+- **Property graphs** — Neo4j and its relatives, queried with Cypher (now standardized as
+  GQL): pragmatic, developer-friendly, and where most operational graphs actually get built.
+  Less formal semantics, far lower friction.
+
+The honest default for a business ontology is a property graph plus a written vocabulary,
+reaching for OWL only when inference or interchange genuinely demands it. The store is the
+least important decision; the agreed meaning is the asset, and it survives a migration.
+
+## The semantic layer for AI
+
+This is why the topic lives in this pillar. An ontology grounds AI systems in what the
+business actually means:
+
+- **GraphRAG** retrieves over structure instead of just similarity — "everything connected
+  to this incident, two hops out" is a graph query no
+  [vector search](/ai-automation/rag/) can express. The knowledge graph is what makes
+  multi-hop questions answerable with provenance.
+- **Agents inherit the mapping.** A tool-using agent resolving "the customer" across the CRM,
+  billing, and support systems either consults the ontology or guesses. The semantic layer
+  is what turns tool calls from string-matching into reference — and constraining an agent
+  to traverse defined relationships is also a quiet [safety property](/ai-automation/securing-ai/):
+  it can only join what the model of the business says joins.
+- **Evaluation gets a ground truth.** Entity resolution against the graph is checkable in a
+  way free-text generation is not.
+
+## Security already runs on ontologies
+
+The industry rarely uses the word, but the artifacts are everywhere, and they make the case
+better than any abstract argument:
+
+- **ATT&CK** is an ontology of adversary behavior — typed entities (techniques, groups,
+  software), defined relationships, controlled vocabulary — which is exactly why it works as
+  the [shared language](/pentest/mitre-attack/) between red, blue, and intel.
+- **OCSF and the normalization schemas** are vocabulary wars settled by committee: the
+  [pipeline's](/detection-eng/data-pipeline/) schema decision is an ontology commitment about
+  what an "event" is.
+- **Threat-actor naming** is the canonical *failed* namespace — every vendor its own alias
+  list, [clusters that don't quite map](/threat-intel/analytic-methods/) — and it
+  demonstrates the cost of skipping the agreement step better than any slide.
+- **Compliance crosswalks** are ontology alignment under a different name:
+  [mapping control frameworks](/grc/compliance-mapping/) onto one internal control set is
+  the same many-vocabularies-one-meaning problem, solved with a spreadsheet.
+- **Asset inventory** is the ontology every enrichment pipeline wishes existed: "host,
+  owner, environment, criticality" is a four-property entity model, and its absence is why
+  severity scoring goes vague.
+
+## How it looks in practice
+
+The real deployments start embarrassingly small: a glossary of a few dozen terms with named
+owners, an entity model scoped to one question that matters, and a graph populated from the
+systems of record by the [same pipelines](/ai-automation/data-engineering/) that feed
+everything else — the ontology is a consumer of data engineering, not a substitute for it.
+Ownership is the survival question, so the working versions attach each entity's definition
+to a steward and treat changes like schema migrations, reviewed and versioned. The
+maintenance cost is the honest objection — a graph that stops being reconciled becomes
+confidently wrong, which is worse than absent — and it's why modeling-to-the-question beats
+modeling-for-completeness: every entity in the graph should have a consumer that would
+notice if it rotted.
+
+## Where this connects
+
+The graph is fed by [data engineering](/ai-automation/data-engineering/) and consumed by
+[GraphRAG](/ai-automation/rag/) and [agents](/ai-automation/agent-orchestration/); the
+schema commitments in the [detection pipeline](/detection-eng/data-pipeline/) are the same
+decision at the event level. [Compliance mapping](/grc/compliance-mapping/) and
+[actor naming](/threat-intel/analytic-methods/) are the discipline's positive and negative
+proofs — one vocabulary maintained on purpose, one namespace nobody agreed to share. And
+the site's own [homepage argument](/threads/one-finding-five-lenses/) is this page's thesis
+applied to security itself: five teams, one fact, five vocabularies.

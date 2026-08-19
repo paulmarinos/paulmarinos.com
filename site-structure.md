@@ -442,6 +442,41 @@ throughout: command → what it does → what the output means → what to do ne
 - Model supply chain
 - Ties directly to §2.6 agent identity
 
+### 6.7 Data Engineering for AI
+The upstream layer §6.1–6.4 quietly assume. §7.3's argument — every detection is downstream
+of a pipeline decision — repeated for AI: every retrieval failure traces to what entered the
+corpus and how.
+- Ingestion and ETL for unstructured data; document parsing reality (PDF, OCR, tables) as
+  where corpus quality is decided
+- Freshness and sync: the corpus as a continuously reconciled mirror, not a one-off load
+- Metadata and chunk-time enrichment as the retrieval contract (ties to §6.1, §6.2)
+- Corpus quality: dedup, staleness, contradiction — health as an evaluated property (ties to §6.3)
+- Access-control inheritance: the corpus must carry source permissions (ties to §2, §10.5)
+- Boundary with §10.6: governance decides *whether* data may be used; this subsection makes
+  it *usable*. Boundary with §7.3: same discipline, different consumer.
+
+### 6.8 Ontologies & Knowledge Graphs
+Mapping a business's entities, vocabulary and processes — the semantic layer, and the most
+thesis-aligned subsection on the site: cross-discipline vocabulary is the whole argument.
+- Taxonomy vs. ontology vs. knowledge graph — what each adds over the last
+- Modeling the business: entities, relationships, controlled vocabulary, process
+- Standards and stores: RDF/OWL/SKOS vs. property graphs (Neo4j); where each fits
+- The semantic layer for AI: grounding agents and GraphRAG in business meaning (ties to §6.1)
+- Security's ontologies in the wild: ATT&CK, OCSF (§7.3), actor naming (§1.7), control
+  crosswalks (§4.4), asset inventory as the ontology every enrichment pipeline wishes existed
+- Maintenance as the real cost: who owns the meaning when the business changes
+
+### 6.9 MCP & the Tool Layer
+The infrastructure §6.4 explicitly defers — how models connect to tools and data, now that
+the connection is a protocol with an ecosystem.
+- What MCP standardizes: tools, resources, prompts; clients and servers; transports
+- Building servers: scoping, least privilege, OAuth-based authorization
+- The security surface: tool poisoning, description injection as indirect prompt injection,
+  the confused deputy, servers as a new software supply chain (ties to §3.2)
+- Tool governance: registries, allowlists, review-before-adoption
+- Boundary with §6.6: model-level attacks there, protocol and tool layer here; the agent
+  holding the tools is a §2.8 identity
+
 ---
 
 ## 7. Detection Engineering & SecOps

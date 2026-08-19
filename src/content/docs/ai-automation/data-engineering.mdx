@@ -1,0 +1,113 @@
+---
+title: Data Engineering for AI
+description: The upstream layer RAG and agents quietly assume — ingestion and document parsing, freshness and sync, metadata as the retrieval contract, corpus quality as an evaluated property, and access-control inheritance.
+pillar: ai-automation
+contentType: deep-dive
+maturity: practitioner
+relatedTo:
+  - ai-automation/rag
+  - detection-eng/data-pipeline
+  - data-privacy/data-governance-ai
+  - data-privacy/classification-discovery
+updated: 2026-08-19
+sidebar:
+  order: 7
+---
+
+Every retrieval failure is downstream of a pipeline decision somebody made, usually in the
+first week of the project and usually without noticing. That sentence is
+[§7.3's argument](/detection-eng/data-pipeline/) about detection, and it transfers to AI
+intact: the answer a RAG system cannot give because the document was never parsed correctly,
+never re-synced, or never tagged with who may read it doesn't show up as a failure anywhere —
+it just produces a worse answer than the demo did. The glamorous layers —
+[retrieval](/ai-automation/rag/), [embeddings](/ai-automation/vector-databases/), agents — all
+assume a corpus that is current, clean, deduplicated, and permission-aware. Producing that
+corpus is data engineering, and it is where most production AI efforts actually succeed or
+fail.
+
+## Parsing is where corpus quality is decided
+
+The unglamorous truth of enterprise data: most of it is PDFs, and PDFs are where structure
+goes to die. A pipeline that naively extracts text from a financial report turns its tables
+into word soup, silently — the ingestion succeeds, the embeddings compute, and the retrieval
+returns confidently mangled numbers. The parsing layer deserves engineering attention
+proportional to how much of the corpus is documents rather than databases:
+
+- **Layout-aware parsing** — heading hierarchy, tables as tables, figures acknowledged rather
+  than dropped. The parser decides what [chunking](/ai-automation/rag/) has to work with, and
+  no downstream cleverness recovers structure discarded here.
+- **OCR is a data-quality decision**, not a checkbox: scanned documents enter the corpus at
+  whatever fidelity the OCR achieved, and nothing downstream knows the difference between a
+  clean extraction and a garbled one unless the pipeline scores it.
+- **Format sprawl is the actual workload.** Wikis, tickets, chat exports, spreadsheets,
+  slide decks — each with its own notion of structure. Per-source parsers with per-source
+  tests beat one generic extractor pointed at everything.
+
+## The corpus is a mirror, not a load
+
+The demo loads documents once; production has to *stay* synchronized with sources that keep
+changing. That makes the corpus a continuously reconciled mirror, with the reconciliation
+machinery — change detection, incremental re-embedding, deletion propagation — as the real
+system. Two consequences deserve emphasis:
+
+- **Staleness is a correctness bug.** An answer assembled from the superseded version of the
+  policy is a hallucination with a citation. Freshness targets belong in the pipeline's
+  requirements the way latency targets do, per source, because "how stale may this be" has a
+  different answer for the HR policy than for the org chart.
+- **Deletion must propagate.** When the source document is deleted or restricted, its chunks,
+  embeddings, and cached answers have to follow — which is
+  [lifecycle-retention's](/data-privacy/lifecycle-retention/) argument arriving in a new
+  store. A vector index that never processes deletions is an unmanaged copy of everything
+  the organization ever wrote.
+
+## Metadata is the retrieval contract
+
+The pipeline's second product, as valuable as the text: structured metadata on every chunk —
+source system, author, date, document type, [classification](/data-privacy/classification-discovery/),
+and the permissions of the source. This is what makes
+[filtered retrieval](/ai-automation/vector-databases/) possible ("only current policy
+documents, only from the legal share"), what scopes multi-tenant indexes, and what lets an
+answer carry a real citation. Metadata discipline at ingest is cheap; reconstructing it after
+a million chunks are embedded is a migration.
+
+The security-critical field is **access-control inheritance**. If the source document was
+readable by the finance team only, its chunks must carry that constraint into the index, and
+retrieval must enforce it per-querying-user — otherwise the RAG system is a well-indexed
+data breach, laundering every source system's permissions into one searchable pool. This is
+the single most common security failure in enterprise RAG deployments, and it's a pipeline
+property: no prompt fixes it.
+
+## Corpus quality is an evaluated property
+
+Deduplication, contradiction, and coverage are measurable, and mature pipelines measure them
+the way [evaluation](/ai-automation/verification/) measures the model: near-duplicate
+detection at ingest (the same policy in four exports skews retrieval toward whatever was
+uploaded most), contradiction surfacing where two current-looking sources disagree, and
+coverage tracked as the fraction of intended sources actually flowing — because the corpus
+that silently lost its connector to the ticketing system three months ago produces answers
+that are subtly, uniformly out of date. Health metrics on the corpus catch what per-answer
+evaluation can't: the golden dataset tests the questions someone thought to ask, while
+corpus monitoring catches the rot in everything else.
+
+## How it looks in practice
+
+The working version resembles a small data platform, because that's what it is: connectors
+per source with owners, a staging store holding raw extractions beside their parsed forms,
+per-source parsing tests that fail the pipeline when a format changes, and scheduled
+reconciliation with deletion propagation verified rather than assumed. Freshness and
+coverage sit on a dashboard next to [retrieval metrics](/ai-automation/verification/), and
+the access-control join is tested with an adversarial case — a user querying for a document
+they cannot read in the source system, expected to get nothing. Teams reach for a framework
+(LlamaIndex's ingestion machinery, Unstructured for parsing) or a warehouse-native pipeline;
+either works, and neither replaces the per-source engineering. The budget tell: in a healthy
+program, more engineering time goes to the pipeline than to the prompts.
+
+## Where this connects
+
+This is [§7.3](/detection-eng/data-pipeline/) with a different consumer — the same
+discipline of tiering, normalization, and coverage-gap honesty, feeding a model instead of a
+SIEM. [Data governance for AI](/data-privacy/data-governance-ai/) is the other half of the
+intake gate: governance decides whether data may be used, this page makes it usable, and the
+[classification](/data-privacy/classification-discovery/) tags governance requires are the
+same metadata retrieval filters on. Downstream, everything in
+[RAG](/ai-automation/rag/) inherits what this layer produced.

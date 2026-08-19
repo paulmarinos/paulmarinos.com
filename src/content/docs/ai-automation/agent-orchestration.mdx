@@ -57,8 +57,8 @@ A handful recur, and naming them is most of designing an agent system:
 
 **LangGraph** (graph-structured, explicit state and control flow), **CrewAI** (role-based teams),
 **AutoGen** (conversational multi-agent), and **MCP** (Model Context Protocol — a standard for
-connecting models to tools and data, which is infrastructure rather than an orchestration
-pattern) are the common names. The honest position: **frameworks help you start and can obscure
+connecting models to tools and data, which is [infrastructure rather than an orchestration
+pattern](/ai-automation/mcp/)) are the common names. The honest position: **frameworks help you start and can obscure
 what's happening underneath.** The core loop — call model, parse tool call, execute, feed back —
 is simple enough to write directly, and understanding it plainly matters more than framework
 fluency, because when an agent misbehaves you debug the loop, not the abstraction over it. Choose

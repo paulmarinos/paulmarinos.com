@@ -753,7 +753,7 @@ graph. This resolves the old open question about where threads live: neither pil
 an eleventh pillar, but a sidebar-invisible shared home. They are the graph's densest connector
 nodes by design — each spans five to eight pillars.
 
-Ten written (the set featured on the homepage):
+Twelve written (the set featured on the homepage):
 
 - **[One finding, five lenses](/threads/one-finding-five-lenses/).** IAM misconfig through pentest, AppSec, GRC, detection and intel — reported five ways. (Merges the original "pentest finding → …" and "IAM misconfig as shared root cause" entries.)
 - **[The purple team loop](/threads/purple-team-loop/).** §5.4/§5.5 emulation → §7.4 validation → §7.2 backlog → §1.4 prioritization.
@@ -765,6 +765,8 @@ Ten written (the set featured on the homepage):
 - **[The telemetry gap](/threads/the-telemetry-gap/).** §7.3 log coverage as the shared prerequisite for detection, IR, hunting and audit.
 - **[Communication as a technical skill](/threads/communication-as-a-technical-skill/).** §1.5 applied to §5.6 reports and §4.x audit narratives.
 - **[The contract is the control](/threads/the-contract-is-the-control/).** For anything you don't operate, the leverage lives at signature time — §9.2.1 evidence tiers, §8.8 telemetry floors and the SSO tax, §8.7 responsibility acceptance, §1.11 feed procurement, §4.6 third-party risk done as clauses rather than questionnaires.
+- **[The namespace nobody shares](/threads/the-namespace-nobody-shares/).** §1.7 actor aliases, §7.3 event schemas, §4.4 crosswalks, asset inventory's absence, and §6.8 as the general statement — the no-shared-vocabulary tax paid five times, and the site's thesis read structurally.
+- **[Every copy flattens permissions](/threads/every-copy-flattens-permissions/).** §6.7's RAG index, §7.3's SIEM, §10's lake, §8.6's backups — every aggregation point sheds source access control unless it's re-derived on purpose; triangulates with the telemetry-gap and deletion threads.
 
 Not yet written (candidates): **Automation of the compliance-to-evidence pipeline**
 (§4.5 × §6.5); **Encryption that proves nothing** (§8.4 key management vs. §4.x

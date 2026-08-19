@@ -1,0 +1,85 @@
+---
+title: The Namespace Nobody Shares
+description: Threat-actor aliases, event schemas, control crosswalks, asset inventory, and the business ontology — five disciplines paying the same no-shared-vocabulary tax, and the same fix every time.
+pillar: ai-automation
+contentType: deep-dive
+maturity: practitioner
+relatedTo:
+  - ai-automation/ontologies
+  - threat-intel/analytic-methods
+  - detection-eng/data-pipeline
+  - grc/compliance-mapping
+updated: 2026-08-19
+sidebar:
+  hidden: true
+---
+
+Security's most expensive recurring failure isn't a vulnerability class — it's the absence of
+an agreement about what things are called. The same organization pays this tax five separate
+times, in five departments, under five different project names, and almost never notices that
+it's one problem. Each discipline below discovered it independently; the fix, when anyone
+funds it, is always the same shape: an explicit model of the entities, an agreed vocabulary,
+and a named owner for the meaning. [Ontologies](/ai-automation/ontologies/) is that fix
+stated generally; this thread is the evidence that everyone already needs it.
+
+## The famous failure: actor names
+
+[Threat-actor naming](/threat-intel/analytic-methods/) is the canonical demonstration of a
+namespace nobody agreed to share. Every vendor names its own clusters from its own telemetry,
+the clusters don't quite correspond, and "APT29 = Cozy Bear = Midnight Blizzard" is a
+maintained alias table, never an identity. The lesson generalizes beyond intel: when each
+observer names what *they* see, correlation becomes a permanent translation project, and the
+translation is where confidence quietly dies.
+
+## The settled war: event schemas
+
+The [detection pipeline's](/detection-eng/data-pipeline/) schema decision — OCSF, ECS, or
+ASIM — is a vocabulary treaty about what an "event" is: which field means the user, which
+means the source, what a "logon" covers. Teams experience it as tooling plumbing; it's
+ontology negotiation by committee, and it's what makes a detection portable across products.
+The pipeline pages call normalization an interface — an interface over meaning is exactly
+what an ontology is.
+
+## The spreadsheet version: control crosswalks
+
+[Compliance mapping](/grc/compliance-mapping/) is ontology alignment that GRC has always done
+by hand: five frameworks each with their own name for "review access quarterly," mapped onto
+one internal control set so the work happens once. The crosswalk *is* an alias table — the
+same artifact intel maintains for actors, built in a spreadsheet, rebuilt at every framework
+revision, and trusted with audit outcomes.
+
+## The missing one: asset inventory
+
+The ontology every discipline wishes existed is four properties long: asset, owner,
+environment, criticality. Its absence is why [enrichment](/detection-eng/data-pipeline/)
+can't tell a production database from a test box, why severity scores go vague, why
+[prioritization](/threat-intel/risk-prioritization/) falls back on CVSS alone, and why the
+first week of every incident includes rediscovering who owns the affected system. Everyone
+calls this an inventory problem; it's a namespace problem — the organization has no agreed
+referent for "this system," so every tool mints its own.
+
+## The general statement: the business ontology
+
+[Mapping the business's entities and vocabulary](/ai-automation/ontologies/) is all four
+stories told once, at the level of the organization instead of a discipline. What forced the
+issue is agents: a human analyst papers over vocabulary drift without noticing, while an
+[agent joining data across systems](/ai-automation/agent-orchestration/) needs the mapping
+to exist in machine-readable form, or it resolves "the customer" three different ways with
+perfect confidence. AI didn't create the problem; it removed the human who was quietly
+absorbing it.
+
+## The pattern
+
+Five instances, one structure: multiple observers, each minting names locally; a translation
+layer maintained by hand at the seams; and correctness leaking away wherever the translation
+lags. The economics are consistent too — agreeing the namespace is cheap early and nearly
+impossible late, and the maintained agreement always needs an owner, because a vocabulary
+without a steward rots into the very ambiguity it replaced. Where the agreement exists —
+ATT&CK for adversary behavior, a settled schema in the pipeline, a crosswalked control set —
+whole categories of cross-team friction simply don't occur.
+
+This thread is [one finding, five lenses](/threads/one-finding-five-lenses/) read
+structurally: that thread shows five teams describing one fact in five vocabularies; this one
+says the vocabularies themselves are the finding. It's also this site's own method — the
+[map on the homepage](/) is a small knowledge graph over an agreed set of entities, which is
+the only reason its edges mean anything.

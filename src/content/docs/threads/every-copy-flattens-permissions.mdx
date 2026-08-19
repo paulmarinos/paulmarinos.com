@@ -1,0 +1,78 @@
+---
+title: Every Copy Flattens Permissions
+description: The RAG index, the SIEM, the data lake, the backup, and the non-prod refresh all shed their sources' access control at copy time — one root cause, five systems, and the controls that re-derive what the copy dropped.
+pillar: data-privacy
+contentType: deep-dive
+maturity: practitioner
+relatedTo:
+  - ai-automation/data-engineering
+  - detection-eng/data-pipeline
+  - cloud-infra/resilience-recovery
+  - data-privacy/classification-discovery
+updated: 2026-08-19
+sidebar:
+  hidden: true
+---
+
+Access control lives with the source system, and it dies in the copy. Every pipeline that
+aggregates data — for search, for analytics, for detection, for recovery — reads from many
+stores, each with its own permission model, and writes to one store with a single, usually
+generous one. Nothing in that sentence sounds like an incident, which is why the pattern
+ships everywhere: the flattening is a side effect of the copy, invisible at design review,
+and each discipline below has met it as a surprise in its own systems. Lined up, it's one
+root cause wearing five costumes.
+
+## The newest instance: the RAG index
+
+[Data engineering for AI](/ai-automation/data-engineering/) states the sharp version: chunks
+from the finance share, the HR system, and the public wiki land in one vector index, and
+retrieval happily serves any of them to any asker. The source permissions existed at ingest
+time and were simply not carried — so the index launders every system's access model into
+one searchable pool, and a well-meaning chatbot becomes the best breach interface the
+organization has ever built. The fix is a pipeline property, and no prompt substitutes for
+it: permissions travel with the chunk, and retrieval enforces them per user.
+
+## The oldest instance: the SIEM
+
+The [detection pipeline](/detection-eng/data-pipeline/) did this decades before embeddings.
+Logs from every tier — including query parameters, tokens in URLs, payloads captured by an
+over-verbose debug flag — flow into a store every analyst can search. The database enforced
+row-level access; its logs, in the SIEM, enforce none of it. Most organizations discover
+what their [DLP program](/data-privacy/dlp-egress/) would flag in the SIEM only when someone
+thinks to search for it.
+
+## The industrial instance: the lake
+
+The warehouse and the lake exist to flatten — cross-system analytics is the product — which
+makes them the honest version of the pattern: the flattening is deliberate, so the
+re-derivation has to be too. That's what [classification tags](/data-privacy/classification-discovery/)
+carried through pipelines, row- and column-level policies at the lake layer, and
+purpose-scoped derived views actually are: access control rebuilt on the far side of the
+copy, driven by metadata that traveled with the data.
+
+## The forgotten instance: the backup
+
+[Backups](/cloud-infra/resilience-recovery/) reproduce production's data without
+reproducing production's access path. The application enforced authorization per request;
+the snapshot answers to whoever holds restore rights, which is why attackers treat backup
+consoles as an exfiltration interface and why restore permissions deserve the same review
+as production admin. A restore into a test account is a second, quieter copy of the same
+problem — production data now living where [non-production controls](/data-privacy/protection-transformation/)
+apply, which is precisely what masking-on-refresh exists to prevent.
+
+## The pattern
+
+One statement covers all of it: **a copy inherits the data and sheds the controls, so every
+aggregation point must re-derive access on purpose or it grants the union of what it
+ingested to the intersection of nobody's rules.** The re-derivation has three working forms,
+and mature systems use all of them — carry the source's permissions with the data and
+enforce at read time (the index), rebuild policy at the aggregate layer from classification
+metadata (the lake), and constrain who can reach the copy at all (the backup, the SIEM's
+role model). The audit question that finds the gaps is short: *for each place this data has
+been copied, who can read it there, and does the source system's owner know?*
+
+The neighboring threads triangulate it: [the telemetry gap](/threads/the-telemetry-gap/) is
+about the copies that were never made, this thread is about the ones made too well, and
+[deletion nobody can prove](/threads/deletion-nobody-can-prove/) is what happens when the
+flattened copies outlive the delete — the erasure request that misses the index, the lake,
+and the backup has erased nothing.

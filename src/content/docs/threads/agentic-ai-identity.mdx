@@ -7,9 +7,10 @@ maturity: advanced
 relatedTo:
   - ai-automation/agent-orchestration
   - ai-automation/securing-ai
+  - ai-automation/mcp
   - iam/frameworks
   - detection-eng/threat-hunting
-updated: 2026-08-13
+updated: 2026-08-19
 sidebar:
   hidden: true
 ---
@@ -51,6 +52,17 @@ steer. That reframes the defense: you cannot make the agent trustworthy, so you 
 *authority* small enough that a hijacked agent cannot do much. Tool-use authorization and
 blast-radius limitation are the control, exactly as they are for a human principal you cannot fully
 trust.
+
+## The protocol side
+
+Since this thread was first written, the abstract problem has grown concrete machinery:
+[MCP](/ai-automation/mcp/) is where agent authority now physically lives. The server's
+credential is the agent's reach, so everything above about scoping arrives as a config file
+rather than a principle; the spec's rule against passing the client's token downstream is
+the confused-deputy defense written into a protocol; and the tool boundary is where the
+authority question gets logged — or doesn't. The three sides of this thread now have a
+place to be implemented, which also means a place to be implemented wrong: an
+over-scoped MCP server is the standing credential problem reborn, one abstraction layer up.
 
 ## One problem
 

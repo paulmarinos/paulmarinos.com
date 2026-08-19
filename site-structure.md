@@ -703,7 +703,7 @@ The site's differentiator is the connective tissue. **These are now written**, a
 `astro.config.mjs`, so it never becomes an eleventh sidebar group. Each thread declares a spine
 pillar in frontmatter (satisfying the schema and the cross-link check trivially, since a thread
 is maximally cross-pillar) but lives in `threads/`, takes a neutral graph node colour rather than
-a pillar colour, and is surfaced through the homepage's "Cross-cutting threads" section plus the
+a pillar colour, and is surfaced through the homepage's "The common threads" section plus the
 graph. This resolves the old open question about where threads live: neither pillar-of-origin nor
 an eleventh pillar, but a sidebar-invisible shared home. They are the graph's densest connector
 nodes by design — each spans five to eight pillars.

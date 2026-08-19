@@ -1,0 +1,119 @@
+---
+title: Service Mesh & mTLS
+description: mTLS as workload identity in practice, what a mesh actually buys against what it costs to run, and where mutual TLS is worth having without one.
+pillar: cloud-infra
+contentType: deep-dive
+maturity: advanced
+cloud: [aws, azure, gcp, multi]
+relatedTo:
+  - cloud-infra/network-segmentation
+  - cloud-infra/cryptography-key-management/pki
+  - iam/non-human-identity
+  - appsec/api-cloud-native/kubernetes-workload-security
+updated: 2026-08-19
+sidebar:
+  hidden: true
+---
+
+Microsegmentation says each workload should reach only what it needs; mTLS asks the harder
+question of how two workloads *prove who they are* to each other once they're allowed to
+talk. Mutual TLS answers it with certificates on both sides of the connection — and that
+quietly replaces the weakest pattern in service-to-service security, the shared API key that
+never rotates. The certificate *is* the [workload identity](/iam/non-human-identity/): issued
+to the workload rather than baked into it, expiring in hours rather than persisting for
+years, and verifiable by any peer that trusts the issuing CA. The catch is operational — per-
+workload certificates at fleet scale mean issuing, rotating, and revoking thousands of them
+continuously, which is exactly the [certificate lifecycle
+problem](/cloud-infra/cryptography-key-management/pki/) that manual PKI cannot survive. A
+service mesh exists to make that burden disappear into infrastructure.
+
+## Identity before encryption
+
+It's worth being precise about what mTLS adds, because "encrypt east-west traffic" is the
+weaker half of it. Cloud provider networks already resist passive interception, and
+encryption alone doesn't stop a compromised workload from calling anything it can route to.
+The real yield is **authenticated identity on every connection**: the receiving service knows
+*which workload* is calling, not just that something on the network is. That's the
+prerequisite for authorization policy with teeth — "the payments service accepts calls from
+checkout, and from nothing else" — which is
+[microsegmentation](/cloud-infra/network-segmentation/) restated in terms of identity instead
+of IP addresses, and it keeps working when IPs churn, pods reschedule, and networks flatten.
+
+SPIFFE is the vocabulary this converged on: a workload identity (`spiffe://trust-domain/ns/
+payments/sa/api`) carried in a short-lived X.509 certificate, issued automatically against
+the platform's own knowledge of what the workload is. The identity document comes from the
+infrastructure, so there's no secret to distribute and nothing for the
+[red team to steal](/pentest/cloud-pentesting/) from a config file.
+
+## What the mesh buys
+
+A mesh (Istio and Linkerd are the reference points) intercepts every connection a workload
+makes and terminates it in a proxy the platform controls. For that price it delivers:
+
+- **mTLS everywhere, by default, with the lifecycle handled.** Certificates issued per
+  workload, rotated on the order of hours, with no application code changes — the
+  [PKI automation argument](/cloud-infra/cryptography-key-management/pki/) deployed at its
+  logical extreme. Rotation this fast also makes revocation mostly moot, which given
+  revocation's track record is the honest design.
+- **Authorization policy at layer 7.** Which identities may call which services, down to the
+  method and path — enforced in the proxy, versioned as configuration, auditable as code.
+- **Uniform observability.** Every service-to-service call produces telemetry from the proxy
+  layer, which [detection](/detection-eng/data-pipeline/) inherits without per-service
+  instrumentation — east-west visibility that otherwise simply doesn't exist.
+
+## What the mesh costs
+
+The costs are real and mostly organizational, and the deployments that fail skip this
+paragraph. A mesh inserts itself into every connection, so every connectivity incident now
+has a suspect that didn't exist before; upgrades touch the data path of everything at once;
+and the configuration surface is large enough to recreate the flat network inside the mesh —
+mTLS enabled in permissive mode forever, authorization policy never written — giving the
+*appearance* of zero-trust networking with none of its guarantees. Sidecar-per-pod remains
+the dominant architecture, with per-pod resource overhead as the visible tax; ambient
+designs move the proxy off the pod to shrink that, trading it for newer, less-proven
+machinery. Either way, a mesh is a platform-team commitment, not a Helm install.
+
+The decision rule that follows: a mesh pays for itself when service count and team count are
+high enough that per-service certificate handling and per-service authorization are the
+bottleneck. Below that threshold — a handful of services, one team — **mTLS without a mesh**
+is the right-sized version: cert-manager issuing workload certificates on
+[Kubernetes](/appsec/api-cloud-native/kubernetes-workload-security/), native mTLS support in
+the frameworks already in use, or the provider's own service-to-service authentication,
+where the platform's [IAM plane](/iam/multi-cloud-federation/) carries workload identity and
+no certificate is handled at all. The goal is authenticated workload identity on every
+call; the mesh is one delivery mechanism for it, and the most expensive one.
+
+## How it looks in practice
+
+The deployed reality is a ladder, and the healthy estates are honest about which rung they
+need:
+
+- **A handful of services, one team:** no mesh. cert-manager issues workload certificates
+  on [Kubernetes](/appsec/api-cloud-native/kubernetes-workload-security/), frameworks
+  terminate mTLS natively, or the provider's IAM-based service auth carries identity with
+  no certificates handled at all.
+- **Dozens of services, several teams:** Linkerd is the low-ceremony mesh — mTLS and
+  east-west telemetry by default with a small operational surface. Istio earns its extra
+  weight when layer-7 authorization policy, multi-cluster trust, or egress control through
+  the mesh are actual requirements rather than aspirations.
+- **Enforcement has a deadline.** Permissive mode is a migration state, so the rollout plan
+  names the date each namespace flips to strict — and an audit for namespaces still
+  permissive months later is the cheapest health check of the whole program.
+- **Authorization policy starts at the crown jewels.** The payments-accepts-only-checkout
+  rules get written for the few services where caller identity genuinely matters, instead
+  of boiling the ocean estate-wide.
+- **Mesh telemetry lands in the [detection pipeline](/detection-eng/data-pipeline/)** — the
+  east-west visibility was half the reason to deploy it, and it's wasted if it stops at a
+  service-health dashboard.
+
+## Where this connects
+
+The mesh is [certificate lifecycle automation](/cloud-infra/cryptography-key-management/pki/)
+at workload scale — the same issuance-rotation-trust machinery, made continuous. The
+certificate it issues is a [non-human identity](/iam/non-human-identity/) credential, short-
+lived for the same reasons federation beats vaulted secrets, and the authorization policy it
+enforces is [Zero Trust](/iam/frameworks/zero-trust/)'s per-request verification applied
+east-west. On [Kubernetes](/appsec/api-cloud-native/kubernetes-workload-security/) it
+overlaps network policy — identity-based and IP-based expressions of the same segmentation
+intent — and the proxy telemetry it emits is an east-west
+[detection source](/detection-eng/data-pipeline/) nothing else provides.

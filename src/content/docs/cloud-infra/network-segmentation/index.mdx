@@ -9,7 +9,7 @@ relatedTo:
   - cloud-infra/architecture-landing-zones
   - iam/frameworks
   - detection-eng/data-pipeline
-updated: 2026-08-11
+updated: 2026-08-19
 sidebar:
   order: 2
 ---
@@ -55,36 +55,22 @@ foothold" into "attacker has a foothold and nowhere to go."
 Here's the point most network security misses. Organizations pour effort into *inbound*
 filtering — what can reach us — and leave *outbound* wide open. But exfiltration, command-and-
 control, and data theft are all **outbound**, which means egress control is the direction that
-actually catches an active intrusion.
-
-- **Default-deny egress.** Workloads reach only the specific destinations they need. This
-  breaks [C2 and exfiltration](/pentest/red-team-operations/) directly — the implant can't
-  call home if home isn't on the allowlist. It's the most under-deployed high-value network
-  control in the cloud.
-- **DNS security.** DNS is an exfiltration channel and a C2 channel — data tunneled through
-  queries, domain-generation algorithms for resilient C2. Monitoring and controlling DNS closes
-  a path that bypasses most other egress controls, because DNS is so often allowed to flow
-  freely.
-
-The reframing worth carrying: **egress control is a detection and containment capability, not a
-firewall chore.** Whether east-west and outbound traffic is even *visible* is a network design
-decision that sits [upstream of the detection pipeline](/detection-eng/data-pipeline/) — you
-cannot detect on traffic the architecture never lets you see, which is why §8.2 is a
-prerequisite for §7.3's coverage rather than a peer of it.
+actually catches an active intrusion. The reframing worth carrying: **egress control is a
+detection and containment capability, not a firewall chore** — whether outbound traffic is even
+*visible* is a design decision that sits [upstream of the detection
+pipeline](/detection-eng/data-pipeline/). The full treatment — default-deny egress and why it's
+the most under-deployed control in the cloud, proxy and firewall architecture, and DNS as both
+attack channel and cheapest telemetry — lives in
+**[Egress & DNS Security](/cloud-infra/network-segmentation/egress-dns/)**.
 
 ## TLS, mTLS, and service mesh
 
 Encryption in transit is table stakes; the interesting decisions are about *identity* in
-transit:
-
-- **TLS termination.** Where TLS ends determines where traffic is plaintext and who can read
-  it. Terminating at the edge means internal traffic is unencrypted unless you re-encrypt.
-- **mTLS** — mutual authentication, so both sides prove identity. The certificate *is* the
-  [workload identity](/iam/multi-cloud-federation/), and it's how service-to-service auth
-  stops relying on a shared secret.
-- **Service mesh** (Istio, Linkerd) — pushes mTLS, and the certificate lifecycle it requires,
-  into infrastructure so it doesn't become an operational burden on every service. The main
-  reason mTLS is practical at scale.
+transit. mTLS makes the certificate the [workload identity](/iam/multi-cloud-federation/), so
+service-to-service auth stops relying on shared secrets — and a service mesh is what makes that
+practical at scale, by pushing the certificate lifecycle into infrastructure. What the mesh
+actually buys, what it costs to run, and where mTLS is worth having without one is
+**[Service Mesh & mTLS](/cloud-infra/network-segmentation/service-mesh-mtls/)**.
 
 ## ZTNA vs. VPN — where each helps
 

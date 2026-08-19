@@ -520,11 +520,21 @@ both could apply, the test is whether the subject is the workload or the substra
 - Landing zones as code; baseline drift and re-baselining
 
 ### 8.2 Network Security & Segmentation
+Grown a third level. The hub keeps segmentation as blast-radius design — VPC/VNet tiering,
+private endpoints, microsegmentation, ZTNA vs. VPN — with condensed egress and mesh sections
+pointing down.
 - VPC/VNet design, subnet tiering, private endpoints and service endpoints
-- Egress control and DNS security — the exfiltration path nobody instruments
 - Microsegmentation and east-west controls
-- TLS termination, mTLS and service mesh
 - ZTNA vs. VPN, and where each actually helps (ties to §2.6)
+- **8.2.1 Egress & DNS Security** — default-deny egress as the most under-deployed control
+  in the cloud, FQDN allow-listing and the inspection-point architecture the economics
+  already favour, the provider data plane as the egress point nobody fences, DNS as attack
+  channel (tunneling, DGA) and cheapest telemetry (feeds §7.3), protective DNS and the DoH
+  bypass, and egress as an IR containment lever (ties to §9.2.1)
+- **8.2.2 Service Mesh & mTLS** — mTLS as authenticated workload identity rather than mere
+  encryption (SPIFFE, ties to §2.8), what the mesh buys (lifecycle automation at the §8.4.1
+  extreme, layer-7 authorization, east-west observability) against its operational cost,
+  permissive-mode theatre, and mTLS without a mesh for right-sized estates
 
 ### 8.3 Workload & Container Security
 - Minimal base images, image provenance and admission control (OPA/Gatekeeper, Kyverno)
@@ -764,11 +774,12 @@ None written yet.
   children, which sit beside it and are hidden from the sidebar. The sidebar therefore never
   grows past pillar -> subsection no matter how much lands underneath, and third-level
   articles are found through the hub, search, the graph and backlinks instead. Mechanics in
-  `AGENTS.md`. Nine subsections have grown a third level so far, across a spectrum of split
+  `AGENTS.md`. Ten subsections have grown a third level so far, across a spectrum of split
   width: `appsec/api-cloud-native` and `dfir/digital-forensics` each split off a single
   sibling article (`kubernetes-workload-security`, `cloud-forensics`);
-  `cloud-infra/cryptography-key-management` split into two (PKI & certificate lifecycle,
-  post-quantum migration); `threat-intel/risk-prioritization` split into three
+  `cloud-infra/cryptography-key-management` and `cloud-infra/network-segmentation` each
+  split into two (PKI & certificate lifecycle plus post-quantum migration, egress & DNS
+  security plus service mesh & mTLS); `threat-intel/risk-prioritization` split into three
   (the CVSS / EPSS+KEV / SSVC scoring systems); `threat-intel/intelligence-lifecycle` into
   three (F3EAD, processing, feedback — the parts of the loop no other subsection owns);
   `iam/frameworks` into three (Zero Trust, Zero Knowledge, Zero Knowledge Trust);
@@ -779,6 +790,15 @@ None written yet.
   A fourth level is not planned — if a third-level article needs children, that is evidence
   the subsection above it should have been split.
 - **Per-section landing page:** what this is, why it matters, how it connects to the other six, then subsection index.
+- **Closing coda on deep-dives: "How it looks in practice", then "Where this connects".**
+  The practice section describes what a good implementation looks like — named tools with a
+  stance, the order things get built, the relevant framework anchor — deliberately framed as
+  description of the deployed reality rather than a best-practices checklist or numbered
+  steps, which matches the house voice and is harder to fill with filler. Convention, not
+  schema: applied to deep-dives (mostly practitioner maturity) where it earns its place;
+  thesis-driven pages and the threads skip it. Heavy tool and command material still belongs
+  in `cheatsheet` pages (the §5.3 pattern), which practice sections point to rather than
+  duplicate. First applied on §8.2.1 and §8.2.2.
 - **Content types to support:** deep-dive articles, cheatsheets/command references, templates (report, policy, threat model), walkthroughs/labs, and a glossary.
 - **Suggested tagging axes:** section, cloud provider (AWS/Azure/GCP/multi), framework (NIST/ISO/SOC2/FedRAMP), maturity level (foundational/practitioner/advanced), content type.
 - **Recommended cross-link discipline:** every article links to at least one article in a different top-level section.

@@ -1,0 +1,126 @@
+---
+title: Egress & DNS Security
+description: Default-deny egress as the most under-deployed control in the cloud, DNS as both attack channel and cheapest telemetry, and outbound control as a detection and containment capability.
+pillar: cloud-infra
+contentType: deep-dive
+maturity: practitioner
+cloud: [aws, azure, gcp, multi]
+relatedTo:
+  - cloud-infra/network-segmentation
+  - detection-eng/data-pipeline
+  - pentest/red-team-operations
+  - dfir/digital-forensics/cloud-forensics
+updated: 2026-08-19
+sidebar:
+  hidden: true
+---
+
+Every phase of an intrusion that hurts — command-and-control, lateral tooling download, data
+theft — is an **outbound** connection, and outbound is the direction most cloud networks leave
+wide open. The asymmetry has a simple cause: inbound exposure is what scanners find and audits
+ask about, while egress is invisible until an incident makes it the only thing that matters.
+This page is about closing and instrumenting that direction, and about DNS, the one protocol
+that slips past most attempts to do so.
+
+## Default-deny egress
+
+The strongest version of the control is also the simplest to state: workloads reach only the
+destinations they need, and everything else is refused. A [C2 implant](/pentest/red-team-operations/)
+that can't call home is a foothold that never becomes an operation, and exfiltration that has
+nowhere to go is a breach that stays a near-miss. Three things make the deployed reality rarer
+than the idea:
+
+- **Cloud defaults are allow-all.** A fresh VPC or VNet lets every workload reach the entire
+  internet, so egress control is always a retrofit, and retrofits against running traffic
+  require knowing what the traffic legitimately is. The discovery pass — instrument first,
+  enumerate what each tier actually talks to, then tighten — is most of the project.
+- **Destination allow-listing outgrew IP addresses.** Modern dependencies live behind CDNs
+  and shared cloud IPs that rotate hourly, so useful egress policy speaks FQDNs and requires
+  an inspection point — an egress proxy or DNS-aware firewall — rather than security-group
+  rules alone. That inspection point is also where the telemetry comes from, which is not a
+  coincidence.
+- **The economics push centralization anyway.** NAT gateways bill per gigabyte, so
+  consolidating egress through shared inspection points is often justified on cost before
+  security is even argued. Take the win: the architecture that saves the money is the
+  architecture that sees the traffic.
+
+The managed-service wrinkle deserves its own line: private endpoints keep traffic to
+provider services off the internet, but they also make **the provider's own APIs an
+exfiltration path** — data copied to an attacker-controlled bucket over the provider's
+backbone crosses no traditional egress point at all. Egress policy that ignores the
+provider's data plane, and the resource-level conditions (which bucket, which account, which
+tenant) that constrain it, is a fence with the gate open.
+
+## DNS — attack channel and cheapest telemetry
+
+DNS holds a special position on both sides of this fight, and for the same reason: almost
+every network lets it flow freely.
+
+As an **attack channel**: data tunnels out through query names and answers at low bandwidth
+but near-universal reachability, domain-generation algorithms give
+[C2 infrastructure](/pentest/red-team-operations/) resilience against blocklists by producing
+thousands of candidate rendezvous domains a day, and newly registered or low-reputation
+domains front most phishing and malware delivery. Every one of those techniques works
+precisely where DNS is unmonitored and unfiltered.
+
+As **telemetry**: resolver logs are close to the cheapest high-value log source in the
+estate. Every connection any workload makes announces its intent in a resolver query first,
+so one log source approximates the outbound intentions of everything — DGA detection,
+beaconing periodicity, tunneling entropy, and lookups of domains younger than the incident
+are all [detections](/detection-eng/data-pipeline/) that need no packet capture and no agent.
+Protective DNS closes the loop: the resolver that logs the malicious lookup can also refuse
+to answer it, or sinkhole it to a responder you control — a containment action that costs one
+policy entry.
+
+Two implementation realities keep this honest. Control only works if workloads **must** use
+your resolvers — direct-to-external DNS has to be blocked at the egress layer, or the
+telemetry describes only the compliant. And **encrypted DNS** (DoH) lets any process carry
+its lookups inside ordinary HTTPS to a public resolver, bypassing yours entirely; blocking
+known DoH endpoints and forcing resolution through the platform is now part of the control,
+not an optional hardening step.
+
+## Egress as a containment capability
+
+The reframing that earns this page its place in an incident: egress control is a **response
+lever**, not just prevention. When a workload is confirmed compromised, cutting its outbound
+reach — deny-all on its security group, revoke at the proxy, sinkhole its C2 domains —
+contains it in seconds without destroying the [evidence a forensic
+acquisition](/dfir/digital-forensics/cloud-forensics/) still needs from the running instance.
+And after containment, egress and resolver logs are where the exfiltration question — *what
+left, and how much* — gets answered, or doesn't. Flow logs record bytes-out to which
+endpoints; the resolver log names the destination. An estate that never instrumented egress
+answers that question with a shrug, which is [the telemetry
+gap](/threads/the-telemetry-gap/) at its most expensive: the log that was never bought
+deciding what the breach notification is allowed to claim.
+
+## How it looks in practice
+
+A mature deployment is recognizable at a glance:
+
+- **Egress is centralized and inspected.** Workload subnets have no direct internet route;
+  outbound traffic flows through a shared egress point running an FQDN-aware firewall (AWS
+  Network Firewall, Azure Firewall, GCP's Secure Web Proxy, or an Envoy/Squid proxy tier),
+  with per-tier allow-lists kept in [IaC](/cloud-infra/posture-iac/) beside the
+  infrastructure they govern.
+- **Rollout is staged by tier.** Log-only first to learn the real traffic, then alert, then
+  enforce — starting with the tiers that have no business reaching the internet at all
+  (databases, batch workers), where default-deny is uncontroversial.
+- **DNS is captured and filtered at the resolver.** Query logging on (Route 53 Resolver
+  query logs and DNS Firewall, Azure DNS security policy, Cloud DNS logging), direct
+  outbound port 53 and known DoH endpoints blocked so the resolver is the only path, and
+  the logs flowing to the [detection pipeline](/detection-eng/data-pipeline/) with rules
+  for newly registered domains, beaconing periodicity, and query-name entropy.
+- **The provider data plane is fenced.** Storage and API access constrained to expected
+  accounts and tenants via endpoint and resource policies — the condition keys exist
+  precisely because the backbone is an egress path.
+
+## Where this connects
+
+Egress visibility sits [upstream of the detection pipeline](/detection-eng/data-pipeline/) —
+coverage of outbound traffic is decided by this architecture, not by the SIEM. Default-deny
+egress is the direct counter to [red-team C2 and exfiltration](/pentest/red-team-operations/),
+which is why it's the control operators most often report as absent. Egress and resolver logs
+are what let [cloud forensics](/dfir/digital-forensics/cloud-forensics/) answer the
+what-left question, and the parent page's [segmentation
+framing](/cloud-infra/network-segmentation/) is the same blast-radius argument pointed
+inward instead of out.

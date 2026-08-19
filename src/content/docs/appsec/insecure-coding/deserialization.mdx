@@ -45,7 +45,7 @@ class that obviously runs code. They assemble a **gadget chain** — a sequence 
 innocent classes already on your classpath whose construction and cleanup hooks, wired together,
 end in command execution. Tools like ysoserial ship ready-made chains for common Java libraries.
 
-The consequence is that "there's nothing dangerous in *my* code" is not a defence. The danger is
+The consequence is that "there's nothing dangerous in *my* code" is not a defense. The danger is
 in the combination of the deserializer plus the entire dependency tree it can reach, which is
 almost never something you can fully audit.
 
@@ -67,7 +67,7 @@ stop doing it:
 
 Deserialization is a high-severity find in [web application pentesting](/pentest/web-app-pentesting/),
 and it is one of the [untrusted-data-into-an-interpreter](/appsec/insecure-coding/) failures this
-subsection is organised around — the object-machinery cousin of
+subsection is organized around — the object-machinery cousin of
 [injection](/appsec/insecure-coding/injection/). It has a sharp new surface in
 [AI systems](/ai-automation/securing-ai/): model weight formats and pickled artifacts from public
 hubs execute code on load, which is exactly this risk wearing a machine-learning label.

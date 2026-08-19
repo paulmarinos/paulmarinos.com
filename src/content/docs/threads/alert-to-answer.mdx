@@ -25,7 +25,7 @@ between them.
 
 It begins as a [detection](/detection-eng/detection-lifecycle/) — a rule someone wrote, possibly
 the one the [purple team loop](/threads/purple-team-loop/) put in the backlog, firing on the
-behaviour it was built to catch. The quality of everything downstream is set here: a detection
+behavior it was built to catch. The quality of everything downstream is set here: a detection
 with no context is an alert someone has to reverse-engineer at 02:00; a detection with the
 technique, the data source and a triage note is a head start on the response.
 
@@ -33,7 +33,7 @@ technique, the data source and a triage note is a head start on the response.
 
 [Incident response](/dfir/incident-response/) takes the believed alert and acts. The fastest lever
 in a cloud intrusion is usually [identity](/iam/aws-identity/) — revoke the session, rotate the
-credential, cut the access — before chasing hosts. Containment is a judgement made under time
+credential, cut the access — before chasing hosts. Containment is a judgment made under time
 pressure with incomplete information, which is why the
 [confidence language](/threat-intel/report-writing/) intel uses matters here more than anywhere:
 "we assess with moderate confidence the blast radius is these three accounts" is an operational
@@ -43,7 +43,7 @@ statement, not a hedge.
 
 Once contained, [investigation](/dfir/investigation-method/) answers what actually happened —
 patient zero, the boundary of the compromise proven rather than assumed, the timeline built from
-[disk and memory artefacts](/dfir/digital-forensics/). This is reconstruction of a known incident,
+[disk and memory artifacts](/dfir/digital-forensics/). This is reconstruction of a known incident,
 which is the discipline line between it and [hunting](/detection-eng/threat-hunting/): the hunter
 looks in an environment presumed healthy, the investigator reconstructs one known to be
 compromised. The output is a defensible account of the intrusion.
@@ -52,7 +52,7 @@ compromised. The output is a defensible account of the intrusion.
 
 If malware was involved, [reverse engineering](/dfir/malware-analysis/) establishes capability —
 what the sample *can* do, not just what it was seen doing — and extracts the indicators and
-behavioural signatures the rest of the system needs. This is the highest-provenance
+behavioral signatures the rest of the system needs. This is the highest-provenance
 [collection](/threat-intel/collection-sourcing/) there is, because you know exactly what was seen
 and how.
 
@@ -66,7 +66,7 @@ telemetry. Detection → response → forensics → analysis → detection.
 
 No pillar owns this. [Detection engineering](/detection-eng/) hands to
 [DFIR](/dfir/incident-response/) hands back to detection, with [intel](/threat-intel/collection-sourcing/)
-consuming the indicators throughout — and an organisation that runs a SOC, an IR team and a
+consuming the indicators throughout — and an organization that runs a SOC, an IR team and a
 detection team that do not feed each other has bought the stages and lost the loop, the same way
 the [purple team loop](/threads/purple-team-loop/) breaks when the engagement report is filed
 instead of actioned.

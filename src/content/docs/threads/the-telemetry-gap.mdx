@@ -25,7 +25,7 @@ instance of it, where the network design decides what is loggable.
 - **Detection** cannot fire on an event that never reached the pipeline. A rule for a technique
   whose data source is not collected is a rule that will never trigger — coverage on paper, blind
   in practice. [Log coverage gap analysis](/detection-eng/data-pipeline/) is the honest map of what
-  you can and cannot see, and it bounds the whole detection programme.
+  you can and cannot see, and it bounds the whole detection program.
 - **Incident response** reconstructs from what was recorded. An [investigation](/dfir/investigation-method/)
   can only prove the boundary of a compromise if the telemetry to scope it exists; where it does
   not, the responder is guessing, and "we cannot rule it out" replaces "we proved it did not
@@ -53,11 +53,11 @@ Each discipline treats telemetry as an input it *consumes* rather than one it *p
 coverage falls into the gap between them. Detection assumes the pipeline team collects the right
 sources; the pipeline team collects what detection asked for; IR discovers the gap mid-incident;
 audit discovers it at assessment. The fix is to treat log coverage as a
-[first-class, shared artefact](/detection-eng/data-pipeline/) — a map of sources against the
+[first-class, shared artifact](/detection-eng/data-pipeline/) — a map of sources against the
 attack surface, owned deliberately — rather than the residue of four teams' independent
 assumptions.
 
 That "shared prerequisite nobody owns" pattern is the connective-tissue argument in its purest
 form: the highest-leverage work is in the dependency between them, not inside any pillar — the
-same lesson as [risk prioritisation everywhere](/threads/risk-prioritization-everywhere/) and
+same lesson as [risk prioritization everywhere](/threads/risk-prioritization-everywhere/) and
 [the purple team loop](/threads/purple-team-loop/).

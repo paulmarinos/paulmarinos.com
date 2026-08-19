@@ -1,6 +1,6 @@
 ---
 title: Agentic AI Identity
-description: Zero Knowledge Trust, agent orchestration, and tool-use authorisation are one problem — scoped, revocable, auditable authority for a non-human actor — and the newest material on this site.
+description: Zero Knowledge Trust, agent orchestration, and tool-use authorization are one problem — scoped, revocable, auditable authority for a non-human actor — and the newest material on this site.
 pillar: iam
 contentType: deep-dive
 maturity: advanced
@@ -47,15 +47,15 @@ does the loop terminate, or can a runaway agent keep spending authority it was g
 means the agent's *instructions* are attacker-influenceable: a document it reads, a web page it
 fetches, a tool result it receives can contain text that becomes its next command. So the agent is
 a [confused deputy](/iam/aws-identity/) by construction — a principal whose intent an attacker can
-steer. That reframes the defence: you cannot make the agent trustworthy, so you must make its
-*authority* small enough that a hijacked agent cannot do much. Tool-use authorisation and
+steer. That reframes the defense: you cannot make the agent trustworthy, so you must make its
+*authority* small enough that a hijacked agent cannot do much. Tool-use authorization and
 blast-radius limitation are the control, exactly as they are for a human principal you cannot fully
 trust.
 
 ## One problem
 
 Put the three together and the shape is single: **scoped, revocable, auditable authority for an
-actor whose behaviour you cannot fully predict.** That is a sentence the IAM pillar has been
+actor whose behavior you cannot fully predict.** That is a sentence the IAM pillar has been
 writing for human and machine identity for years — least privilege, just-in-time elevation,
 revocation, audit — and the agent is just the hardest instance of it, because its intent is
 attacker-reachable and its actions are its own.

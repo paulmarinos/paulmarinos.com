@@ -20,7 +20,7 @@ make them mean anything — and the single most consequential denominator is the
 
 ## The base rate problem, worked
 
-This is the arithmetic that decides whether a detection programme is survivable, so it's
+This is the arithmetic that decides whether a detection program is survivable, so it's
 worth doing explicitly rather than gesturing at.
 
 Take a rule that is genuinely good: **99% sensitivity** (catches almost every true attack)
@@ -38,7 +38,7 @@ constraint when the base rate is low**, not that detection is hopeless; improvin
 until specificity is extreme. Halving the false positive rate here does more than any
 recall improvement can.
 
-That is also why alert volume is a terrible programme metric: it measures the denominator,
+That is also why alert volume is a terrible program metric: it measures the denominator,
 not the finding.
 
 :::tip[The practical consequence]
@@ -68,7 +68,7 @@ Common distortions worth naming in any analysis:
 
 - **Coverage bias.** You detect more in the environments with better logging, which reads
   as those environments being *worse*. This is the [telemetry gap](/detection-eng/)
-  expressed as a statistical artefact.
+  expressed as a statistical artifact.
 - **Survivorship.** Incidents you resolved are documented; the ones nobody noticed are not
   in the dataset by definition.
 - **Retention truncation.** A 30-day window cannot show a 90-day dwell time, and will

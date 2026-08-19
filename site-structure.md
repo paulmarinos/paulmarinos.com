@@ -84,7 +84,7 @@ modes and the FAIR/loss-exceedance note; the three scoring systems each earn a r
 - Levels of attribution: cluster → group → organization → individual → state, and why
   defensive work rarely needs past the first
 - Actor naming across vendors: aliases, not a shared namespace
-- Pyramid of Pain and why behavioural conclusions outlive indicators
+- Pyramid of Pain and why behavioral conclusions outlive indicators
 
 ### 1.8 The Intelligence Lifecycle
 Grown a third level. The hub keeps the six phases, the report-factory argument, the
@@ -115,8 +115,8 @@ owns each earn a page.
 ### 1.10 Sharing & Community
 - TLP 2.0: what each label actually permits, and the common misreadings
 - The ecosystem: ISACs/ISAOs, national CERTs, vendor trust groups, informal peer circles
-- Sanitization and tearlines — sharing the behaviour without burning the source (ties to §1.7:
-  behavioural conclusions travel better than indicators anyway)
+- Sanitization and tearlines — sharing the behavior without burning the source (ties to §1.7:
+  behavioral conclusions travel better than indicators anyway)
 - STIX/TAXII and MISP as sharing transport (format mechanics in §1.6)
 - The free-rider problem: what contributing back actually buys
 - Legal and contractual constraints on what can leave the building (ties to §4, §9.5)
@@ -349,7 +349,7 @@ is a real deep-dive on one framework.
 
 ### 5.3 Tools & Commands
 Second subsection to grow a third level — the five tool families are the split, and the hub
-keeps the phase-independent judgement (passive-before-active, loud-has-a-place). Format
+keeps the phase-independent judgment (passive-before-active, loud-has-a-place). Format
 throughout: command → what it does → what the output means → what to do next.
 - **5.3.1 Recon & Enumeration** — nmap, masscan, amass/subfinder, dnsx, httpx, ffuf/feroxbuster
 - **5.3.2 Web Application Testing** — Burp workbench, sqlmap, Nuclei, parameter and JWT tooling
@@ -528,13 +528,13 @@ pointing down.
 - ZTNA vs. VPN, and where each actually helps (ties to §2.6)
 - **8.2.1 Egress & DNS Security** — default-deny egress as the most under-deployed control
   in the cloud, FQDN allow-listing and the inspection-point architecture the economics
-  already favour, the provider data plane as the egress point nobody fences, DNS as attack
+  already favor, the provider data plane as the egress point nobody fences, DNS as attack
   channel (tunneling, DGA) and cheapest telemetry (feeds §7.3), protective DNS and the DoH
   bypass, and egress as an IR containment lever (ties to §9.2.1)
 - **8.2.2 Service Mesh & mTLS** — mTLS as authenticated workload identity rather than mere
   encryption (SPIFFE, ties to §2.8), what the mesh buys (lifecycle automation at the §8.4.1
   extreme, layer-7 authorization, east-west observability) against its operational cost,
-  permissive-mode theatre, and mTLS without a mesh for right-sized estates
+  permissive-mode theater, and mTLS without a mesh for right-sized estates
 
 ### 8.3 Workload & Container Security
 - Minimal base images, image provenance and admission control (OPA/Gatekeeper, Kyverno)
@@ -625,18 +625,18 @@ Grown a third level. The hub keeps the discipline — order of volatility, disk 
 forensics, anti-forensics and the absence-of-evidence argument — plus a condensed cloud
 section pointing down; the workload-type acquisition detail moved to the child.
 - Order of volatility and sound acquisition
-- Disk forensics: file systems, deleted data, artefacts of execution
+- Disk forensics: file systems, deleted data, artifacts of execution
 - Memory forensics (Volatility) — what only RAM will tell you
-- Endpoint, browser and mobile artefacts
+- Endpoint, browser and mobile artifacts
 - Anti-forensics and what absence of evidence is worth
 - **9.2.1 Cloud Forensics** — forensic readiness as the early acquisition phase, then
   evidence by workload type: VM (snapshots, the memory problem, autoscaling races),
   container (image / writable layer / node), serverless (no body — logs, change history,
-  artefact diffs), SaaS (vendor-decided evidence, the IdP as cross-SaaS backbone);
+  artifact diffs), SaaS (vendor-decided evidence, the IdP as cross-SaaS backbone);
   bounded throughout by the §8.7 responsibility line
 
 ### 9.3 Timeline & Investigation Method
-- Building a super-timeline and pivoting across artefact sources
+- Building a super-timeline and pivoting across artifact sources
 - Root cause vs. proximate cause; establishing patient zero
 - Scoping: proving the boundary of a compromise rather than assuming it
 - Hypothesis discipline and confidence language under time pressure (ties to §1.1)
@@ -646,7 +646,7 @@ section pointing down; the workload-type acquisition detail moved to the child.
 - Triage: static properties, strings, packing, similarity
 - Dynamic analysis and sandboxing; detonation safety
 - Unpacking and basic RE workflow
-- Extracting IOCs and behavioural signatures that feed §7 and §1
+- Extracting IOCs and behavioral signatures that feed §7 and §1
 - Capability assessment: what the sample can actually do
 
 ### 9.5 Evidence Handling & Legal
@@ -662,7 +662,7 @@ section pointing down; the workload-type acquisition detail moved to the child.
 
 Protecting the thing all of it exists to protect. §4 owns the obligation — what the
 regulation requires. This section owns the engineering: how data is found, classified,
-minimised, transformed and deleted in systems that are already running.
+minimized, transformed and deleted in systems that are already running.
 
 **Boundary with §4 and §8.** §4 is the regulatory requirement and audit evidence. §8.4 is
 the key material and cryptographic primitives. §10 is the data itself — its lifecycle,
@@ -670,7 +670,7 @@ shape, and the controls applied to it.
 
 ### 10.1 Classification & Discovery
 - Classification schemes that survive contact with users
-- Automated discovery and labelling at scale
+- Automated discovery and labeling at scale
 - Data mapping and lineage: knowing where it flows, not just where it sits
 - Shadow data — copies, exports, backups, and analytics stores
 
@@ -689,12 +689,12 @@ shape, and the controls applied to it.
 
 ### 10.4 Privacy Engineering
 - Minimization and purpose limitation as design constraints
-- Privacy by design, and threat modelling for privacy (LINDDUN)
+- Privacy by design, and threat modeling for privacy (LINDDUN)
 - Consent and preference management as system state
 - Privacy impact assessments that inform design rather than document it
 
 ### 10.5 Data Loss Prevention & Egress
-- DLP programme design, and why most DLP is theatre
+- DLP program design, and why most DLP is theater
 - Egress paths: endpoint, SaaS, cloud storage, AI tooling (ties to §8.2)
 - Insider risk and the detection tradeoffs it forces (ties to §7)
 
@@ -712,8 +712,8 @@ The site's differentiator is the connective tissue. **These are now written**, a
 `src/content/docs/threads/` — a directory deliberately *not* in the `pillars` table in
 `astro.config.mjs`, so it never becomes an eleventh sidebar group. Each thread declares a spine
 pillar in frontmatter (satisfying the schema and the cross-link check trivially, since a thread
-is maximally cross-pillar) but lives in `threads/`, takes a neutral graph node colour rather than
-a pillar colour, and is surfaced through the homepage's "The common threads" section plus the
+is maximally cross-pillar) but lives in `threads/`, takes a neutral graph node color rather than
+a pillar color, and is surfaced through the homepage's "The common threads" section plus the
 graph. This resolves the old open question about where threads live: neither pillar-of-origin nor
 an eleventh pillar, but a sidebar-invisible shared home. They are the graph's densest connector
 nodes by design — each spans five to eight pillars.
@@ -725,7 +725,7 @@ Ten written (the set featured on the homepage):
 - **[Agentic AI identity](/threads/agentic-ai-identity/).** §2.6 (Zero Knowledge Trust) × §6.4 (orchestration) × §6.6 (securing AI).
 - **[Risk prioritization as the universal problem](/threads/risk-prioritization-everywhere/).** §1.4 methods applied to AppSec, cloud posture, the detection backlog and the risk register.
 - **[The substrate trace](/threads/the-substrate-trace/).** One network path as §8.2 flaw, §5.2 pivot, §7.3 blind spot, §4.x control gap.
-- **[Alert to answer](/threads/alert-to-answer/).** §7 fires, §9.1 contains, §9.3 reconstructs, §9.4 analyses — lesson returns to §7.2.
+- **[Alert to answer](/threads/alert-to-answer/).** §7 fires, §9.1 contains, §9.3 reconstructs, §9.4 analyzes — lesson returns to §7.2.
 - **[Deletion nobody can prove](/threads/deletion-nobody-can-prove/).** §10.3 defensible deletion vs. §4 audit evidence vs. §9.2 forensics.
 - **[The telemetry gap](/threads/the-telemetry-gap/).** §7.3 log coverage as the shared prerequisite for detection, IR, hunting and audit.
 - **[Communication as a technical skill](/threads/communication-as-a-technical-skill/).** §1.5 applied to §5.6 reports and §4.x audit narratives.
@@ -756,8 +756,8 @@ spine pillar; essays are the author's own voice with no pillar at all.
   section is surfaced through the homepage (after the threads), search, the graph and
   backlinks; individual essays are indexed by `essays/index.mdx`, the same hub pattern as
   third-level articles.
-- **Graph:** essays are tagged `essays` for filtering but keep the default node colour —
-  the colour slots are exhausted at ten, and the unstyled node marks the section as
+- **Graph:** essays are tagged `essays` for filtering but keep the default node color —
+  the color slots are exhausted at ten, and the unstyled node marks the section as
   outside the palette, matching the threads.
 - **Voice:** first person throughout, per the site-level voice rule. The pillar articles
   stay third person.
@@ -810,9 +810,9 @@ None written yet.
 - ~~Does Incident Response warrant its own pillar?~~ Resolved: graduated to §9 alongside forensics and malware analysis. §7 is now purely detection engineering.
 - ~~Is threat hunting (§7.5) on the right side of the §7/§9 line?~~ Resolved once both were written: hunting is discovery in an environment presumed healthy, investigation is reconstruction of a known incident. The blur during a long-running compromise resolves on declaration — the activity changes discipline when an incident is declared, taking on evidence-handling, documentation and scope-proof obligations. Same analyst, same tools, different standard. Stated in §7.5 and §9.3.
 - Does §10.6 (data governance for AI) stay in Data Security, or migrate to §6 as that pillar's "securing AI" half fills out?
-- Does IaC security live in §3.6 (as a scanning tool) or §8.5 (as a posture program)? Current split is tooling vs. programme; watch whether that holds as both fill out.
+- Does IaC security live in §3.6 (as a scanning tool) or §8.5 (as a posture program)? Current split is tooling vs. program; watch whether that holds as both fill out.
 - **Where does a glossary live?** `contentType: glossary` exists in the schema and nothing uses it. A site-wide glossary belongs to no pillar, but `src/content.config.ts` requires `pillar` on everything except `contentType: landing`, so it needs either a schema exemption or per-pillar glossaries. Per-pillar is the cheaper answer and probably the better one — a term means something slightly different in each, and the difference is the interesting part.
-- **Where do the cross-cutting threads live?** Twelve are listed above and none are written, and by construction each belongs to two or more pillars. Options: file each under the pillar it starts from, or add an eleventh non-pillar section. Note the graph constraint if a new section is added — the colour slots are exhausted at ten (see `AGENTS.md`).
+- **Where do the cross-cutting threads live?** Twelve are listed above and none are written, and by construction each belongs to two or more pillars. Options: file each under the pillar it starts from, or add an eleventh non-pillar section. Note the graph constraint if a new section is added — the color slots are exhausted at ten (see `AGENTS.md`).
 - **Section numbers in published prose.** Pages refer to "§8.4" and "§2.6", but the numbering only exists in this file, which is not published — so a reader has no way to resolve them. Either publish this document, or convert the references to named links. Roughly two dozen occurrences across the pillar overview pages.
 
 ---

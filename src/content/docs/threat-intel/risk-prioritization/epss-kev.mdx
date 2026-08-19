@@ -26,13 +26,13 @@ answer subtly different questions.
 The **Exploit Prediction Scoring System** is a data-driven model, maintained by FIRST, that
 produces for each CVE a **probability (0 to 1) that it will be exploited in the next 30 days**.
 It is trained on real-world exploitation data correlated against features of each vulnerability —
-so it is a statistical prediction, not a human judgement, and it updates as the evidence changes.
+so it is a statistical prediction, not a human judgment, and it updates as the evidence changes.
 
 Two numbers come with each CVE and they are not the same:
 
 - The **probability** — e.g. 0.08, an 8% chance of exploitation in the window.
 - The **percentile** — where that CVE ranks against all others. A 90th-percentile CVE is more
-  likely to be exploited than 90% of the catalogue.
+  likely to be exploited than 90% of the catalog.
 
 The percentile is usually the more useful for setting a policy, because it is stable against
 shifts in the absolute scale. The critical usage rule is to treat EPSS as a **threshold, not a
@@ -43,7 +43,7 @@ presented as a policy — it has to be re-read on a cadence.
 
 ## KEV — confirmed exploitation, now
 
-CISA's **Known Exploited Vulnerabilities** catalogue is a different kind of signal: not a
+CISA's **Known Exploited Vulnerabilities** catalog is a different kind of signal: not a
 prediction but a **confirmation**. A CVE is on the KEV list because exploitation has been
 *observed* — reliable evidence it is being used in the wild. It exists as part of US federal
 Binding Operational Directive 22-01, which sets remediation deadlines for federal agencies, but
@@ -52,7 +52,7 @@ intelligence gets.
 
 That makes KEV a **near-binary escalation** in any prioritization model — if it is on the list,
 it jumps the queue, full stop. The one discipline it demands is the inverse: **absence from KEV
-means "not confirmed," never "safe"**. The catalogue records *confirmed* exploitation, and stops short of a complete census of all
+means "not confirmed," never "safe"**. The catalog records *confirmed* exploitation, and stops short of a complete census of all
 exploitation. Plenty of exploited vulnerabilities are not (yet) on it, so "not in KEV" means
 "not confirmed," never "not dangerous."
 
@@ -74,7 +74,7 @@ consequence remain the other two inputs the model needs.
 EPSS and KEV are the likelihood and confirmation inputs to the
 [prioritization model](/threat-intel/risk-prioritization/), the signals that actually cut the
 queue that [CVSS](/threat-intel/risk-prioritization/cvss/) severity alone cannot. They are what a
-[scanning programme](/appsec/code-scanning/) should sort by instead of raw severity, and
+[scanning program](/appsec/code-scanning/) should sort by instead of raw severity, and
 confirmed-exploitation signal is also an input to the
 [detection backlog](/detection-eng/detection-lifecycle/) — a vulnerability being exploited in the
 wild is a detection you want, not only a patch you owe.

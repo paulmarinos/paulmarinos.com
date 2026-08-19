@@ -26,7 +26,7 @@ The symptom of an unbuilt processing phase has a name: **the analyst as ETL laye
 Copying indicators between portals, reformatting one vendor's export for another vendor's
 import, manually checking whether this hash has been seen before, re-reading the same
 advisory from three feeds. In immature programs this quietly consumes the largest single
-share of analyst hours — skilled judgement doing pipeline work, and the pipeline still
+share of analyst hours — skilled judgment doing pipeline work, and the pipeline still
 unreliable because it lives in browser tabs.
 
 ## Normalization and the canonical store
@@ -41,7 +41,7 @@ through it*.
 The store is what makes the team's most common question — *have we seen this before?* —
 answerable in seconds instead of in someone's memory. That is institutional memory as
 infrastructure: it survives the analyst who would otherwise have been the lookup table.
-Treat STIX as an exchange format at the edges rather than a modelling constraint inside;
+Treat STIX as an exchange format at the edges rather than a modeling constraint inside;
 the store's schema should serve your analysis, and speak STIX at the door.
 
 ## Deduplication is provenance accounting
@@ -77,9 +77,9 @@ and every one done by hand is analyst time spent being a script.
 
 An unmaintained store fills with the dead. Hashes are invalidated by recompilation in
 seconds; IP addresses and domains turn over in days to weeks — and infrastructure is
-resold, so yesterday's C2 is tomorrow's legitimate host; behavioural intelligence holds
+resold, so yesterday's C2 is tomorrow's legitimate host; behavioral intelligence holds
 for months to years. The gradient is the Pyramid of Pain read as a decay curve, and it is
-the same reason [behavioural conclusions outlive indicators](/threat-intel/analytic-methods/)
+the same reason [behavioral conclusions outlive indicators](/threat-intel/analytic-methods/)
 in analysis.
 
 Processing owns the decay policy: type-based expiry as the default, sightings extending
@@ -102,7 +102,7 @@ institutional memory with a citation, and later analysis will trust it *because 
 from the store*. Extraction into the store therefore needs
 [verification discipline](/ai-automation/verification/) — grounding against the source
 document, schema validation, and spot-checking — in a way that a draft on an analyst's
-screen does not. Automate the mechanical; keep judgement, and anything that writes
+screen does not. Automate the mechanical; keep judgment, and anything that writes
 unreviewed "facts," out of the pipeline.
 
 ## Where this connects

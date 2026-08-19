@@ -46,7 +46,7 @@ This is the mechanism behind a whole class of business-logic exploits:
   between; the classic systems-level form.
 
 Attackers trigger these deliberately with tools that fire many requests in a single packet burst
-to minimise the timing window — so "the window is tiny" is not a defence.
+to minimize the timing window — so "the window is tiny" is not a defense.
 
 ## The fix is atomicity, not a bigger check
 
@@ -64,7 +64,7 @@ indivisible operation:
   compound operation genuinely cannot be expressed as one statement, accepting the throughput
   cost.
 - **Idempotency keys** — for request retries and webhooks, so a duplicate delivery is
-  recognised and dropped rather than re-applied.
+  recognized and dropped rather than re-applied.
 
 The principle underneath all of them: **never a check followed by a separate action on mutable
 shared state.** That is the [secure-coding paradigm](/appsec/secure-coding/) the family reduces

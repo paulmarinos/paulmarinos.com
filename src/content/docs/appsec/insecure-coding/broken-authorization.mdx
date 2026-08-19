@@ -68,7 +68,7 @@ The durable fix pushes enforcement down:
   controller forgets to ask.
 - **Make the safe path the only path.** A repository layer or query scope that always applies the
   ownership filter means new endpoints inherit the check instead of re-implementing it.
-- **Prefer unpredictable identifiers** as defence in depth, but never as the control — a UUID buys slower enumeration, not authorization.
+- **Prefer unpredictable identifiers** as defense in depth, but never as the control — a UUID buys slower enumeration, not authorization.
 
 This is [identity](/iam/) enforced inside the application: the same least-privilege, check-at-the-
 resource logic the IAM pillar applies to cloud principals, applied to rows in a table.
@@ -81,4 +81,4 @@ low-privileged user — is in [web testing](/pentest/tools-commands/web-testing/
 code-level view of the [OWASP API Top 10](/appsec/api-cloud-native/) authorization risks, and its
 fix is [IAM](/iam/) discipline inside the app. As an absent-check bug it shares a failure mode
 with [race conditions](/appsec/insecure-coding/race-conditions/) — both are guards that are not
-there — which is the [organising idea](/appsec/insecure-coding/) of the subsection.
+there — which is the [organizing idea](/appsec/insecure-coding/) of the subsection.

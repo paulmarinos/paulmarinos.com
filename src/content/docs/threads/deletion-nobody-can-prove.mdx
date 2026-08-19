@@ -1,6 +1,6 @@
 ---
 title: Deletion Nobody Can Prove
-description: Defensible deletion read against audit evidence and forensics — where the data an organisation swore was gone is exactly what the investigation recovers, and the gap between the compliance answer and the engineering reality.
+description: Defensible deletion read against audit evidence and forensics — where the data an organization swore was gone is exactly what the investigation recovers, and the gap between the compliance answer and the engineering reality.
 pillar: data-privacy
 contentType: deep-dive
 maturity: practitioner
@@ -24,7 +24,7 @@ sworn gone.
 
 [Regulation](/grc/regulations-region/) creates the requirement. GDPR's right to erasure, retention
 limits, residency rules — each says data must be gone after some event or interval, and each treats
-"deleted" as a state the organisation can attest to. The audit answer is a policy and a screenshot
+"deleted" as a state the organization can attest to. The audit answer is a policy and a screenshot
 of a retention setting. The obligation is binary: the data is retained lawfully, or it is deleted.
 
 ## The engineering reality
@@ -38,7 +38,7 @@ store; deletion as an *obligation* is a distributed problem across every copy th
 — and most of those copies were made by systems the person clicking "delete" has never heard of.
 
 The sharpest case is [immutable and air-gapped backups](/cloud-infra/resilience-recovery/), which
-are a security control precisely *because* they cannot be altered — which means they cannot honour
+are a security control precisely *because* they cannot be altered — which means they cannot honor
 an erasure request either. The control that protects you from ransomware is the control that keeps
 the data you promised to delete. That tension is real and mostly unresolved; the honest answer is
 retention windows and crypto-shredding, not a claim that the backup was edited.
@@ -46,17 +46,17 @@ retention windows and crypto-shredding, not a claim that the backup was edited.
 ## The forensic recovery
 
 [Digital forensics](/dfir/digital-forensics/) is the discipline whose entire premise is that
-absence of data is not proof of deletion. Deleted files leave artefacts; unallocated space holds
+absence of data is not proof of deletion. Deleted files leave artifacts; unallocated space holds
 recoverable content; a copy the deleter forgot sits in a store the investigation enumerates. When
-an incident touches data an organisation certified as deleted, forensics is what finds it — and
+an incident touches data an organization certified as deleted, forensics is what finds it — and
 now the deletion attestation is *evidence*, discoverable and dated — worse than merely wrong — that the
-organisation claimed a state it had not achieved.
+organization claimed a state it had not achieved.
 
 ## The gap that matters
 
 Line the three up and the problem is legible: the [obligation](/grc/regulations-region/) is binary,
 the [engineering](/data-privacy/lifecycle-retention/) is a distributed best-effort, and the
-[forensics](/dfir/digital-forensics/) is a live test of the gap between them. An organisation that
+[forensics](/dfir/digital-forensics/) is a live test of the gap between them. An organization that
 treats deletion as a compliance checkbox — set the retention policy, screenshot it — has answered
 the obligation and not touched the engineering, and it will keep believing the data is gone until
 an investigation recovers it. Treating deletion as the distributed engineering problem it actually

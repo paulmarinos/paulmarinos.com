@@ -1,6 +1,6 @@
 ---
 title: Dependency Confusion & Supply Chain
-description: Your code is a minority of what ships — dependency confusion and typosquatting as the entry points, lockfiles and resolver configuration as the baseline defence, and where the deeper provenance story begins.
+description: Your code is a minority of what ships — dependency confusion and typosquatting as the entry points, lockfiles and resolver configuration as the baseline defense, and where the deeper provenance story begins.
 pillar: appsec
 contentType: deep-dive
 maturity: practitioner
@@ -23,7 +23,7 @@ single instance, but it is one entry point into a broader problem.
 ## Dependency confusion and its neighbours
 
 **Dependency confusion** exploits how package resolvers choose between sources. Publish a
-malicious *public* package whose name matches an organisation's *internal private* package, and a
+malicious *public* package whose name matches an organization's *internal private* package, and a
 resolver configured to check both — preferring the higher version or the public registry — pulls
 the attacker's package instead of the intended internal one. The install runs the attacker's code
 in your build. It works because the resolver's default preference was never meant to be a security
@@ -39,7 +39,7 @@ The family around it shares the theme of trusting a name or a source too readily
 - **Malicious install hooks** — `postinstall` scripts and their equivalents that run at
   install time, before your code ever imports the package, so review-the-import is too late.
 
-## Baseline defences
+## Baseline defenses
 
 None of these is exotic to defend against, and the baseline is cheap relative to the blast radius:
 

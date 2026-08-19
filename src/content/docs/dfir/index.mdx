@@ -15,7 +15,7 @@ how far did it go, and is it over.
 
 That last part is where most response goes wrong. Scoping a compromise is a claim about
 the *boundary* of an intrusion, and it is far easier to assume a boundary than to prove
-one. Reconstruction — timelines, forensic artefacts, malware capability — is what turns
+one. Reconstruction — timelines, forensic artifacts, malware capability — is what turns
 the assumption into evidence.
 
 ## Why it matters
@@ -31,7 +31,7 @@ restores service and moves on guarantees a rerun.
 ## How this connects
 
 - **→ [Detection Engineering](/detection-eng/):** the closest sibling — §7 builds and tests the rules, this pillar responds and investigates. Every incident produces detection gaps, which is the highest-quality input the detection backlog gets.
-- **→ [Threat Intelligence](/threat-intel/):** investigation output *is* intelligence, and confidence language matters most under time pressure. Malware analysis feeds indicators and behaviours back upstream.
+- **→ [Threat Intelligence](/threat-intel/):** investigation output *is* intelligence, and confidence language matters most under time pressure. Malware analysis feeds indicators and behaviors back upstream.
 - **→ [IAM](/iam/):** identity-centric containment is usually the fastest lever available — revoke, rotate, and cut the session before chasing hosts.
 - **→ [Cloud & Infrastructure Security](/cloud-infra/):** cloud IR is a different discipline. Snapshotting, credential revocation and blast-radius scoping all depend on how the substrate was architected.
 - **→ [Data Security & Privacy Engineering](/data-privacy/):** what was accessed determines notification obligations, and forensics routinely recovers data an organization believed was deleted.
@@ -46,8 +46,8 @@ restores service and moves on guarantees a rerun.
 |---|---|
 | [Incident Response Operations](/dfir/incident-response/) | NIST SP 800-61 lifecycle and playbooks, triage and severity declaration, incident command, identity-centric containment, cloud IR, incident communications, blameless postmortems |
 | [Digital Forensics](/dfir/digital-forensics/) | Order of volatility and sound acquisition, disk and memory forensics, anti-forensics — with [Cloud Forensics](/dfir/digital-forensics/cloud-forensics/) covering evidence collection by workload type |
-| [Timeline & Investigation Method](/dfir/investigation-method/) | Super-timelines and cross-artefact pivoting, root cause vs. proximate cause, proving scope rather than assuming it, confidence language under pressure, reproducible documentation |
-| [Malware Analysis & Reverse Engineering](/dfir/malware-analysis/) | Static triage and similarity, dynamic analysis and detonation safety, unpacking and RE workflow, extracting IOCs and behavioural signatures, capability assessment |
+| [Timeline & Investigation Method](/dfir/investigation-method/) | Super-timelines and cross-artifact pivoting, root cause vs. proximate cause, proving scope rather than assuming it, confidence language under pressure, reproducible documentation |
+| [Malware Analysis & Reverse Engineering](/dfir/malware-analysis/) | Static triage and similarity, dynamic analysis and detonation safety, unpacking and RE workflow, extracting IOCs and behavioral signatures, capability assessment |
 | [Evidence Handling & Legal](/dfir/evidence-legal/) | Chain of custody and defensible process, legal hold and privilege, regulatory notification clocks, working with counsel, law enforcement and external IR |
 
 :::tip[The thread worth following]

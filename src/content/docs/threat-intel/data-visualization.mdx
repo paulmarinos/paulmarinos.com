@@ -67,17 +67,17 @@ system of record, and an unambiguous owner.
 
 ## Anti-patterns
 
-- **Traffic-light theatre.** Red/amber/green thresholds set to make the current state amber
-  are the most common chart in security and the least informative. The colours encode a
+- **Traffic-light theater.** Red/amber/green thresholds set to make the current state amber
+  are the most common chart in security and the least informative. The colors encode a
   policy decision that nobody wrote down.
-- **Risk quadrants with unlabelled axes.** "Likelihood × impact" with no units, no scale,
+- **Risk quadrants with unlabeled axes.** "Likelihood × impact" with no units, no scale,
   and dots placed by consensus. It looks quantitative and is not.
 - **3D anything.** Perspective distorts the encoding you're relying on.
 - **Dual y-axes.** Two scales, one plot area, any correlation you like depending on where
   you put the baselines.
 - **Truncated y-axes on counts.** Fine for indexed series, misleading for volumes.
 - **Rainbow palettes for ordered data.** Use a sequential ramp, so "more" looks like more.
-- **Precision theatre.** "Risk score 73.4" from inputs graded high/medium/low.
+- **Precision theater.** "Risk score 73.4" from inputs graded high/medium/low.
 
 The unifying failure: charts that cannot be wrong. If no possible dataset would change the
 picture, it is not showing you anything.
@@ -94,16 +94,16 @@ refactored, and they can be cited.
 
 ## Accessibility is correctness, not politeness
 
-Roughly one in twelve men has some form of colour vision deficiency, and security
+Roughly one in twelve men has some form of color vision deficiency, and security
 visualization leans heavily on red-green. Encode the finding redundantly — position, shape,
-label, or direct annotation — so colour is reinforcement rather than the sole channel. A
-chart that stops working in greyscale will also stop working when it's printed for a board
+label, or direct annotation — so color is reinforcement rather than the sole channel. A
+chart that stops working in grayscale will also stop working when it's printed for a board
 pack.
 
 ## Where this connects
 
 Everything here rests on [the statistics](/threat-intel/statistics/) — a chart of a badly framed
-number is a faster way to be wrong. Coverage matrices are the standard artefact of
+number is a faster way to be wrong. Coverage matrices are the standard artifact of
 [detection engineering](/detection-eng/), where the distinction between untested and
 uncovered decides where the work goes. And in [GRC](/grc/) the same discipline governs
 control-status reporting, which is where traffic lights do the most damage.

@@ -1,6 +1,6 @@
 ---
 title: The Purple Team Loop
-description: The full circuit from adversary technique to tested detection — emulation, detection validation, backlog, and prioritisation — and why breaking the loop is what makes red teaming theatre.
+description: The full circuit from adversary technique to tested detection — emulation, detection validation, backlog, and prioritization — and why breaking the loop is what makes red teaming theater.
 pillar: detection-eng
 contentType: deep-dive
 maturity: advanced
@@ -49,7 +49,7 @@ nobody actioned. The loop only closes if the finding enters a backlog with an ow
 ## Prioritise
 
 Twenty gaps do not get fixed at once, so the backlog is a
-[prioritisation](/threat-intel/risk-prioritization/) problem — the same one every queue on this
+[prioritization](/threat-intel/risk-prioritization/) problem — the same one every queue on this
 site inherits. Order by which techniques the emulated actor actually leads with, which map to
 exposed assets, which have the business behind them. A gap in a technique your threat model says
 you will face beats a gap in one you will not, and the
@@ -57,15 +57,15 @@ you will face beats a gap in one you will not, and the
 
 ## The circuit, closed
 
-The output of prioritise feeds the next emulate: the technique you decided to build a detection
+The output of prioritize feeds the next emulate: the technique you decided to build a detection
 for is the one the next engagement should try to slip past, to confirm the rule works against a
-live operator rather than only against a replay. Emulate → validate → backlog → prioritise →
+live operator rather than only against a replay. Emulate → validate → backlog → prioritize →
 emulate. Each lap raises the floor.
 
 The reason this is a thread and not a single pillar's article is that no pillar owns it.
 [Red teaming](/pentest/red-team-operations/) owns emulate, [detection engineering](/detection-eng/)
-owns validate and backlog, [intel](/threat-intel/risk-prioritization/) owns prioritise — and an
-organisation that staffs those separately, with no handoff between them, has bought all four
+owns validate and backlog, [intel](/threat-intel/risk-prioritization/) owns prioritize — and an
+organization that staffs those separately, with no handoff between them, has bought all four
 capabilities and none of the loop. It is the same disconnect that lets
 [one finding be rediscovered five times](/threads/one-finding-five-lenses/), and its natural
 sequel is [alert to answer](/threads/alert-to-answer/), which picks up when a detection built here

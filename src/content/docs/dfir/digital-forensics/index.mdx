@@ -44,7 +44,7 @@ that have since exited.
 
 Volatility is the standard toolkit. The workflow is consistent regardless of case: identify
 the profile, list processes and look for lineage that shouldn't exist, examine network
-artefacts, hunt injected regions, and extract suspicious sections for
+artifacts, hunt injected regions, and extract suspicious sections for
 [malware analysis](/dfir/malware-analysis/).
 
 The recurring finding is a process whose *parent* is wrong — a browser spawning a shell, a
@@ -53,7 +53,7 @@ individual binary.
 
 ## Disk forensics
 
-Slower and durable. What it yields that memory does not: execution artefacts (prefetch,
+Slower and durable. What it yields that memory does not: execution artifacts (prefetch,
 shimcache, amcache on Windows), file system timestamps across multiple attributes,
 deleted-but-recoverable content, and persistence mechanisms.
 
@@ -71,7 +71,7 @@ its own schedule, and identity records — sign-in logs, token issuance, role as
 chains — carry the story that process lists carry on-premise. The evidence model changes
 with the workload type, and each tier keeps different remains: a VM still yields
 snapshots and (with preparation) memory, a container leaves an image diff, serverless
-leaves only logs and artefacts, and SaaS leaves whatever the vendor decided to record.
+leaves only logs and artifacts, and SaaS leaves whatever the vendor decided to record.
 The acquisition treatment, workload by workload, is in
 [Cloud Forensics](/dfir/digital-forensics/cloud-forensics/).
 
@@ -88,7 +88,7 @@ ambiguous**, and reading it as absence of activity is how investigations conclud
 An empty log can mean nothing happened, logging wasn't enabled, the data aged out, the
 event went somewhere you didn't look, or someone cleared it. Those demand different
 responses, and distinguishing them is often possible: a *gap* in a log with continuous
-coverage either side is itself evidence, and log clearing usually leaves its own artefact.
+coverage either side is itself evidence, and log clearing usually leaves its own artifact.
 
 State the ambiguity explicitly in findings. "No evidence of exfiltration" and "evidence of
 no exfiltration" are entirely different claims, and only one of them is usually available.
@@ -100,5 +100,5 @@ work under pressure.
 Acquisition sequence is constrained by [response operations](/dfir/incident-response/) —
 containment and preservation compete, and the order matters. What can be recovered at all is
 set by [pipeline and architecture](/detection-eng/data-pipeline/) long beforehand.
-Extracted samples go to [malware analysis](/dfir/malware-analysis/), and the artefacts assemble
+Extracted samples go to [malware analysis](/dfir/malware-analysis/), and the artifacts assemble
 into [a timeline](/dfir/investigation-method/).

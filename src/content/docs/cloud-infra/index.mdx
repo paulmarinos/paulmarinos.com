@@ -21,21 +21,21 @@ with a key any compute role could use.
 ## Why it matters
 
 Architecture decisions are the ones you can't patch. A misconfigured dependency is a
-ticket; a flat network across three environments is a two-year programme. The controls
+ticket; a flat network across three environments is a two-year program. The controls
 here are also the ones that make every other pillar cheaper — segmentation shrinks what a
 [pentest](/pentest/) can reach, sane account structure shrinks what an
 [IAM](/iam/) mistake can touch, and a real posture baseline shrinks what
 [detection](/detection-eng/) has to compensate for.
 
 The honest counterweight: posture tooling is very good at producing findings and much
-worse at producing prioritised ones. A CSPM that reports ten thousand issues has told you
+worse at producing prioritized ones. A CSPM that reports ten thousand issues has told you
 nothing, which is why this pillar leans on [risk prioritization](/threat-intel/) rather
 than restating it.
 
 ## How this connects
 
 - **→ [IAM](/iam/):** the two-plane split. §2 owns identity policy — evaluation logic, roles, federation. This pillar owns org-level guardrail architecture: SCPs and Azure Policy as blast-radius design rather than as permission checks.
-- **→ [Application Security](/appsec/):** §3 is the workload, this is what it runs on. IaC and container *scanners* live there; the posture *programme* they feed lives here.
+- **→ [Application Security](/appsec/):** §3 is the workload, this is what it runs on. IaC and container *scanners* live there; the posture *program* they feed lives here.
 - **→ [Penetration Testing & Red Teaming](/pentest/):** segmentation, egress control and workload isolation are exactly what an operator tests. Cloud pivots are architecture findings before they are exploits.
 - **→ [Detection Engineering](/detection-eng/):** architecture determines what is observable. Network design decides whether east-west traffic is even loggable, which makes §8.2 upstream of §7.3's coverage gaps.
 - **→ [GRC](/grc/):** most technical control requirements land here — encryption, segmentation, backup, key management. "Data is encrypted at rest" is an audit answer; §8.4 is what it does and doesn't buy.

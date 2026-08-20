@@ -1,7 +1,7 @@
 ## This project
 
 Personal site for paulmarinos.com — Astro + Starlight, deployed to GitHub Pages via
-`.github/workflows/deploy.yml` on every push to `main`. Custom domain: `www.paulmarinos.com`
+`.github/workflows/deploy.yml` on every push to `main`. Custom domain: `paulmarinos.com`
 (`public/CNAME`).
 
 - **`site-structure.md`** is the content architecture and the source of truth for what gets

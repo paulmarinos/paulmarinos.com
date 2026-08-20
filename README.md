@@ -7,7 +7,7 @@ automation engineering, detection engineering & SecOps, cloud & infrastructure s
 Built with [Astro](https://astro.build) + [Starlight](https://starlight.astro.build),
 deployed to GitHub Pages.
 
-**Live:** https://www.paulmarinos.com
+**Live:** https://paulmarinos.com
 
 ## Content architecture
 

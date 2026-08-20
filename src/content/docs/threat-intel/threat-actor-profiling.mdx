@@ -1,0 +1,121 @@
+---
+title: Threat Actor Profiling & Tracking
+description: The maintained actor library — which adversaries matter to your organization, the profile as a living product with a decay problem, TTP change as the signal that matters, and the consumers the library feeds.
+pillar: threat-intel
+contentType: deep-dive
+maturity: practitioner
+frameworks: [ATT&CK]
+relatedTo:
+  - threat-intel/analytic-methods
+  - threat-intel/intelligence-requirements
+  - pentest/mitre-attack
+  - detection-eng/detection-lifecycle
+updated: 2026-08-20
+sidebar:
+  order: 12
+---
+
+Most organizations' actor knowledge is whatever the last vendor report said, held in the
+heads of whoever read it. The alternative this page describes is an **actor library**: a
+deliberately small set of adversaries assessed as relevant to *this* organization, each
+maintained as a living profile, tracked for change, and consumed by named downstream teams.
+[Analytic methods](/threat-intel/analytic-methods/) owns how clustering and attribution
+work — the machinery that produces actor knowledge. This page owns what a program does with
+it, because attribution that ends in a report nobody operationalizes is trivia with a
+confidence level.
+
+## Relevance: your threat model is not the news
+
+The first discipline is deciding which actors earn a profile at all, and the honest answer
+is a short list. The filter is the classic triad, applied from the defender's side:
+
+- **Intent** — does anything about this organization attract the actor: its sector, its
+  geography, its customers, the data it holds, the causes it's associated with?
+- **Capability** — what the actor can do, assessed from evidenced behavior rather than
+  reputation.
+- **Opportunity** — does the actor's known tradecraft even intersect this environment? An
+  actor living off on-prem Exchange exploitation matters differently to an
+  all-cloud estate.
+
+The pull toward covering whatever is in the headlines is constant, because executives read
+the headlines — and the deliverable that resists it is the written relevance assessment: *why
+these actors, why not that one everyone's asking about*. Answering the second half well is
+half the value, and it's an [intelligence requirement](/threat-intel/intelligence-requirements/)
+in the strict sense: the actor list is a standing PIR, reviewed on the same cadence.
+
+## The profile is a product, and products decay
+
+A useful profile is a maintained assessment, and its sections carry different half-lives:
+
+- **Identity and aliases, each with confidence** — the vendor-name mapping is inherited from
+  the [cluster registry](/threat-intel/analytic-methods/), and every alias equivalence is a
+  judgment, never a fact.
+- **Intent and targeting history** — what the actor goes after and what it has done to
+  organizations like yours; the slowest-moving section and the one executives actually read.
+- **The TTP inventory, mapped to ATT&CK, with evidence dates.** The load-bearing section:
+  behavior, not indicators, per the [Pyramid of Pain](/threat-intel/analytic-methods/), and
+  every technique stamped with when it was last observed — because an inventory without
+  dates cannot distinguish an actor's current tradecraft from its greatest hits.
+- **Infrastructure patterns** — how the actor sources and rotates infrastructure, held
+  loosely, since it's the fastest-decaying layer.
+
+The stamp that keeps the whole artifact honest is *last reviewed, by whom*. A profile that
+hasn't been touched in a year isn't a profile; it's a 2025 snapshot wearing a current
+letterhead, and consumers deserve to see the staleness rather than infer it.
+
+## Tracking is watching for change
+
+Between incidents, tracking accumulates: new campaigns attributed to the cluster fold into
+the profile, and the TTP inventory's dates refresh. The high-value event is **change** — an
+actor adopting a new initial-access route or moving from data theft to extortion — because
+change is precisely what invalidates the things built on the old profile: the
+[detections](/detection-eng/detection-lifecycle/) written against last year's techniques and
+the emulation plan rehearsing them. A TTP-inventory diff is therefore an *alert*, not an
+edit; it should open tickets downstream, not just update a wiki.
+
+Retirement is the tracking discipline nobody budgets: actors go dormant, get arrested,
+rebrand, or simply stop intersecting your environment. Marking a profile dormant — with the
+date and the reasoning — keeps the library small enough to maintain, which is the only state
+in which any of it stays true.
+
+## The consumers are the point
+
+The library justifies itself entirely through what reads it:
+
+- **Emulation planning.** The TTP inventory of a relevant actor is the
+  [purple team's](/threads/purple-team-loop/) shopping list — the
+  [ATT&CK-mapped](/pentest/mitre-attack/) techniques worth rehearsing because someone who
+  targets you actually uses them.
+- **The detection backlog.** Techniques in relevant actors' inventories with no tested
+  coverage are the [§7.2 intake](/detection-eng/detection-lifecycle/) with the strongest
+  provenance a request can carry.
+- **The strategic tier.** Actor targeting trends are the raw material for
+  [the program's](/threat-intel/running-a-cti-program/) executive products — the landscape
+  brief that says something about *this* organization rather than the industry at large.
+- **Prioritization.** "Threat-informed" in [§1.4](/threat-intel/risk-prioritization/) means
+  weighting by the techniques and CVEs your relevant actors use — which requires knowing who
+  they are and keeping that knowledge current.
+
+## How it looks in practice
+
+The working version is unglamorous: a capped list — a dozen actors is a strong program,
+not a weak one — each profile living in the TIP or wiki with an owner and a review date,
+built on the [cluster registry's](/threat-intel/analytic-methods/) naming layer. The TTP
+inventory is structured data rather than prose, so each actor's ATT&CK Navigator layer
+regenerates from it and can be overlaid on the [detection coverage
+layer](/pentest/mitre-attack/) — the gap between those two pictures *is* the work plan.
+Review runs on a calendar with the relevance assessment re-argued quarterly, inventory
+diffs open backlog tickets automatically, and the one report that proves the system works
+is boring by design: what changed across the library this quarter, and what downstream
+work it triggered.
+
+## Where this connects
+
+The library is built with [§1.7's machinery](/threat-intel/analytic-methods/) and steered
+by [§1.9's requirements](/threat-intel/intelligence-requirements/); its TTP inventories
+select [emulation targets](/pentest/mitre-attack/) and feed the
+[detection lifecycle's intake](/detection-eng/detection-lifecycle/); its targeting trends
+supply [the strategic tier](/threat-intel/running-a-cti-program/). And its daily operating
+cost — the alias table that maps every vendor's name for the same cluster — is
+[the namespace thread](/threads/the-namespace-nobody-shares/) made concrete, one maintained
+translation layer at a time.

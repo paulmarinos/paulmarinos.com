@@ -133,6 +133,19 @@ owns each earn a page.
   the vendor's demo scenario
 - Program metrics beyond report counts (ties to §7.7)
 
+### 1.12 Threat Actor Profiling & Tracking
+The maintained actor library. Boundary with §1.7: that subsection owns how clustering and
+attribution *work*; this one owns the product built with them and who consumes it.
+- Relevance filtering: which actors matter to this org (sector, geography, stack) —
+  capability × intent × opportunity, and why the threat model is not the news
+- The profile as a living product: aliases with confidence, motivation, capability, the
+  ATT&CK-mapped TTP inventory with evidence dates, infrastructure patterns, targeting history
+- Tracking over time: campaign-to-actor accumulation, TTP *change* as the signal that
+  invalidates detections and emulation plans, profile decay and deliberate retirement
+- Consumers: emulation target selection (§5.4), the §7.2 detection backlog on TTP change,
+  §1.11's strategic tier, §1.4's threat-informed weighting
+- The alias table as operating cost (the namespace thread made concrete)
+
 ---
 
 ## 2. Identity & Access Management

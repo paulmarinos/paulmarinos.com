@@ -28,7 +28,7 @@ const pillars = [
 // While the custom domain is still being provisioned, the deploy workflow sets
 // these to the github.io project URL so the preview renders with its assets.
 // Once DNS is live, drop the `env:` block from .github/workflows/deploy.yml.
-const site = process.env.SITE_URL ?? 'https://paulmarinos.com';
+const site = process.env.SITE_URL ?? 'https://www.paulmarinos.com';
 const base = process.env.BASE_PATH ?? '/';
 
 // https://astro.build/config

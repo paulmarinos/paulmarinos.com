@@ -255,11 +255,17 @@ your own supply (secrets, dependencies) — and indexes the children; each famil
   the provenance/SLSA half stays in §3.4
 
 ### 3.3 SDLC Best Practices
-- Threat modeling (STRIDE, PASTA, attack trees) and when it's worth it
+Grown a third level. The hub keeps the worth-it triage, abuse cases, design review gates,
+secure code review, and the shift-everywhere argument; the modeling methods earn a
+reference page.
+- Threat modeling and when it's worth it; the worth-it triage
 - Security requirements and abuse cases
 - Design review gates
 - Secure code review methodology
 - Shift-left vs. shift-everywhere — honest tradeoffs
+- **3.3.1 Threat Modeling** — the DFD and trust boundaries as identity boundaries, STRIDE's
+  coverage, attack trees as the design-time twin of the campaign attack path (§1.12 actor
+  profiles as the threat library that weights the branches), PASTA, LINDDUN pointer to §10
 
 ### 3.4 CI/CD & Platform Security
 - GitHub: Actions security, OIDC to cloud, branch protection, CODEOWNERS, secret scanning, Dependabot

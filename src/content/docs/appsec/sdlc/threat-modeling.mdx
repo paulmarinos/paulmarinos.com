@@ -1,0 +1,139 @@
+---
+title: Threat Modeling
+description: The methods behind "what can go wrong" — data-flow diagrams and trust boundaries, STRIDE's coverage, attack trees as the design-time attack path, PASTA's risk framing, and the threat library that weights the branches.
+pillar: appsec
+contentType: deep-dive
+maturity: practitioner
+frameworks: [STRIDE, PASTA, LINDDUN]
+relatedTo:
+  - appsec/sdlc
+  - threat-intel/threat-actor-profiling
+  - iam
+  - data-privacy/privacy-engineering
+updated: 2026-08-21
+sidebar:
+  hidden: true
+---
+
+A threat model is a map of attacks that haven't happened yet. Intelligence work reconstructs
+the paths an attacker *did* take through a system; a threat model draws the paths they
+*could* take, before the system exists to be attacked — the same graph with the arrow of
+time reversed. [The hub](/appsec/sdlc/) owns the prior question of when a design deserves
+this effort at all. This page owns the methods: what to draw, how to enumerate what can go
+wrong, and how to decide which of the resulting threats deserve engineering time.
+
+## The diagram is the model
+
+Every method below runs against a **data-flow diagram**: external entities, processes, data
+stores, the flows between them, and — the part that carries almost all the security
+content — the **trust boundaries** where a request's authority changes hands. A boundary is
+wherever the caller's identity, and therefore what it's allowed to do, must be re-established:
+the internet edge, a service-to-service hop, a queue between producer and consumer, the
+process-to-database seam.
+
+Two consequences follow from taking the diagram seriously. First, most trust boundaries are
+[identity](/iam/) boundaries — the interesting question at each one is what credential
+crosses it, who issued that credential, and what it authorizes on the far side. A diagram
+that marks boundaries without naming the credential at each crossing is a floor plan with
+the doors drawn and the locks omitted. Second, the act of drawing is itself the first check:
+if the team can't agree where authority changes hands, the model has already produced its
+first finding, and it's an architectural one.
+
+## STRIDE: coverage first
+
+**STRIDE** walks the diagram element by element and asks six questions of each: can this be
+**S**poofed, **T**ampered with, made **R**epudiable, made to disclose **I**nformation,
+**D**enied service, or used for **E**levation of privilege. Each maps to the property it
+violates — authentication, integrity, non-repudiation, confidentiality, availability,
+authorization — so the checklist doubles as a definition of what "secure" means for that
+element.
+
+Its value is coverage. Engineers reasoning freely about threats gravitate to the attacks
+they've seen, and STRIDE's whole contribution is mechanical exposure to the categories they
+haven't — repudiation and information disclosure go unexamined in most unstructured design
+reviews, and those are exactly the columns the walk forces. The standard refinement,
+STRIDE-per-element, narrows the questions to what each element type can actually suffer
+(data stores get tampering and disclosure; external entities get spoofing), which cuts the
+walk to a practical length.
+
+Its limit is that it says nothing about likelihood. STRIDE produces an undifferentiated
+list of valid threats, and a list where everything matters equally gives the design review
+no decision. Prioritizing that list is a separate step, covered below.
+
+## Attack trees: the could-graph
+
+An **attack tree** starts from the attacker's goal as the root — "read another tenant's
+data" — and decomposes it into the ways of achieving it, each child a subgoal, with
+AND-nodes where an attacker needs every branch and OR-nodes where any one suffices. Annotate
+the leaves with cost or feasibility, and the cheapest live path through the tree is the one
+a real attacker finds by trial.
+
+Read one against a completed intrusion and the relationship is exact: a real attack path is
+an attack tree with every branch pruned except the one taken. That makes trees the point
+where [threat intelligence](/threat-intel/threat-actor-profiling/) enters design work — an
+actor's ATT&CK-mapped TTP inventory is evidence about which subtrees are live for the
+attackers who plausibly care about this system, and which are theoretical. A tree weighted
+by that evidence stops being a brainstorm and starts being a claim.
+
+Trees earn their keep on focused, high-value questions — one goal, one boundary — and they
+scale poorly as full-system coverage, which is what STRIDE is for. The pairing works in one
+direction: STRIDE finds the categories, and a tree interrogates the finding that matters
+most.
+
+## PASTA: when impact leads
+
+**PASTA** (Process for Attack Simulation and Threat Analysis) runs seven stages from
+business objectives down through technical decomposition, threat analysis, and attack
+simulation, tying each threat back to business impact. It's the heavyweight option, and its
+distinct contribution is the direction of travel: it starts from what the business cannot
+afford to lose and works toward the attacks that would lose it, where STRIDE starts from
+components and works outward.
+
+Few teams need the full seven-stage ceremony, and running it on every design is a fast way
+to stop modeling altogether. What's worth borrowing at any scale is the framing: a threat
+model whose findings are phrased as business impact survives contact with a
+[prioritization decision](/threat-intel/risk-prioritization/), and one phrased as component
+defects gets deferred by whoever owns the roadmap.
+
+## Weighting the branches
+
+The methods above enumerate; something still has to rank, and this is where modeling most
+often goes wrong. Ranking by headline — modeling whatever technique is in the news — makes
+the model a mirror of the feed rather than of the threat. The corrective is the same
+discipline the intel side calls the threat library: which actors have the capability,
+intent, and opportunity to care about *this* system, and what their demonstrated tradecraft
+says about which branches are live. That library is exactly what
+[actor profiles](/threat-intel/threat-actor-profiling/) exist to maintain, and TTP change in
+a tracked profile is the signal to reopen a shipped model, the same trigger the
+[detection backlog](/detection-eng/) runs on.
+
+Two boundary cases deserve their own vocabulary. Privacy threats have a dedicated STRIDE
+analogue in **LINDDUN** (linkability, identifiability, non-repudiation, detectability,
+disclosure, unawareness, non-compliance), which belongs to
+[privacy engineering](/data-privacy/privacy-engineering/) and catches harms a
+security-framed walk misses entirely. And systems with an AI agent in the loop put their
+most consequential trust boundary at the [tool-use seam](/ai-automation/mcp/) — the point
+where model output becomes authorized action is a boundary crossing like any other, and it
+belongs on the diagram with its credential named.
+
+## How it looks in practice
+
+- **The diagram lives beside the code** — a Mermaid DFD in the repository, updated in the
+  pull request that changes the architecture it describes, so drift is visible in a diff.
+- **STRIDE findings land as abuse cases** in the acceptance criteria of the stories they
+  implicate, which is the [hub's](/appsec/sdlc/) discipline for making "done" include the
+  hostile user.
+- **One tree per review, at most** — drawn for the finding the room argued about, with the
+  cheapest live branch setting the mitigation order.
+- **Reopening is triggered, never scheduled** — a tracked actor's TTP change or a new trust
+  boundary reopens the model; a calendar reminder to "review the threat model" gets snoozed
+  until it dies.
+
+## Where this connects
+
+The [hub](/appsec/sdlc/) owns when any of this is worth the hour and where the findings land
+in the delivery process. The threat library that weights the branches is maintained in
+[threat actor profiling](/threat-intel/threat-actor-profiling/), the trust boundaries being
+drawn are [identity](/iam/) boundaries, and the privacy column belongs to
+[LINDDUN](/data-privacy/privacy-engineering/). Downstream, the model is a hypothesis:
+[pentesting](/pentest/) is how it gets tested against an adversary who never read it.

@@ -9,7 +9,7 @@ relatedTo:
   - appsec/secure-coding
   - grc
   - threat-intel/risk-prioritization
-updated: 2026-08-19
+updated: 2026-08-21
 sidebar:
   order: 3
 ---
@@ -20,16 +20,19 @@ incident. Secure SDLC is the practice of moving that discovery earlier. The trap
 it as a set of gates to pass rather than a set of decisions to make, at which point it
 becomes theater engineering learns to route around.
 
+**In this subsection:**
+
+- [Threat Modeling](/appsec/sdlc/threat-modeling/) — the data-flow diagram and its trust
+  boundaries, STRIDE, attack trees, PASTA, and the threat library that decides which branches
+  deserve the effort.
+
 ## Threat modeling, and when it's actually worth it
 
 Threat modeling asks four questions about a design: what are we building, what can go wrong,
 what are we doing about it, and did we do a good job. The methodologies — STRIDE, PASTA,
-attack trees — are structured ways to answer the second.
-
-**STRIDE** is the most practical default: walk the design and ask, per component, about
-Spoofing, Tampering, Repudiation, Information disclosure, Denial of service, and Elevation of
-privilege. It's a checklist against a data-flow diagram, and its value is coverage — it
-surfaces the category you'd have skipped.
+attack trees — are structured ways to answer the second, and they get
+[their own page](/appsec/sdlc/threat-modeling/). What stays here is the decision that comes
+first.
 
 The honest part is **when it's worth it**, because threat modeling every user story is how the
 practice dies:

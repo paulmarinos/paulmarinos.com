@@ -822,6 +822,19 @@ None written yet.
 
 ---
 
+## About
+
+`src/content/docs/about.mdx` — a single site-level page, first person, `contentType: landing`
+(exempt from pillar validation), `sidebar: hidden` like `essays/` and `threads/`. Linked from
+the homepage; otherwise reached through search, the graph and backlinks. It carries the
+author's focus (threat intelligence with identity as the terrain), the method (attack paths
+as graphs — campaign writeups as the did-graph, threat models as the could-graph), and the
+product taxonomy (technique deep-dives; campaign writeups; actor profiles earned by
+accumulation). The page states the plan the products will fill in, so it should be revisited
+as campaigns and profiles land.
+
+---
+
 ## Structural Notes
 
 - **Depth: three levels of content, two levels of navigation.** Pillar -> subsection ->

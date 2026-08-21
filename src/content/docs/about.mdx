@@ -1,0 +1,81 @@
+---
+title: About
+description: Who I am, the focus I'm building, and the method behind this site — identity as the terrain, techniques as the edges, the graph as the map.
+contentType: landing
+sidebar:
+  hidden: true
+---
+
+I'm Paul Marinos. This site is my public working notes across ten security disciplines,
+with particular attention to the seams between them; the homepage carries
+[the thesis](/#the-thesis). This page covers the rest: the focus I'm building, the method
+behind it, and how the site serves both.
+
+## The focus
+
+My own work sits at one of those seams: threat intelligence with identity as the terrain.
+Attackers today move through identity more than they move through malware. The intrusions
+worth studying read as a sequence of identity events — a credential phished, a token
+stolen, a role assumed, a consent granted — across human accounts, machine credentials,
+and increasingly AI agents. The one-line version of what I do: I map how attackers move
+through identity, and turn those maps into intelligence someone can act on.
+
+## The method
+
+The method is graphs, taken literally. An intrusion is a path through a system: the nodes
+are identities and the resources they reach, and the edges are labeled with the techniques
+that crossed them — reached via token theft, via role assumption, via consent grant.
+[ATT&CK](/threat-intel/threat-actor-profiling/) gives those edge labels a shared
+vocabulary, so a drawn path is also a claim other analysts can check.
+
+The same map gets drawn in two directions. A campaign writeup reconstructs the path an
+attacker *did* take, from evidence. A [threat model](/appsec/sdlc/threat-modeling/) draws
+the paths an attacker *could* take, before the fact — an attack tree is a campaign graph
+with the arrow of time reversed and every branch still open. Working both directions
+against the same terrain is the practice this site is built around, and it's why the
+disciplines here are kept in one place: the evidence side lives in
+[threat intelligence](/threat-intel/), the terrain itself in
+[identity](/iam/), and the anticipatory side in
+[application security](/appsec/), with [AI](/ai-automation/) as both the tooling that
+scales the analysis and a subject growing its own identity problems.
+
+## The products
+
+That method produces three kinds of intelligence writing, each with its own lifecycle:
+
+- **Technique deep-dives** — one per technique, timeless reference, deliberately
+  cross-actor. These slot into the pillars alongside the rest of the knowledge base.
+- **Campaign writeups** — one per campaign, bounded and point-in-time. These are the
+  flagship product, because a campaign is exactly one attack graph with a beginning and
+  an objective.
+- **Actor profiles** — one per actor, living documents: an index over that actor's
+  campaigns plus the TTP inventory that stays constant across them. A profile is earned
+  by accumulation, so each one appears only after the campaign writeups that justify it.
+
+Techniques are used in campaigns; campaigns are attributed to actors. That containment is
+itself a graph, and it lands directly on [the site's map](/#the-map): profiles will link
+to campaigns, campaigns to techniques, and the backlinks will answer which actors use a
+given technique. The architecture and the method are the same shape on purpose.
+
+## Communication as the other half
+
+I treat [communication as a technical skill](/threads/communication-as-a-technical-skill/),
+on par with the analysis itself. An intelligence product that goes unread, misunderstood,
+or unacted-on has failed no matter how good the underlying work was, so everything here is
+practice for both halves at once: the analysis, and the writing, visualization, and
+structure that let someone act on it. The [report-writing](/threat-intel/report-writing/)
+and [communication](/threat-intel/effective-communication/) pages hold the standards; the rest of
+the site is where I hold myself to them.
+
+## How to read this site
+
+Start with [the thesis](/#the-thesis), then pick one of
+[the common threads](/#the-common-threads) — they're the site's argument in miniature,
+one fact walked across discipline lines. The [map](/#the-map) is drawn from the articles'
+own cross-links, so it doubles as a picture of how the disciplines connect and, honestly,
+of how I think. Everything is a working note: pages carry a maturity level and an updated
+date, and they change as the practice does.
+
+I'm on [GitHub](https://github.com/paulmarinos), where this site is an open repository —
+the [content architecture](https://github.com/paulmarinos/paulmarinos.com/blob/main/site-structure.md)
+shows what's planned before it's written.

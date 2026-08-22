@@ -620,6 +620,14 @@ each earn a page, with condensed sections pointing down.
 - Drift detection and closed-loop remediation
 - Benchmarks and well-architected security pillars as baselines
 - Prioritizing posture findings so the queue stays finite (ties to §1.4)
+- **8.5.1 Terraform Security** — the tool as attack surface and control plane, assuming the
+  reader knows what it is: the state file as a plaintext secret store and a standing
+  pentest find (§5.2 hunts it, §10.1 should be classifying it), the apply pipeline as the
+  estate's most privileged non-human identity (§2.8's sharpest example, minted through
+  §3.4's OIDC), module and provider supply chain as unreviewed third-party code (§3.4
+  signing and provenance), plan-time policy as code as the guardrail layer (§4.5 owns the
+  engineering), and drift as the gap between declared and actual state — staying on §8.5's
+  program side of the split with §3.6, which keeps the scanners
 
 ### 8.6 Resilience & Recovery
 - Backup and restore as a security control, not an ops concern

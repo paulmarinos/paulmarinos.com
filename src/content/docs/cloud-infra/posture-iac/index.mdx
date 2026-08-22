@@ -61,6 +61,11 @@ IaC scanning only sees what's *in* the IaC: click-ops changes, drift, and anythi
 outside the templates are invisible to it. That's precisely why it complements runtime posture
 rather than replacing it — the two cover each other's blind spots.
 
+The tool at the centre of all this has a security shape of its own: a state file that holds
+working credentials, an apply identity more privileged than any administrator, modules that
+are third-party dependencies. [Terraform Security](/cloud-infra/posture-iac/terraform-security/)
+treats the tool as attack surface and control plane in its own right.
+
 ## Drift detection and closed-loop remediation
 
 A [landing zone](/cloud-infra/architecture-landing-zones/) is a starting state, and environments drift from

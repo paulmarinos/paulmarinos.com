@@ -1,0 +1,141 @@
+---
+title: Terraform Security
+description: The IaC tool as attack surface and control plane — state files that hold secrets, the apply pipeline as the most privileged identity in the estate, modules as dependencies, and policy at plan time.
+pillar: cloud-infra
+contentType: deep-dive
+maturity: practitioner
+cloud: [aws, azure, gcp, multi]
+attack: [T1552, T1195]
+relatedTo:
+  - cloud-infra/posture-iac
+  - iam/non-human-identity
+  - pentest/cloud-pentesting
+  - appsec/cicd-security
+  - grc/grc-engineering
+updated: 2026-08-22
+sidebar:
+  hidden: true
+---
+
+This page assumes you know what Terraform is — declarative configuration, a plan you review,
+an apply that reconciles reality against it, a state file that remembers what it built. The
+[HashiCorp documentation](https://developer.hashicorp.com/terraform/intro) covers that well.
+What it covers less well is the security shape of the tool itself, which is worth a page
+because Terraform occupies two positions at once: it is a **control plane** — the thing
+through which your infrastructure's security properties get set — and it is **attack
+surface**, a system with its own secrets, privileges, and dependencies that deserves the
+same scrutiny it helps you apply to everything else.
+
+The boundary from [the hub](/cloud-infra/posture-iac/) holds here: the scanners that read
+Terraform (Checkov, tfsec, Terrascan) belong to [AppSec](/appsec/api-cloud-native/), and the
+posture program their findings feed lives one level up. This page is about what an attacker
+sees when they look at your Terraform, and what a defender should build around it.
+
+## The state file is a secrets store
+
+Terraform records the attributes of everything it manages in its state file, and it records
+them in plaintext — a [documented design position](https://developer.hashicorp.com/terraform/language/state/sensitive-data),
+with the mitigation delegated to wherever you store the file. That includes attributes you'd
+never write in config: the database password a resource generated at create time, initial
+admin credentials a provider returned, private key material from resources that mint
+certificates. Marking an attribute `sensitive` redacts it from CLI output and changes nothing
+about what sits in state.
+
+This makes `terraform.tfstate` a standing [cloud pentest](/pentest/cloud-pentesting/) find,
+and a rewarding one: a state file in a misconfigured bucket hands over working credentials
+*and* a complete, accurate map of the environment they work in — every resource, every
+relationship, every place the architecture is soft. Reading state is reconnaissance and
+credential access in a single object.
+
+The defensive conclusion is to treat state as one of the most sensitive data objects in the
+estate: a remote backend with encryption and locking, access scoped to the pipeline identity
+and a short list of humans, versioning on so a tampered or deleted state can be recovered,
+and access logging that someone actually reads. Your
+[classification scheme](/data-privacy/classification-discovery/) should rank the state
+backend alongside the databases whose passwords it holds, because an attacker already does.
+
+## The apply pipeline is the estate's most privileged identity
+
+The identity that runs `terraform apply` can create, modify, and destroy most of what your
+cloud contains — including the IAM configuration that constrains every other identity. That
+makes it the sharpest example of a [non-human identity](/iam/non-human-identity/) there is:
+it holds more standing power than any administrator, and it is exempt from everything built
+to protect administrators — no MFA, no session challenge, and too often no named owner.
+
+Three design choices carry most of the weight:
+
+- **Federate it, and keep the credential short-lived.** A static cloud key in CI secrets is
+  the worst version of this identity. [OIDC federation from the pipeline](/appsec/cicd-security/)
+  replaces it with a token minted per run, scoped to a repository and branch, gone in
+  minutes — the elimination path the NHI page argues for, applied to its most dangerous case.
+- **Split plan from apply.** Plan needs read access; apply needs write. Running them under
+  one identity means every PR-triggered plan holds destroy-the-estate power. Separate roles,
+  with apply reachable only from protected branches, shrink the exposure to the one step
+  that needs it.
+- **Review the plan as the change, because it is the change.** The plan output is the
+  authoritative diff of what will happen to production, and approving it is the control gate
+  everything else assumes. Pipeline-compromise techniques matter here precisely because
+  poisoned pipeline execution that reaches the apply credential inherits everything it can do.
+
+## Modules and providers are dependencies
+
+A registry module is third-party code that executes with your pipeline's credentials, and
+the registry is a public repository with the supply-chain properties that implies. The same
+discipline [AppSec applies to packages](/appsec/cicd-security/) applies unchanged: pin
+modules and providers to exact versions, commit the dependency lock file so provider hashes
+are verified on every run, and put an allowlist or a private registry in front of the
+critical path. A provider deserves particular respect — it is a binary that executes every
+API call Terraform makes, which means a malicious or compromised provider *is* the apply
+credential for as long as it runs.
+
+## Policy at plan time
+
+The plan is machine-readable, which turns it into an enforcement surface. Rendered as JSON,
+it can be evaluated by OPA and Conftest, or by Sentinel on HashiCorp's platform, before
+apply ever runs: deny the public bucket, the wildcard IAM policy, the security group open to
+the world, the resource missing its mandatory tags. These are the guardrails the
+[landing zone](/cloud-infra/architecture-landing-zones/) promises, restated as code that
+fails a pipeline instead of prose that fails an audit.
+
+The engineering discipline behind this — policy as code, versioned rules, controls that emit
+their own evidence — is [GRC engineering's](/grc/grc-engineering/), and the overlap is worth
+exploiting: a plan-time rule that blocks a violation is also a continuously-monitored
+control, and its pipeline logs are audit evidence nobody had to collect by hand. The honest
+limit is inherited from the medium: policy over the plan sees what the plan sees. Changes
+made outside Terraform are invisible to it, which is exactly the gap
+[runtime posture](/cloud-infra/posture-iac/) exists to cover.
+
+## Drift is three versions of the truth
+
+With Terraform in the picture there are three descriptions of your infrastructure: the
+configuration (what you declared), the state (what Terraform last recorded), and reality
+(what the cloud is actually running). Security lives in the gaps between them. A hand-made
+console change diverges reality from both config and state; a scheduled `terraform plan`
+against production surfaces that divergence for managed resources, making it a drift
+detector the [posture program](/cloud-infra/posture-iac/) should consume — with the hub's
+caution about closed-loop remediation applying doubly here, since an automatic apply that
+"corrects" a deliberate emergency change is an outage with good intentions. The sharper
+blind spot is the resource Terraform never managed at all: it appears in no plan, drifts
+from nothing, and only runtime posture or an [attacker](/pentest/cloud-pentesting/) will
+ever notice it.
+
+## How it looks in practice
+
+The shape that falls out: state in an encrypted, versioned, access-logged remote backend
+that classification treats as tier zero; a per-environment apply role reached only by OIDC
+from protected branches, with plan running under a read-only sibling; plan output posted to
+the pull request and gated by both a human approval and a Conftest policy set shared with
+the posture program; the lock file committed and module sources pinned or vendored; and a
+scheduled plan whose non-empty diff pages someone. None of it is exotic — each piece is an
+existing discipline from another pillar, pointed at the tool that builds everything else.
+
+## Where this connects
+
+Terraform's state file is what a [cloud pentester](/pentest/cloud-pentesting/) hopes your
+bucket policy forgot, and what [data classification](/data-privacy/classification-discovery/)
+should rank with the crown jewels. The apply role is
+[non-human identity's](/iam/non-human-identity/) most privileged case, minted through
+[the pipeline](/appsec/cicd-security/) it shares supply-chain discipline with. Plan-time
+policy is [GRC engineering](/grc/grc-engineering/) enforcing the
+[landing zone's](/cloud-infra/architecture-landing-zones/) promises, and everything the tool
+can't see falls to [the posture program](/cloud-infra/posture-iac/) this page grew out of.
